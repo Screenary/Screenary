@@ -19,28 +19,35 @@
 
 using System;
 using Gtk;
+using Screenary;
 
 public partial class MainWindow: Gtk.Window
 {	
-	public MainWindow (): base (Gtk.WindowType.Toplevel)
+	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
-		Build ();
+		Build();
 	}
 	
-	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
+	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		Application.Quit ();
+		Application.Quit();
 		a.RetVal = true;
 	}
 
-	protected void OnQuitActionActivated (object sender, System.EventArgs e)
+	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{
-		Application.Quit ();
+		Application.Quit();
 	}
 
-	protected void OnAboutActionActivated (object sender, System.EventArgs e)
+	protected void OnAboutActionActivated(object sender, System.EventArgs e)
 	{
 		AboutDialog dialog = new AboutDialog();
-		dialog.Run ();
+		dialog.Run();
+	}
+
+	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
+	{	
+		Surface surface = new Surface();
+		surface.test();
 	}
 }

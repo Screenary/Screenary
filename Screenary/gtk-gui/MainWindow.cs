@@ -15,8 +15,9 @@ public partial class MainWindow
 	private global::Gtk.Action aboutAction;
 	private global::Gtk.Action toolsAction;
 	private global::Gtk.Action RemoteFXAction;
-	private global::Gtk.VBox vbox1;
+	private global::Gtk.VBox mainVbox;
 	private global::Gtk.MenuBar mainMenuBar;
+	private global::Gtk.DrawingArea mainDrawingArea;
     
 	protected virtual void Build ()
 	{
@@ -63,24 +64,32 @@ public partial class MainWindow
 		this.Title = global::Mono.Unix.Catalog.GetString ("Screenary");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 		// Container child MainWindow.Gtk.Container+ContainerChild
-		this.vbox1 = new global::Gtk.VBox ();
-		this.vbox1.Name = "vbox1";
-		this.vbox1.Spacing = 6;
-		// Container child vbox1.Gtk.Box+BoxChild
+		this.mainVbox = new global::Gtk.VBox ();
+		this.mainVbox.Name = "mainVbox";
+		this.mainVbox.Spacing = 6;
+		// Container child mainVbox.Gtk.Box+BoxChild
 		this.UIManager.AddUiFromString ("<ui><menubar name='mainMenuBar'><menu name='fileAction' action='fileAction'><menuitem name='quitAction' action='quitAction'/></menu><menu name='toolsAction' action='toolsAction'><menuitem name='RemoteFXAction' action='RemoteFXAction'/></menu><menu name='helpAction' action='helpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 		this.mainMenuBar = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/mainMenuBar")));
 		this.mainMenuBar.Name = "mainMenuBar";
-		this.vbox1.Add (this.mainMenuBar);
-		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.mainMenuBar]));
+		this.mainVbox.Add (this.mainMenuBar);
+		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.mainVbox [this.mainMenuBar]));
 		w2.Position = 0;
 		w2.Expand = false;
 		w2.Fill = false;
-		this.Add (this.vbox1);
+		// Container child mainVbox.Gtk.Box+BoxChild
+		this.mainDrawingArea = new global::Gtk.DrawingArea ();
+		this.mainDrawingArea.WidthRequest = 1024;
+		this.mainDrawingArea.HeightRequest = 768;
+		this.mainDrawingArea.Name = "mainDrawingArea";
+		this.mainVbox.Add (this.mainDrawingArea);
+		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.mainVbox [this.mainDrawingArea]));
+		w3.Position = 1;
+		this.Add (this.mainVbox);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 885;
-		this.DefaultHeight = 622;
+		this.DefaultWidth = 1026;
+		this.DefaultHeight = 829;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.QuitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
@@ -88,5 +97,7 @@ public partial class MainWindow
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
 		this.aboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
 		this.RemoteFXAction.Activated += new global::System.EventHandler (this.OnRemoteFXActionActivated);
+		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
+		this.mainDrawingArea.ConfigureEvent += new global::Gtk.ConfigureEventHandler (this.OnMainDrawingAreaConfigureEvent);
 	}
 }

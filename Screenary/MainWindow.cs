@@ -17,12 +17,15 @@
  * limitations under the License.
  */
 
-using System;
 using Gtk;
+using Gdk;
+using System;
 using Screenary;
 
 public partial class MainWindow: Gtk.Window
 {	
+	public Cairo.Surface surface;
+	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
@@ -47,7 +50,25 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{	
-		Surface surface = new Surface();
-		surface.test();
+		SurfaceCommand surfaceCommand = new SurfaceCommand();
+		surfaceCommand.test();
+	}
+
+	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
+	{
+		DrawingArea area = (DrawingArea) o;
+		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
+		
+		Console.WriteLine("OnExposeEvent");
+		
+		context.SetSourceRGB(0, 178, 238);
+		context.Rectangle(0, 0, 1024, 768);
+		context.Fill();
+	}
+
+	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)
+	{	
+		DrawingArea area = (DrawingArea) o;
+		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
 	}
 }

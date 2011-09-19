@@ -8,7 +8,7 @@
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/Screenary.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="885 622">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1026 829">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -76,7 +76,7 @@
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
-      <widget class="Gtk.VBox" id="vbox1">
+      <widget class="Gtk.VBox" id="mainVbox">
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
@@ -102,7 +102,17 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gtk.DrawingArea" id="mainDrawingArea">
+            <property name="MemberName" />
+            <property name="WidthRequest">1024</property>
+            <property name="HeightRequest">768</property>
+            <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
+            <signal name="ConfigureEvent" handler="OnMainDrawingAreaConfigureEvent" />
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
       </widget>
     </child>

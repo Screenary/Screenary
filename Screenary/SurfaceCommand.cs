@@ -3,8 +3,10 @@ using System.IO;
 
 namespace Screenary
 {
-	public class Surface
+	public class SurfaceCommand
 	{
+		public FreeRDP freerdp;
+		
 		const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
 		const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
 		const UInt16 CMDTYPE_FRAME_MARKER = 4;
@@ -29,7 +31,7 @@ namespace Screenary
 			public UInt32 frameId;
 		}
 		
-		public Surface ()
+		public SurfaceCommand ()
 		{
 		}
 		
@@ -50,7 +52,7 @@ namespace Screenary
 			cmd.bitmapDataLength = fp.ReadUInt32(); /* bitmapDataLength */
 			cmd.bitmapData = fp.ReadBytes((int) cmd.bitmapDataLength); /* bitmapData */
 			
-			FreeRDP freerdp = new FreeRDP();
+			freerdp = new FreeRDP();
 			freerdp.RfxProcessMessage(cmd.bitmapData, (int) cmd.bitmapDataLength);
 		}
 		

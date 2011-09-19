@@ -60,10 +60,8 @@ namespace Screenary
 			IntPtr msg;
 			UInt16 ntiles;
 			UInt16 nrects;
-			RFX_RECT* rect;
 			RFX_TILE* tile;
-		
-			Console.WriteLine("length:" + length);
+			byte[] buffer = new byte[4096 * 4];
 			
 			msg = rfx_process_message(rfx, data, (UInt32) length);
 			ntiles = rfx_message_get_tile_count(msg);
@@ -71,11 +69,15 @@ namespace Screenary
 			
 			Console.WriteLine("ntiles:{0} nrects:{1}", ntiles, nrects);
 
-			rect = rfx_message_get_rect(msg, 1);
-			Console.WriteLine("rect: x:{0} y:{1} w:{2} h:{3}", rect->x, rect->y, rect->width, rect->height);
-			
 			tile = rfx_message_get_tile(msg, 1);
-			Console.WriteLine("tile: x:{0} y:{1}", tile->x, tile->y);
+			
+			for (int index = 0; index < ntiles; index++)
+			{
+				tile = rfx_message_get_tile(msg, index);
+				Marshal.Copy(new IntPtr(tile->data), buffer, 0, 4096 * 4);
+				Cairo.ImageSurface surface = new Cairo.ImageSurface(buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
+				surface.WriteToPng(String.Format("/tmp/rfx/tile_{0:000}.png", index));
+			}
 			
 			rfx_message_free(rfx, msg);
 		}

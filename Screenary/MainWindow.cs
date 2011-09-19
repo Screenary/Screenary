@@ -64,11 +64,14 @@ public partial class MainWindow: Gtk.Window
 		context.SetSourceRGB(0, 178, 238);
 		context.Rectangle(0, 0, 1024, 768);
 		context.Fill();
+		
+		((IDisposable)context).Dispose();
 	}
 
 	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)
 	{	
 		DrawingArea area = (DrawingArea) o;
 		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
+		((IDisposable)context).Dispose();
 	}
 }

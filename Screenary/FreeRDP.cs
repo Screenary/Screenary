@@ -26,28 +26,28 @@ namespace Screenary
 			public byte* data;
 		}
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern IntPtr rfx_context_new();
 	
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern void rfx_context_free(IntPtr rfx);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern IntPtr rfx_process_message(IntPtr rfx, byte[] data, UInt32 length);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern UInt16 rfx_message_get_tile_count(IntPtr message);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern RFX_TILE* rfx_message_get_tile(IntPtr message, int index);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern UInt16 rfx_message_get_rect_count(IntPtr message);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern RFX_RECT* rfx_message_get_rect(IntPtr message, int index);
 		
-		[DllImport("/usr/local/lib/libfreerdp-rfx.so")]
+		[DllImport("libfreerdp-rfx")]
 		public static extern void rfx_message_free(IntPtr rfx, IntPtr message);
 		
 		public FreeRDP()
@@ -75,8 +75,8 @@ namespace Screenary
 			{
 				tile = rfx_message_get_tile(msg, index);
 				Marshal.Copy(new IntPtr(tile->data), buffer, 0, 4096 * 4);
-				Cairo.ImageSurface surface = new Cairo.ImageSurface(buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
-				surface.WriteToPng(String.Format("/tmp/rfx/tile_{0:000}.png", index));
+				Cairo.ImageSurface surface = new Cairo.ImageSurface(ref buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
+				surface.WriteToPng(String.Format("data/rfx/tile_{0:000}.png", index));
 			}
 			
 			rfx_message_free(rfx, msg);

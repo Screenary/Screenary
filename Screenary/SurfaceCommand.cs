@@ -69,7 +69,7 @@ namespace Screenary
 			UInt16 cmdType;
 			
 			BinaryReader fp;
-			string filename = "/tmp/rfx_msg.bin";
+			string filename = "data/rfx/rfx.bin";
 			
 			fp = new BinaryReader(File.Open(filename, FileMode.Open));
 			
@@ -88,6 +88,8 @@ namespace Screenary
 					readFrameMarkerCommand(fp);
 					break;
 			}
+			
+			fp.Close();
 		}
 	}
 }

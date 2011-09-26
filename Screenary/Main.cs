@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.IO;
 using Gtk;
 
 namespace Screenary
@@ -26,10 +27,18 @@ namespace Screenary
 	{
 		public static void Main (string[] args)
 		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			MainWindow window;
+			string workingDirectory;
+			
+			Application.Init();
+			
+			workingDirectory = Directory.GetCurrentDirectory();
+			Directory.SetCurrentDirectory(workingDirectory + "../../../");
+			
+			window = new MainWindow();
+			window.Show();
+			
+			Application.Run();
 		}
 	}
 }

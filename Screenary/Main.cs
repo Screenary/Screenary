@@ -18,18 +18,32 @@
  */
 
 using System;
+using System.IO;
 using Gtk;
 
 namespace Screenary
 {
 	class MainClass
 	{
+		public static string WorkingDirectory;
+		
 		public static void Main (string[] args)
 		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			MainWindow window;
+			
+			Application.Init();
+			
+			WorkingDirectory = Directory.GetCurrentDirectory();
+			
+			if (!WorkingDirectory.EndsWith("/"))
+				WorkingDirectory += "/";
+			
+			Directory.SetCurrentDirectory(WorkingDirectory + "../../");
+			
+			window = new MainWindow();
+			window.Show();
+			
+			Application.Run();
 		}
 	}
 }

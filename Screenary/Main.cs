@@ -25,15 +25,20 @@ namespace Screenary
 {
 	class MainClass
 	{
+		public static string WorkingDirectory;
+		
 		public static void Main (string[] args)
 		{
 			MainWindow window;
-			string workingDirectory;
 			
 			Application.Init();
 			
-			workingDirectory = Directory.GetCurrentDirectory();
-			Directory.SetCurrentDirectory(workingDirectory + "../../../");
+			WorkingDirectory = Directory.GetCurrentDirectory();
+			
+			if (!WorkingDirectory.EndsWith("/"))
+				WorkingDirectory += "/";
+			
+			Directory.SetCurrentDirectory(WorkingDirectory + "../../");
 			
 			window = new MainWindow();
 			window.Show();

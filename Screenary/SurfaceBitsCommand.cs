@@ -39,7 +39,7 @@ namespace Screenary
 
 		public override void Process()
 		{
-			freerdp.RfxProcessMessage(bitmapData, (int) bitmapDataLength);
+			remotefx.Decode(bitmapData, (int) bitmapDataLength);
 		}
 	}
 }

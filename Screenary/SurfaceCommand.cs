@@ -6,7 +6,7 @@ namespace Screenary
 	public class SurfaceCommand
 	{
 		public UInt16 cmdType;
-		public static FreeRDP freerdp = null;
+		public static RemoteFX remotefx = null;
 		
 		public const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
 		public const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
@@ -14,16 +14,16 @@ namespace Screenary
 		
 		public SurfaceCommand()
 		{
-			if (freerdp == null)
-				freerdp = new FreeRDP();
+			if (remotefx == null)
+				remotefx = new RemoteFX();
 			
 			this.cmdType = 0;
 		}
 		
 		public SurfaceCommand(UInt16 cmdType)
 		{
-			if (freerdp == null)
-				freerdp = new FreeRDP();
+			if (remotefx == null)
+				remotefx = new RemoteFX();
 			
 			this.cmdType = cmdType;
 		}

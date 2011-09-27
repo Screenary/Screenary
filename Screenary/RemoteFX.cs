@@ -1,14 +1,10 @@
-using Gtk;
-using Gdk;
 using System;
 using System.Runtime.InteropServices;
 
 namespace Screenary
 {
-	public unsafe class FreeRDP
-	{		
-		private IntPtr rfx;
-		
+	public unsafe class RemoteFX
+	{
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RFX_RECT
 		{
@@ -25,6 +21,16 @@ namespace Screenary
 			public UInt16 y;
 			public byte* data;
 		}
+		
+		private IntPtr rfx;
+		private IntPtr msg;
+		private UInt16 ntiles;
+		private UInt16 nrects;
+		private int itiles;
+		private int irects;
+		private byte[] buffer;
+		private RFX_TILE* tile;
+		private RFX_RECT* rect;
 		
 		[DllImport("libfreerdp-rfx")]
 		public static extern IntPtr rfx_context_new();
@@ -50,40 +56,67 @@ namespace Screenary
 		[DllImport("libfreerdp-rfx")]
 		public static extern void rfx_message_free(IntPtr rfx, IntPtr message);
 		
-		public FreeRDP()
+		public RemoteFX()
 		{
+			itiles = 0;
+			irects = 0;
+			msg = IntPtr.Zero;
 			rfx = rfx_context_new();
+			buffer = new byte[4096 * 4];
 		}
 		
-		public void RfxProcessMessage(byte[] data, int length)
+		public void Decode(byte[] data, int length)
 		{	
-			IntPtr msg;
-			UInt16 ntiles;
-			UInt16 nrects;
-			RFX_TILE* tile;
-			byte[] buffer = new byte[4096 * 4];
+			itiles = 0;
+			irects = 0;
+			
+			if (msg != IntPtr.Zero)
+					rfx_message_free(rfx, msg);
 			
 			msg = rfx_process_message(rfx, data, (UInt32) length);
+			
 			ntiles = rfx_message_get_tile_count(msg);
 			nrects = rfx_message_get_rect_count(msg);
-			
-			Console.WriteLine("ntiles:{0} nrects:{1}", ntiles, nrects);
-
-			tile = rfx_message_get_tile(msg, 1);
-			
-			for (int index = 0; index < ntiles; index++)
-			{
-				tile = rfx_message_get_tile(msg, index);
-				Marshal.Copy(new IntPtr(tile->data), buffer, 0, 4096 * 4);
-				Cairo.ImageSurface surface = new Cairo.ImageSurface(ref buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
-				surface.WriteToPng(String.Format("data/rfx/tile_{0:000}.png", index));
-			}
-			
-			rfx_message_free(rfx, msg);
 		}
 		
-		~FreeRDP()
+		public bool HasNextTile()
 		{
+			return (itiles < ntiles);
+		}
+		
+		public Cairo.ImageSurface GetNextTile()
+		{
+			Cairo.ImageSurface surface;
+			
+			tile = rfx_message_get_tile(msg, itiles++);
+			Marshal.Copy(new IntPtr(tile->data), buffer, 0, 4096 * 4);
+			surface = new Cairo.ImageSurface(buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
+			
+			return surface;
+		}
+		
+		public bool HasNextRect()
+		{	
+			return (irects < nrects);
+		}
+		
+		public Cairo.Rectangle GetNextRect()
+		{
+			Cairo.Rectangle rectangle;
+			
+			rect = rfx_message_get_rect(msg, irects++);
+			
+			rectangle = new Cairo.Rectangle((double) rect->x, (double) rect->y,
+				(double) rect->width, (double) rect->height);
+			
+			return rectangle;
+		}
+		
+		~RemoteFX()
+		{
+			if (msg != IntPtr.Zero)
+					rfx_message_free(rfx, msg);
+			
 			rfx_context_free(rfx);
 		}
 	}

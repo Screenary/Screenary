@@ -20,6 +20,7 @@
 using Gtk;
 using Gdk;
 using System;
+using System.IO;
 using Screenary;
 
 public partial class MainWindow: Gtk.Window
@@ -50,8 +51,17 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{	
-		SurfaceCommand surfaceCommand = new SurfaceCommand();
-		surfaceCommand.test();
+			BinaryReader fp;
+			string filename;
+			SurfaceCommand cmd;
+			
+			filename = "data/rfx/rfx.bin";
+			fp = new BinaryReader(File.Open(filename, FileMode.Open));
+			
+			cmd = SurfaceCommand.Parse(fp);
+			cmd.Process();
+			
+			fp.Close();
 	}
 
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -61,7 +71,7 @@ public partial class MainWindow: Gtk.Window
 		
 		Console.WriteLine("OnExposeEvent");
 		
-		context.SetSourceRGB(0, 178, 238);
+		context.SetSourceRGB(0, 0, 0);
 		context.Rectangle(0, 0, 1024, 768);
 		context.Fill();
 		

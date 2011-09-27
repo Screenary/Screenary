@@ -20,6 +20,7 @@
 using Gtk;
 using Gdk;
 using System;
+using System.IO;
 using Screenary;
 
 public partial class MainWindow: Gtk.Window
@@ -49,9 +50,31 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
-	{	
-		SurfaceCommand surfaceCommand = new SurfaceCommand();
-		surfaceCommand.test();
+	{
+		int index;
+		BinaryReader fp;
+		string filename;
+		RemoteFX remotefx;
+		SurfaceCommand cmd;
+		Cairo.ImageSurface surface;
+			
+		filename = "data/rfx/rfx.bin";
+		fp = new BinaryReader(File.Open(filename, FileMode.Open));
+			
+		cmd = SurfaceCommand.Parse(fp);
+		cmd.Process();
+		
+		index = 0;
+		remotefx = SurfaceCommand.remotefx;
+		
+		while (remotefx.HasNextTile())
+		{
+			surface = remotefx.GetNextTile();
+			Console.WriteLine(String.Format("data/rfx/tile_{0:000}.png", index));
+			surface.WriteToPng(String.Format("data/rfx/tile_{0:000}.png", index++));
+		}
+		
+		fp.Close();
 	}
 
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -59,9 +82,7 @@ public partial class MainWindow: Gtk.Window
 		DrawingArea area = (DrawingArea) o;
 		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
 		
-		Console.WriteLine("OnExposeEvent");
-		
-		context.SetSourceRGB(0, 178, 238);
+		context.SetSourceRGB(0, 0, 0);
 		context.Rectangle(0, 0, 1024, 768);
 		context.Fill();
 		

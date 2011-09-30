@@ -4,7 +4,19 @@ using System.Runtime.InteropServices;
 namespace Screenary
 {
 	public unsafe class RemoteFX
-	{
+	{		
+		public enum RFX_PIXEL_FORMAT
+		{
+			BGRA = 0,
+			RGBA = 1,
+			BGR = 2,
+			RGB = 3,
+			BGR565_LE = 4,
+			RGB565_LE = 5,
+			PALETTE4_PLANER = 6,
+			PALETTE8 = 7
+		}
+		
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RFX_RECT
 		{
@@ -39,6 +51,9 @@ namespace Screenary
 		public static extern void rfx_context_free(IntPtr rfx);
 		
 		[DllImport("libfreerdp-rfx")]
+		public static extern void rfx_context_set_pixel_format(IntPtr rfx, RFX_PIXEL_FORMAT format);
+		
+		[DllImport("libfreerdp-rfx")]
 		public static extern IntPtr rfx_process_message(IntPtr rfx, byte[] data, UInt32 length);
 		
 		[DllImport("libfreerdp-rfx")]
@@ -62,6 +77,7 @@ namespace Screenary
 			irects = 0;
 			msg = IntPtr.Zero;
 			rfx = rfx_context_new();
+			rfx_context_set_pixel_format(rfx, RFX_PIXEL_FORMAT.RGBA);
 			buffer = new byte[4096 * 4];
 		}
 		
@@ -84,13 +100,16 @@ namespace Screenary
 			return (itiles < ntiles);
 		}
 		
-		public Cairo.ImageSurface GetNextTile()
+		public Gdk.Pixbuf GetNextTile(ref int x, ref int y)
 		{
-			Cairo.ImageSurface surface;
+			Gdk.Pixbuf surface;
 			
 			tile = rfx_message_get_tile(msg, itiles++);
+			
+			x = tile->x;
+			y = tile->y;
 			Marshal.Copy(new IntPtr(tile->data), buffer, 0, 4096 * 4);
-			surface = new Cairo.ImageSurface(buffer, Cairo.Format.ARGB32, 64, 64, 64 * 4);
+			surface = new Gdk.Pixbuf(buffer, Gdk.Colorspace.Rgb, true, 8, 64, 64, 64 * 4);
 			
 			return surface;
 		}
@@ -100,14 +119,12 @@ namespace Screenary
 			return (irects < nrects);
 		}
 		
-		public Cairo.Rectangle GetNextRect()
+		public Gdk.Rectangle GetNextRect()
 		{
-			Cairo.Rectangle rectangle;
+			Gdk.Rectangle rectangle;
 			
 			rect = rfx_message_get_rect(msg, irects++);
-			
-			rectangle = new Cairo.Rectangle((double) rect->x, (double) rect->y,
-				(double) rect->width, (double) rect->height);
+			rectangle = new Gdk.Rectangle(rect->x, rect->y, rect->width, rect->height);
 			
 			return rectangle;
 		}

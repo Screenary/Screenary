@@ -30,6 +30,14 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
+		
+		Cairo.Context context = Gdk.CairoHelper.Create(mainDrawingArea.GdkWindow);
+		
+		context.SetSourceRGB(0, 0, 0);
+		context.Rectangle(0, 0, 1024, 768);
+		context.Fill();
+		
+		((IDisposable) context).Dispose();
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -51,27 +59,28 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{
-		int index;
+		int x, y;
 		BinaryReader fp;
 		string filename;
 		RemoteFX remotefx;
 		SurfaceCommand cmd;
-		Cairo.ImageSurface surface;
-			
+		Gdk.Pixbuf surface;
+		
+		x = y = 0;
 		filename = "data/rfx/rfx.bin";
 		fp = new BinaryReader(File.Open(filename, FileMode.Open));
 			
 		cmd = SurfaceCommand.Parse(fp);
 		cmd.Process();
-		
-		index = 0;
+
 		remotefx = SurfaceCommand.remotefx;
+		
+		Gdk.GC gc = new Gdk.GC(mainDrawingArea.GdkWindow);
 		
 		while (remotefx.HasNextTile())
 		{
-			surface = remotefx.GetNextTile();
-			Console.WriteLine(String.Format("data/rfx/tile_{0:000}.png", index));
-			surface.WriteToPng(String.Format("data/rfx/tile_{0:000}.png", index++));
+			surface = remotefx.GetNextTile(ref x, ref y);
+			mainDrawingArea.GdkWindow.DrawPixbuf(gc, surface, 0, 0, x, y, 64, 64, RgbDither.Normal, 0, 0);
 		}
 		
 		fp.Close();
@@ -79,20 +88,11 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
-		DrawingArea area = (DrawingArea) o;
-		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
-		
-		context.SetSourceRGB(0, 0, 0);
-		context.Rectangle(0, 0, 1024, 768);
-		context.Fill();
-		
-		((IDisposable)context).Dispose();
+
 	}
 
 	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)
 	{	
-		DrawingArea area = (DrawingArea) o;
-		Cairo.Context context = Gdk.CairoHelper.Create(area.GdkWindow);
-		((IDisposable)context).Dispose();
+
 	}
 }

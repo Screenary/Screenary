@@ -4,10 +4,10 @@ namespace Screenary
 	public class PcapFile
 	{
 
-		public char _name;
-		public uint _fileSize;
-		public uint _recordCount;
-		public PcapHeader _pcapHeader;
+		private char _name;
+		private uint _fileSize;
+		private uint _recordCount;
+		private PcapHeader _pcapHeader;
 	
 		public PcapFile ()
 		{

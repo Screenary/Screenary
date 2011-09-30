@@ -5,8 +5,8 @@ namespace Screenary
 {
 	public class PcapRecord
 	{
-		public PcapRecordHeader _pcapRecordHeader;
-		public Packet _packet;
+		private PcapRecordHeader _pcapRecordHeader;
+		private Packet _packet;
 		
 		public PcapRecord ()
 		{

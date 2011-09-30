@@ -85,6 +85,12 @@
     <Compile Include="FrameMarkerCommand.cs" />
     <Compile Include="nunit\SurfaceCommandTest.cs" />
     <Compile Include="RemoteFX.cs" />
+    <Compile Include="pcaputil\Packet.cs" />
+    <Compile Include="pcaputil\PcapFile.cs" />
+    <Compile Include="pcaputil\PcapHeader.cs" />
+    <Compile Include="pcaputil\PcapRecord.cs" />
+    <Compile Include="pcaputil\PcapRecordHeader.cs" />
+    <Compile Include="pcaputil\PCapUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -22,10 +22,12 @@ using Gdk;
 using System;
 using System.IO;
 using Screenary;
+using FreeRDP;
 
 public partial class MainWindow: Gtk.Window
 {	
 	public Cairo.Surface surface;
+	private byte[] buffer = new byte[4096 * 4];
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
@@ -59,28 +61,34 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{
+		Rfx rfx;
 		int x, y;
 		BinaryReader fp;
 		string filename;
-		RemoteFX remotefx;
 		SurfaceCommand cmd;
 		Gdk.Pixbuf surface;
 		
 		x = y = 0;
 		filename = "data/rfx/rfx.bin";
 		fp = new BinaryReader(File.Open(filename, FileMode.Open));
-			
-		cmd = SurfaceCommand.Parse(fp);
-		cmd.Process();
-
-		remotefx = SurfaceCommand.remotefx;
 		
+		rfx = new Rfx();
+		cmd = SurfaceCommand.Parse(fp);
 		Gdk.GC gc = new Gdk.GC(mainDrawingArea.GdkWindow);
 		
-		while (remotefx.HasNextTile())
+		Gdk.Drawable drw = (Gdk.Drawable) mainDrawingArea.GdkWindow;
+		
+		if (cmd.cmdType == SurfaceCommand.CMDTYPE_STREAM_SURFACE_BITS)
 		{
-			surface = remotefx.GetNextTile(ref x, ref y);
-			mainDrawingArea.GdkWindow.DrawPixbuf(gc, surface, 0, 0, x, y, 64, 64, RgbDither.Normal, 0, 0);
+			SurfaceBitsCommand bitsCmd = (SurfaceBitsCommand) cmd;
+			RfxMessage rfxMsg = rfx.ParseMessage(bitsCmd.bitmapData, bitsCmd.bitmapDataLength);
+			
+			while (rfxMsg.HasNextTile())
+			{
+				rfxMsg.GetNextTile(buffer, ref x, ref y);
+				surface = new Gdk.Pixbuf(buffer, Gdk.Colorspace.Rgb, true, 8, 64, 64, 64 * 4);
+				drw.DrawPixbuf(gc, surface, 0, 0, x, y, 64, 64, RgbDither.Normal, 0, 0);	
+			}
 		}
 		
 		fp.Close();

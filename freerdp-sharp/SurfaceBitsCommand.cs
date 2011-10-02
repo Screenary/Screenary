@@ -36,11 +36,6 @@ namespace Screenary
 			bitmapDataLength = fp.ReadUInt32(); /* bitmapDataLength */
 			bitmapData = fp.ReadBytes((int) bitmapDataLength); /* bitmapData */
 		}
-
-		public override void Process()
-		{
-			remotefx.Decode(bitmapData, (int) bitmapDataLength);
-		}
 	}
 }
 

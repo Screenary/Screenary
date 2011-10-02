@@ -80,11 +80,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="SurfaceCommand.cs" />
-    <Compile Include="SurfaceBitsCommand.cs" />
-    <Compile Include="FrameMarkerCommand.cs" />
     <Compile Include="nunit\SurfaceCommandTest.cs" />
-    <Compile Include="RemoteFX.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -94,5 +90,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="nunit\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\freerdp-sharp\freerdp-sharp.csproj">
+      <Project>{C9F2AF88-B617-4E3A-ACE2-79E1ADE1E55D}</Project>
+      <Name>freerdp-sharp</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,35 +1,27 @@
 using System;
 using System.IO;
+using FreeRDP;
 
 namespace Screenary
 {	
-	public class SurfaceCommand
+	public abstract class SurfaceCommand
 	{
 		public UInt16 cmdType;
-		public static RemoteFX remotefx = null;
-		
 		public const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
 		public const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
 		public const UInt16 CMDTYPE_FRAME_MARKER = 4;
 		
 		public SurfaceCommand()
 		{
-			if (remotefx == null)
-				remotefx = new RemoteFX();
-			
 			this.cmdType = 0;
 		}
 		
 		public SurfaceCommand(UInt16 cmdType)
 		{
-			if (remotefx == null)
-				remotefx = new RemoteFX();
-			
 			this.cmdType = cmdType;
 		}
 		
-		public virtual void Read(BinaryReader fp) { }
-		public virtual void Process() { }
+		public abstract void Read(BinaryReader fp);
 		
 		public static SurfaceCommand Parse(BinaryReader fp)
 		{
@@ -37,7 +29,6 @@ namespace Screenary
 			SurfaceCommand cmd = null;
 			
 			cmdType = fp.ReadUInt16();
-			Console.WriteLine("cmdType:" + cmdType);
 			
 			switch (cmdType)
 			{

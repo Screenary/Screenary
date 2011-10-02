@@ -1,27 +1,20 @@
 using System;
 using System.IO;
-using FreeRDP;
 
-namespace Screenary
+namespace FreeRDP
 {	
 	public abstract class SurfaceCommand
 	{
-		public UInt16 cmdType;
-		public const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
-		public const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
-		public const UInt16 CMDTYPE_FRAME_MARKER = 4;
+		private const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
+		private const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
+		private const UInt16 CMDTYPE_FRAME_MARKER = 4;
 		
 		public SurfaceCommand()
 		{
-			this.cmdType = 0;
 		}
 		
-		public SurfaceCommand(UInt16 cmdType)
-		{
-			this.cmdType = cmdType;
-		}
-		
-		public abstract void Read(BinaryReader fp);
+		public virtual void Read(BinaryReader fp) {}
+		public virtual void Execute(Gdk.Drawable surface) {}
 		
 		public static SurfaceCommand Parse(BinaryReader fp)
 		{
@@ -33,13 +26,17 @@ namespace Screenary
 			switch (cmdType)
 			{
 				case CMDTYPE_SET_SURFACE_BITS:
+					cmd = new SetSurfaceBitsCommand();
+					cmd.Read(fp);
+					break;
+				
 				case CMDTYPE_STREAM_SURFACE_BITS:
-					cmd = new SurfaceBitsCommand(cmdType);
+					cmd = new StreamSurfaceBitsCommand();
 					cmd.Read(fp);
 					break;
 				
 				case CMDTYPE_FRAME_MARKER:
-					cmd = new FrameMarkerCommand(cmdType);
+					cmd = new FrameMarkerCommand();
 					cmd.Read(fp);
 					break;
 			}

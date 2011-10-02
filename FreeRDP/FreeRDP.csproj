@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C9F2AF88-B617-4E3A-ACE2-79E1ADE1E55D}</ProjectGuid>
+    <ProjectGuid>{C5E8D831-864B-4BE7-8027-77727D5A6D80}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FreeRDP</RootNamespace>
-    <AssemblyName>freerdp-sharp</AssemblyName>
+    <AssemblyName>FreeRDP</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,13 +33,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FrameMarkerCommand.cs" />
     <Compile Include="Rfx.cs" />
     <Compile Include="RfxMessage.cs" />
-    <Compile Include="FrameMarkerCommand.cs" />
-    <Compile Include="SurfaceBitsCommand.cs" />
+    <Compile Include="SetSurfaceBitsCommand.cs" />
+    <Compile Include="StreamSurfaceBitsCommand.cs" />
     <Compile Include="SurfaceCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

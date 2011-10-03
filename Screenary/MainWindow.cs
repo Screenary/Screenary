@@ -18,27 +18,28 @@
  */
 
 using Gtk;
-using Gdk;
 using System;
 using System.IO;
 using Screenary;
 using FreeRDP;
 
-public partial class MainWindow: Gtk.Window
+public partial class MainWindow : Gtk.Window
 {	
-	public Cairo.Surface surface;
+	private Gdk.GC gc;
+	private Gdk.Window window;
+	private Gdk.Pixbuf surface;
+	private Gdk.Drawable drawable;
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 		
-		Cairo.Context context = Gdk.CairoHelper.Create(mainDrawingArea.GdkWindow);
+		window = mainDrawingArea.GdkWindow;
+		drawable = (Gdk.Drawable) window;
+		gc = new Gdk.GC(drawable);
 		
-		context.SetSourceRGB(0, 0, 0);
-		context.Rectangle(0, 0, 1024, 768);
-		context.Fill();
-		
-		((IDisposable) context).Dispose();
+		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, 1024, 768);		
+		window.InvalidateRect(new Gdk.Rectangle(0, 0, 1024, 768), true);
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -66,17 +67,21 @@ public partial class MainWindow: Gtk.Window
 		
 		filename = "data/rfx/rfx.bin";
 		fp = new BinaryReader(File.Open(filename, FileMode.Open));
-		Gdk.Drawable surface = (Gdk.Drawable) mainDrawingArea.GdkWindow;
 		
 		cmd = SurfaceCommand.Parse(fp);
-		cmd.Execute(surface);
+		cmd.Execute(window, surface);
 		
 		fp.Close();
 	}
 
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
-
+		Gdk.Rectangle[] rects = args.Event.Region.GetRectangles();
+		
+		foreach (Gdk.Rectangle rect in rects)
+		{
+			drawable.DrawPixbuf(gc, surface, rect.X, rect.Y, rect.X, rect.Y, rect.Width, rect.Height, Gdk.RgbDither.Normal, 0, 0);
+		}
 	}
 
 	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)

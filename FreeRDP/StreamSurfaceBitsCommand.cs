@@ -39,12 +39,11 @@ namespace FreeRDP
 			bitmapData = fp.ReadBytes((int) bitmapDataLength); /* bitmapData */
 		}
 		
-		public override void Execute(Gdk.Drawable surface)
+		public override void Execute(Gdk.Window window, Gdk.Pixbuf surface)
 		{
 			int x, y;
 			Gdk.Pixbuf pixbuf;
 			Rfx rfx = new Rfx();
-			Gdk.GC gc = new Gdk.GC(surface);
 			RfxMessage rfxMsg = rfx.ParseMessage(bitmapData, bitmapDataLength);
 			
 			x = y = 0;
@@ -53,7 +52,8 @@ namespace FreeRDP
 			{
 				rfxMsg.GetNextTile(buffer, ref x, ref y);
 				pixbuf = new Gdk.Pixbuf(buffer, Gdk.Colorspace.Rgb, true, 8, 64, 64, 64 * 4);
-				surface.DrawPixbuf(gc, pixbuf, 0, 0, x, y, 64, 64, Gdk.RgbDither.Normal, 0, 0);	
+				pixbuf.CopyArea(0, 0, 64, 64, surface, x, y);
+				window.InvalidateRect(new Gdk.Rectangle(x, y, 64, 64), true);
 			}
 		}
 	}

@@ -14,7 +14,7 @@ namespace FreeRDP
 		}
 		
 		public virtual void Read(BinaryReader fp) {}
-		public virtual void Execute(Gdk.Drawable surface) {}
+		public virtual void Execute(Gdk.Window window, Gdk.Pixbuf surface) {}
 		
 		public static SurfaceCommand Parse(BinaryReader fp)
 		{

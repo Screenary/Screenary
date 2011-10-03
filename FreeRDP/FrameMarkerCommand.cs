@@ -18,7 +18,7 @@ namespace FreeRDP
 			frameId = fp.ReadUInt32(); /* frameId */
 		}
 		
-		public override void Execute(Gdk.Drawable surface)
+		public override void Execute(Gdk.Window window, Gdk.Pixbuf surface)
 		{
 		}
 	}

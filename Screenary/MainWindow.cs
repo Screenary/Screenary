@@ -26,6 +26,7 @@ using FreeRDP;
 public partial class MainWindow : Gtk.Window
 {	
 	private Gdk.GC gc;
+	private int width, height;
 	private Gdk.Window window;
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
@@ -34,12 +35,17 @@ public partial class MainWindow : Gtk.Window
 	{
 		Build();
 		
+		width = 1024;
+		height = 768;
+		
 		window = mainDrawingArea.GdkWindow;
 		drawable = (Gdk.Drawable) window;
-		gc = new Gdk.GC(drawable);
 		
-		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, 1024, 768);		
-		window.InvalidateRect(new Gdk.Rectangle(0, 0, 1024, 768), true);
+		gc = new Gdk.GC(drawable);
+		gc.ClipRectangle = new Gdk.Rectangle(0, 0, width, height);
+		
+		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, width, height);		
+		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -80,7 +86,8 @@ public partial class MainWindow : Gtk.Window
 		
 		foreach (Gdk.Rectangle rect in rects)
 		{
-			drawable.DrawPixbuf(gc, surface, rect.X, rect.Y, rect.X, rect.Y, rect.Width, rect.Height, Gdk.RgbDither.Normal, 0, 0);
+			drawable.DrawPixbuf(gc, surface, rect.X, rect.Y, rect.X, rect.Y,
+				rect.Width, rect.Height, Gdk.RgbDither.None, 0, 0);
 		}
 	}
 

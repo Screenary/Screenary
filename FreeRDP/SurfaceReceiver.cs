@@ -16,7 +16,7 @@ namespace FreeRDP
 		}
 		
 		public void InvalidateRect(int x, int y, int width, int height)
-		{
+		{			
 			window.InvalidateRect(new Gdk.Rectangle(x, y, 64, 64), true);
 		}
 	}

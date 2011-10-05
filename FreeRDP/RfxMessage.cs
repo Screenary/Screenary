@@ -13,6 +13,16 @@ namespace FreeRDP
 		protected UInt16 nrects;
 		protected UInt16 ntiles;
 		
+		public int RectCount
+		{
+			get { return (int) nrects; }
+		}
+		
+		public int TileCount
+		{
+			get { return (int) ntiles; }
+		}
+		
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RFX_RECT
 		{

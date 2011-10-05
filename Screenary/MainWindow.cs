@@ -109,7 +109,7 @@ public partial class MainWindow : Gtk.Window
 		
 		foreach (PcapRecord record in pcap)
 		{
-			Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);
+			//Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);
 			
 			stream = new MemoryStream(record.Buffer);
 			reader = new BinaryReader(stream);

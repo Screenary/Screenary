@@ -51,6 +51,7 @@
     <Compile Include="StreamSurfaceBitsCommand.cs" />
     <Compile Include="SurfaceCommand.cs" />
     <Compile Include="SurfaceReceiver.cs" />
+    <Compile Include="SurfaceBitsCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

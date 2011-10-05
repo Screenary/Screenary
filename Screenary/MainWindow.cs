@@ -30,6 +30,7 @@ public partial class MainWindow : Gtk.Window
 	private Gdk.Window window;
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
+	private SurfaceReceiver receiver;
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
@@ -46,6 +47,8 @@ public partial class MainWindow : Gtk.Window
 		
 		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, width, height);		
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
+		
+		receiver = new SurfaceReceiver(window, surface);
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -75,7 +78,7 @@ public partial class MainWindow : Gtk.Window
 		fp = new BinaryReader(File.Open(filename, FileMode.Open));
 		
 		cmd = SurfaceCommand.Parse(fp);
-		cmd.Execute(window, surface);
+		cmd.Execute(receiver);
 		
 		fp.Close();
 	}
@@ -99,11 +102,22 @@ public partial class MainWindow : Gtk.Window
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
 	{
 		int count = 0;
+		SurfaceCommand cmd;
+		MemoryStream stream;
+		BinaryReader reader;
 		PcapReader pcap = new PcapReader(File.OpenRead("data/rfx_sample.pcap"));
 		
 		foreach (PcapRecord record in pcap)
 		{
 			Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);
+			
+			stream = new MemoryStream(record.Buffer);
+			reader = new BinaryReader(stream);
+			
+			cmd = SurfaceCommand.Parse(reader);
+			cmd.Execute(receiver);
+			
+			window.ProcessUpdates(false); /* force update */
 		}
 		
 		pcap.Close();

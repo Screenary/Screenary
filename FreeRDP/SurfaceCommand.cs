@@ -9,12 +9,16 @@ namespace FreeRDP
 		private const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
 		private const UInt16 CMDTYPE_FRAME_MARKER = 4;
 		
+		protected const byte CODEC_ID_NONE = 0x00;
+		protected const byte CODEC_ID_NSCODEC = 0x01;
+		protected const byte CODEC_ID_REMOTEFX = 0x03;
+		
 		public SurfaceCommand()
 		{
 		}
 		
 		public virtual void Read(BinaryReader fp) {}
-		public virtual void Execute(Gdk.Window window, Gdk.Pixbuf surface) {}
+		public virtual void Execute(SurfaceReceiver receiver) {}
 		
 		public static SurfaceCommand Parse(BinaryReader fp)
 		{

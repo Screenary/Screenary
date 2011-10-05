@@ -39,22 +39,39 @@ namespace FreeRDP
 			bitmapData = fp.ReadBytes((int) bitmapDataLength); /* bitmapData */
 		}
 		
-		public override void Execute(Gdk.Window window, Gdk.Pixbuf surface)
+		public override void Execute(SurfaceReceiver receiver)
 		{
+			if (codecID != CODEC_ID_REMOTEFX)
+				return;
+			
 			int x, y;
+			int tx, ty;
+			int width, height;
 			Gdk.Pixbuf pixbuf;
-			Rfx rfx = new Rfx();
-			RfxMessage rfxMsg = rfx.ParseMessage(bitmapData, bitmapDataLength);
+			RfxMessage rfxMsg = receiver.rfx.ParseMessage(bitmapData, bitmapDataLength);
 			
 			x = y = 0;
+			width = height = 64;
 			
 			while (rfxMsg.HasNextTile())
 			{
 				rfxMsg.GetNextTile(buffer, ref x, ref y);
+				
+				tx = x + destLeft;
+				ty = y + destTop;
+				
 				pixbuf = new Gdk.Pixbuf(buffer, Gdk.Colorspace.Rgb, true, 8, 64, 64, 64 * 4);
-				pixbuf.CopyArea(0, 0, 64, 64, surface, x, y);
-				window.InvalidateRect(new Gdk.Rectangle(x, y, 64, 64), true);
+				pixbuf.CopyArea(0, 0, 64, 64, receiver.surface, tx, ty);
+				receiver.InvalidateRect(tx, ty, width, height);
 			}
+			
+			/*
+			while (rfxMsg.HasNextRect())
+			{
+				rfxMsg.GetNextRect(ref x, ref y, ref width, ref height);
+				receiver.InvalidateRect(x, y, width, height);
+			}
+			*/
 		}
 	}
 }

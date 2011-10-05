@@ -19,13 +19,13 @@ namespace FreeRDP
 			PALETTE8 = 7
 		}
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern IntPtr rfx_context_new();
 	
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern void rfx_context_free(IntPtr handle);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern void rfx_context_set_pixel_format(IntPtr handle, RFX_PIXEL_FORMAT format);
 		
 		public Rfx()

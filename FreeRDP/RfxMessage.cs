@@ -30,22 +30,22 @@ namespace FreeRDP
 			public byte* data;
 		}
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern IntPtr rfx_process_message(IntPtr rfxHandle, byte[] data, UInt32 length);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern UInt16 rfx_message_get_tile_count(IntPtr handle);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern RFX_TILE* rfx_message_get_tile(IntPtr handle, int index);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern UInt16 rfx_message_get_rect_count(IntPtr handle);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern RFX_RECT* rfx_message_get_rect(IntPtr handle, int index);
 		
-		[DllImport("libfreerdp-rfx")]
+		[DllImport("libfreerdp-codec")]
 		public static extern void rfx_message_free(IntPtr rfxHandle, IntPtr handle);
 		
 		private RfxMessage(IntPtr rfxHandle, IntPtr handle)

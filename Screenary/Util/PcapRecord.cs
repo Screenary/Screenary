@@ -13,9 +13,12 @@ namespace Screenary
 			get { return Buffer.Length; }
 		}
 		
-		public PcapRecord(byte[] buffer)
+		public TimeSpan Time { get; set; }
+		
+		public PcapRecord(byte[] buffer, TimeSpan time)
 		{
 			this.Buffer = buffer;
+			this.Time = time;
 		}
 	}
 }

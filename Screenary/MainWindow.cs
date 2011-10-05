@@ -98,11 +98,12 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
 	{
-		PcapReader pcap = new PcapReader(File.OpenRead("data/test.pcap"));
+		int count = 0;
+		PcapReader pcap = new PcapReader(File.OpenRead("data/rfx_sample.pcap"));
 		
 		foreach (PcapRecord record in pcap)
 		{
-			Console.WriteLine("record length: {0}", record.Length);
+			Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);
 		}
 		
 		pcap.Close();

@@ -32,6 +32,7 @@ namespace Screenary
 		
 		private PcapRecord GetNext()
 		{
+			long ticks;
 			PcapRecord record;
 			
 			pcap_record.ts_sec = reader.ReadUInt32();
@@ -40,7 +41,10 @@ namespace Screenary
 			pcap_record.orig_len = reader.ReadUInt32();
 			pcap_record.buffer = reader.ReadBytes((int) pcap_record.incl_len);
 			
-			record = new PcapRecord(pcap_record.buffer);
+			ticks = pcap_record.ts_sec * TimeSpan.TicksPerSecond;
+			ticks += pcap_record.ts_usec * (TimeSpan.TicksPerMillisecond / 1000);
+			
+			record = new PcapRecord(pcap_record.buffer, new TimeSpan(ticks));
 			
 			return record;
 		}

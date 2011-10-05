@@ -67,14 +67,6 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{
-		PcapReader pcap = new PcapReader(File.OpenRead("data/test.pcap"));
-		
-		foreach (PcapRecord record in pcap)
-		{
-			Console.WriteLine("record length: {0}", record.Length);
-		}
-		
-		/*
 		BinaryReader fp;
 		string filename;
 		SurfaceCommand cmd;
@@ -86,7 +78,6 @@ public partial class MainWindow : Gtk.Window
 		cmd.Execute(window, surface);
 		
 		fp.Close();
-		*/
 	}
 
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -103,5 +94,17 @@ public partial class MainWindow : Gtk.Window
 	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)
 	{	
 
+	}
+
+	protected void OnOpenActionActivated (object sender, System.EventArgs e)
+	{
+		PcapReader pcap = new PcapReader(File.OpenRead("data/test.pcap"));
+		
+		foreach (PcapRecord record in pcap)
+		{
+			Console.WriteLine("record length: {0}", record.Length);
+		}
+		
+		pcap.Close();
 	}
 }

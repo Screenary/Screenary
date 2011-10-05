@@ -69,6 +69,17 @@
         <property name="ShortLabel" translatable="yes">RemoteFX</property>
         <signal name="Activated" handler="OnRemoteFXActionActivated" />
       </action>
+      <action id="OpenAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Open</property>
+        <property name="ShortLabel" translatable="yes">Open</property>
+      </action>
+      <action id="openAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Open</property>
+        <property name="ShortLabel" translatable="yes">Open</property>
+        <signal name="Activated" handler="OnOpenActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -83,6 +94,7 @@
             <property name="MemberName" />
             <node name="mainMenuBar" type="Menubar">
               <node type="Menu" action="fileAction">
+                <node type="Menuitem" action="openAction" />
                 <node type="Menuitem" action="quitAction" />
               </node>
               <node type="Menu" action="toolsAction">

@@ -15,6 +15,8 @@ public partial class MainWindow
 	private global::Gtk.Action aboutAction;
 	private global::Gtk.Action toolsAction;
 	private global::Gtk.Action RemoteFXAction;
+	private global::Gtk.Action OpenAction;
+	private global::Gtk.Action openAction;
 	private global::Gtk.VBox mainVbox;
 	private global::Gtk.MenuBar mainMenuBar;
 	private global::Gtk.DrawingArea mainDrawingArea;
@@ -58,6 +60,12 @@ public partial class MainWindow
 		this.RemoteFXAction = new global::Gtk.Action ("RemoteFXAction", global::Mono.Unix.Catalog.GetString ("RemoteFX"), null, null);
 		this.RemoteFXAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("RemoteFX");
 		w1.Add (this.RemoteFXAction, null);
+		this.OpenAction = new global::Gtk.Action ("OpenAction", global::Mono.Unix.Catalog.GetString ("Open"), null, null);
+		this.OpenAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Open");
+		w1.Add (this.OpenAction, null);
+		this.openAction = new global::Gtk.Action ("openAction", global::Mono.Unix.Catalog.GetString ("Open"), null, null);
+		this.openAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Open");
+		w1.Add (this.openAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -68,7 +76,7 @@ public partial class MainWindow
 		this.mainVbox.Name = "mainVbox";
 		this.mainVbox.Spacing = 6;
 		// Container child mainVbox.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString (@"<ui><menubar name='mainMenuBar'><menu name='fileAction' action='fileAction'><menuitem name='quitAction' action='quitAction'/></menu><menu name='toolsAction' action='toolsAction'><menuitem name='RemoteFXAction' action='RemoteFXAction'/></menu><menu name='helpAction' action='helpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='mainMenuBar'><menu name='fileAction' action='fileAction'><menuitem name='openAction' action='openAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='toolsAction' action='toolsAction'><menuitem name='RemoteFXAction' action='RemoteFXAction'/></menu><menu name='helpAction' action='helpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 		this.mainMenuBar = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/mainMenuBar")));
 		this.mainMenuBar.Name = "mainMenuBar";
 		this.mainVbox.Add (this.mainMenuBar);
@@ -97,6 +105,7 @@ public partial class MainWindow
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
 		this.aboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
 		this.RemoteFXAction.Activated += new global::System.EventHandler (this.OnRemoteFXActionActivated);
+		this.openAction.Activated += new global::System.EventHandler (this.OnOpenActionActivated);
 		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
 		this.mainDrawingArea.ConfigureEvent += new global::Gtk.ConfigureEventHandler (this.OnMainDrawingAreaConfigureEvent);
 	}

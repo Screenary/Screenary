@@ -57,6 +57,11 @@ namespace Screenary
 				yield return this.GetNext();
 			}
 		}
+		
+		public void Close()
+		{
+			reader.Close();
+		}
 	}
 }
 

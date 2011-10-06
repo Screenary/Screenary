@@ -20,6 +20,7 @@
 using Gtk;
 using System;
 using System.IO;
+using System.Threading;
 using Screenary;
 using FreeRDP;
 
@@ -100,17 +101,17 @@ public partial class MainWindow : Gtk.Window
 	}
 
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
-	{
-		int count = 0;
+	{		
 		SurfaceCommand cmd;
 		MemoryStream stream;
 		BinaryReader reader;
 		PcapReader pcap = new PcapReader(File.OpenRead("data/rfx_sample.pcap"));
 		
+		TimeSpan previousTime = new TimeSpan(0, 0, 0, 0);
 		foreach (PcapRecord record in pcap)
 		{
-			//Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);
-			
+			//Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
+						
 			stream = new MemoryStream(record.Buffer);
 			reader = new BinaryReader(stream);
 			
@@ -118,6 +119,9 @@ public partial class MainWindow : Gtk.Window
 			cmd.Execute(receiver);
 			
 			window.ProcessUpdates(false); /* force update */
+									
+			Thread.Sleep(record.Time.Subtract(previousTime));						
+			previousTime = record.Time;
 		}
 		
 		pcap.Close();

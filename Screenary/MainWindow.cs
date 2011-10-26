@@ -111,7 +111,10 @@ public partial class MainWindow : Gtk.Window
 		foreach (PcapRecord record in pcap)
 		{
 			//Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
-						
+			
+			Thread.Sleep(record.Time.Subtract(previousTime));						
+			previousTime = record.Time;
+			
 			stream = new MemoryStream(record.Buffer);
 			reader = new BinaryReader(stream);
 			
@@ -120,8 +123,6 @@ public partial class MainWindow : Gtk.Window
 			
 			window.ProcessUpdates(false); /* force update */
 									
-			Thread.Sleep(record.Time.Subtract(previousTime));						
-			previousTime = record.Time;
 		}
 		
 		pcap.Close();

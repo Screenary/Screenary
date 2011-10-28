@@ -73,6 +73,7 @@
     <Compile Include="Util\PcapReader.cs" />
     <Compile Include="Util\PcapRecord.cs" />
     <Compile Include="NUnit\PcapReaderTest.cs" />
+    <Compile Include="Util\PcapWriter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

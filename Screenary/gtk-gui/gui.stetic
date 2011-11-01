@@ -11,57 +11,50 @@
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Alt&gt;f</property>
         <property name="Label" translatable="yes">File</property>
         <property name="ShortLabel" translatable="yes">File</property>
       </action>
-      <action id="FileAction1">
+      <action id="openAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">File</property>
-        <property name="ShortLabel" translatable="yes">File</property>
+        <property name="Accelerator">&lt;Control&gt;o</property>
+        <property name="Label" translatable="yes">Open</property>
+        <property name="ShortLabel" translatable="yes">Open</property>
+        <signal name="Activated" handler="OnOpenActionActivated" />
       </action>
-      <action id="HelpAction">
+      <action id="closeAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Help</property>
-        <property name="ShortLabel" translatable="yes">Help</property>
+        <property name="Accelerator">&lt;Control&gt;s</property>
+        <property name="Label" translatable="yes">Close</property>
+        <property name="ShortLabel" translatable="yes">Close</property>
+        <signal name="Activated" handler="OnCloseActionActivated" />
       </action>
-      <action id="QuitAction">
+      <action id="connectAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Quit</property>
-        <property name="ShortLabel" translatable="yes">Quit</property>
-        <signal name="Activated" handler="OnQuitActionActivated" />
-      </action>
-      <action id="AboutAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">About</property>
-        <property name="ShortLabel" translatable="yes">About</property>
-        <signal name="Activated" handler="OnAboutActionActivated" />
-      </action>
-      <action id="fileAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">File</property>
-        <property name="ShortLabel" translatable="yes">File</property>
+        <property name="Accelerator">&lt;Control&gt;c</property>
+        <property name="Label" translatable="yes">Connect</property>
+        <property name="ShortLabel" translatable="yes">Connect</property>
+        <signal name="Activated" handler="OnConnectActionActivated" />
       </action>
       <action id="quitAction">
         <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Control&gt;q</property>
         <property name="Label" translatable="yes">Quit</property>
         <property name="ShortLabel" translatable="yes">Quit</property>
         <signal name="Activated" handler="OnQuitActionActivated" />
       </action>
-      <action id="helpAction">
+      <action id="ToolsAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Help</property>
-        <property name="ShortLabel" translatable="yes">Help</property>
-      </action>
-      <action id="aboutAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">About</property>
-        <property name="ShortLabel" translatable="yes">About</property>
-        <signal name="Activated" handler="OnAboutActionActivated" />
-      </action>
-      <action id="toolsAction">
-        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Alt&gt;t</property>
         <property name="Label" translatable="yes">Tools</property>
         <property name="ShortLabel" translatable="yes">Tools</property>
+      </action>
+      <action id="recordAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Control&gt;r</property>
+        <property name="Label" translatable="yes">Record</property>
+        <property name="ShortLabel" translatable="yes">Record</property>
+        <signal name="Activated" handler="OnRecordActionActivated" />
       </action>
       <action id="RemoteFXAction">
         <property name="Type">Action</property>
@@ -69,20 +62,23 @@
         <property name="ShortLabel" translatable="yes">RemoteFX</property>
         <signal name="Activated" handler="OnRemoteFXActionActivated" />
       </action>
-      <action id="OpenAction">
+      <action id="HelpAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Open</property>
-        <property name="ShortLabel" translatable="yes">Open</property>
+        <property name="Accelerator">&lt;Alt&gt;h</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">Help</property>
       </action>
-      <action id="openAction">
+      <action id="aboutAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Open</property>
-        <property name="ShortLabel" translatable="yes">Open</property>
-        <signal name="Activated" handler="OnOpenActionActivated" />
+        <property name="Accelerator">&lt;Control&gt;a</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+        <signal name="Activated" handler="OnAboutActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
+    <property name="Icon">stock:gtk-go-forward Menu</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
@@ -90,39 +86,204 @@
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
-          <widget class="Gtk.MenuBar" id="mainMenuBar">
+          <widget class="Gtk.VBox" id="vbox1">
             <property name="MemberName" />
-            <node name="mainMenuBar" type="Menubar">
-              <node type="Menu" action="fileAction">
-                <node type="Menuitem" action="openAction" />
-                <node type="Menuitem" action="quitAction" />
-              </node>
-              <node type="Menu" action="toolsAction">
-                <node type="Menuitem" action="RemoteFXAction" />
-              </node>
-              <node type="Menu" action="helpAction">
-                <node type="Menuitem" action="aboutAction" />
-              </node>
-            </node>
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.MenuBar" id="menubar1">
+                <property name="MemberName" />
+                <node name="menubar1" type="Menubar">
+                  <node type="Menu" action="FileAction">
+                    <node type="Menuitem" action="openAction" />
+                    <node type="Menuitem" action="closeAction" />
+                    <node type="Menuitem" action="connectAction" />
+                    <node type="Menuitem" action="quitAction" />
+                  </node>
+                  <node type="Menu" action="ToolsAction">
+                    <node type="Menuitem" action="recordAction" />
+                    <node type="Menuitem" action="RemoteFXAction" />
+                  </node>
+                  <node type="Menu" action="HelpAction">
+                    <node type="Menuitem" action="aboutAction" />
+                  </node>
+                </node>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.DrawingArea" id="mainDrawingArea">
+                <property name="MemberName" />
+                <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Dialog" id="Screenary.ConnectDialog" design-size="410 166">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">Connect to...</property>
+    <property name="Icon">stock:gtk-connect Menu</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Resizable">False</property>
+    <property name="AllowGrow">False</property>
+    <property name="Buttons">2</property>
+    <property name="HelpButton">False</property>
+    <child internal-child="VBox">
+      <widget class="Gtk.VBox" id="dialog1_VBox">
+        <property name="MemberName" />
+        <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.VBox" id="vbox3">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.HBox" id="hbox1">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.Label" id="label1">
+                    <property name="MemberName">ip</property>
+                    <property name="LabelProp" translatable="yes">IP Address: </property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                    <property name="Padding">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Entry" id="ip">
+                    <property name="MemberName" />
+                    <property name="WidthRequest">277</property>
+                    <property name="CanFocus">True</property>
+                    <property name="IsEditable">True</property>
+                    <property name="InvisibleChar">•</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                    <property name="Padding">15</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.HBox" id="hbox2">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.Label" id="label2">
+                    <property name="MemberName">port</property>
+                    <property name="LabelProp" translatable="yes">Port Number:</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                    <property name="Padding">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Entry" id="port">
+                    <property name="MemberName" />
+                    <property name="WidthRequest">144</property>
+                    <property name="CanFocus">True</property>
+                    <property name="IsEditable">True</property>
+                    <property name="InvisibleChar">•</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                    <property name="Padding">6</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+                <property name="Padding">4</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">0</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
+            <property name="Padding">6</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+    <child internal-child="ActionArea">
+      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
+        <property name="MemberName" />
+        <property name="Spacing">10</property>
+        <property name="BorderWidth">5</property>
+        <property name="Size">2</property>
+        <property name="LayoutStyle">End</property>
+        <child>
+          <widget class="Gtk.Button" id="buttonCancel">
+            <property name="MemberName">cancel</property>
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="UseStock">True</property>
+            <property name="Type">StockItem</property>
+            <property name="StockId">gtk-cancel</property>
+            <property name="ResponseId">-6</property>
+            <signal name="Clicked" handler="OnButtonCancelClicked" />
+            <property name="label">gtk-cancel</property>
+          </widget>
+          <packing>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
-          <widget class="Gtk.DrawingArea" id="mainDrawingArea">
-            <property name="MemberName" />
-            <property name="WidthRequest">1024</property>
-            <property name="HeightRequest">768</property>
-            <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
-            <signal name="ConfigureEvent" handler="OnMainDrawingAreaConfigureEvent" />
+          <widget class="Gtk.Button" id="buttonConnect">
+            <property name="MemberName">connect</property>
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextAndIcon</property>
+            <property name="Icon">stock:gtk-connect Menu</property>
+            <property name="Label" translatable="yes">Connect</property>
+            <property name="UseUnderline">True</property>
+            <property name="ResponseId">-5</property>
+            <signal name="Clicked" handler="OnButtonConnectClicked" />
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>

@@ -135,6 +135,7 @@ public partial class MainWindow : Gtk.Window
 			chooser.Destroy();
 			
 			// PcapReader
+			int count = 0;
 			SurfaceCommand cmd;
 			MemoryStream stream;
 			BinaryReader reader;
@@ -143,7 +144,7 @@ public partial class MainWindow : Gtk.Window
 			TimeSpan previousTime = new TimeSpan(0, 0, 0, 0);
 			foreach (PcapRecord record in pcap)
 			{
-				// Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
+				Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
 				
 				Thread.Sleep(record.Time.Subtract(previousTime));						
 				previousTime = record.Time;

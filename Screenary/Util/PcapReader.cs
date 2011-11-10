@@ -7,6 +7,7 @@ namespace Screenary
 	public class PcapReader : Pcap, IEnumerable
 	{
 		private BinaryReader reader;
+		private int seconds_offset = -1;
 		
 		public PcapReader(Stream stream) : base(stream)
 		{
@@ -33,6 +34,7 @@ namespace Screenary
 		private PcapRecord GetNext()
 		{
 			long ticks;
+			int sec, usec;
 			PcapRecord record;
 			
 			pcap_record.ts_sec = reader.ReadUInt32();
@@ -41,9 +43,17 @@ namespace Screenary
 			pcap_record.orig_len = reader.ReadUInt32();
 			pcap_record.buffer = reader.ReadBytes((int) pcap_record.incl_len);
 			
-			ticks = pcap_record.ts_sec * TimeSpan.TicksPerSecond;
-			ticks += pcap_record.ts_usec * (TimeSpan.TicksPerMillisecond / 1000);
+			sec = (int) pcap_record.ts_sec;
+			usec = (int) pcap_record.ts_usec;
 			
+			if (seconds_offset < 0)
+				seconds_offset = sec;
+			
+			sec -= seconds_offset;
+			
+			ticks = sec * TimeSpan.TicksPerSecond;
+			ticks += (usec / 1000) * TimeSpan.TicksPerMillisecond;
+
 			record = new PcapRecord(pcap_record.buffer, new TimeSpan(ticks));
 			
 			return record;

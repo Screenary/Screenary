@@ -75,6 +75,8 @@
     <Compile Include="Util\Connect.cs" />
     <Compile Include="ConnectDialog.cs" />
     <Compile Include="gtk-gui\Screenary.ConnectDialog.cs" />
+    <Compile Include="Util\PDU.cs" />
+    <Compile Include="IConnectObserver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

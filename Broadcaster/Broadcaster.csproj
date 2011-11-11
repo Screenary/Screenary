@@ -33,9 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Screenary, Version=1.0.4331.42455, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Screenary, Version=1.0.4332.183, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Screenary\bin\Debug\Screenary.exe</HintPath>
+      <HintPath>data\Screenary.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

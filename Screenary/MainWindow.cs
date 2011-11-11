@@ -193,55 +193,6 @@ public partial class MainWindow : Gtk.Window, IConnectObserver
 	{
 		ConnectDialog connect = new ConnectDialog(window, receiver);
 		connect.setObserver(this);
-		
-		/*String address = connect.getIp();
-		int port = connect.getPort();
-
-		byte[] header = new byte[PDU.PDU_HEADER_LENGTH];
-		TcpClient client = new TcpClient();
-		client.Connect(address, port);
-		
-		TimeSpan timespan = new TimeSpan(0, 0, 0, 0);
-		PcapRecord record;
-		byte[] big_buffer = null;
-		byte[] buffer = null;
-		
-		while (true)
-		{
-			client.GetStream().Read(header, 0, header.Length);
-			
-			UInt16 channel = BitConverter.ToUInt16(header, 0);
-			byte type = header[2];
-			byte frag = header[3];
-			UInt16 size = BitConverter.ToUInt16(header, 4);
-			
-			buffer = new byte[size];
-			client.GetStream().Read(buffer, 0, size);
-			
-			if (frag == PDU.PDU_FRAGMENT_SINGLE)
-			{
-				record = new PcapRecord(buffer, timespan);
-				DisplayRecord(record);
-			}
-			else if (frag == PDU.PDU_FRAGMENT_FIRST)
-			{
-				big_buffer = new byte[size];
-				for (int i = 0; i < big_buffer.Length; i++)
-				{
-					big_buffer[i] = buffer[i];	
-				}
-			}
-			else if (frag == PDU.PDU_FRAGMENT_NEXT)
-			{
-				big_buffer = combine(big_buffer, buffer);
-			}
-			else if (frag == PDU.PDU_FRAGMENT_LAST)
-			{
-				big_buffer = combine(big_buffer, buffer);
-				record = new PcapRecord(big_buffer, timespan);
-				DisplayRecord(record);
-			}
-		}*/
 	}
 	
 	private void DisplayRecord(PcapRecord record)
@@ -312,11 +263,13 @@ public partial class MainWindow : Gtk.Window, IConnectObserver
 				buffer = new byte[size];
 				client.GetStream().Read(buffer, 0, size);
 				
+				/* A Single fragment */
 				if (frag == PDU.PDU_FRAGMENT_SINGLE)
 				{
 					record = new PcapRecord(buffer, timespan);
 					DisplayRecord(record);
 				}
+				/* The first of a series of fragments */
 				else if (frag == PDU.PDU_FRAGMENT_FIRST)
 				{
 					big_buffer = new byte[size];
@@ -325,10 +278,12 @@ public partial class MainWindow : Gtk.Window, IConnectObserver
 						big_buffer[i] = buffer[i];	
 					}
 				}
+				/* The "in between" of a series of fragments */
 				else if (frag == PDU.PDU_FRAGMENT_NEXT)
 				{
 					big_buffer = combine(big_buffer, buffer);
 				}
+				/* The last of a series of fragments */
 				else if (frag == PDU.PDU_FRAGMENT_LAST)
 				{
 					big_buffer = combine(big_buffer, buffer);

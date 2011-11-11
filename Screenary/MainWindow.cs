@@ -23,8 +23,10 @@ using System.IO;
 using System.Threading;
 using Screenary;
 using FreeRDP;
+using System.Net;
+using System.Net.Sockets;
 
-public partial class MainWindow : Gtk.Window
+public partial class MainWindow : Gtk.Window, IConnectObserver
 {	
 	private Gdk.GC gc;
 	private int width, height;
@@ -32,6 +34,9 @@ public partial class MainWindow : Gtk.Window
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
+	
+	private string senderAddress;
+	private int senderPort;
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
@@ -113,7 +118,7 @@ public partial class MainWindow : Gtk.Window
 	}
 
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
-	{		
+	{
 		// Create and display a fileChooserDialog
 		FileChooserDialog chooser = new FileChooserDialog(
 		   "Please select a video to view ...",
@@ -185,12 +190,152 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnConnectActionActivated (object sender, System.EventArgs e)
 	{
-		ConnectDialog connect = new ConnectDialog();
-	}
+		ConnectDialog connect = new ConnectDialog(window, receiver);
+		connect.setObserver(this);
+		
+		/*String address = connect.getIp();
+		int port = connect.getPort();
 
+		byte[] header = new byte[PDU.PDU_HEADER_LENGTH];
+		TcpClient client = new TcpClient();
+		client.Connect(address, port);
+		
+		TimeSpan timespan = new TimeSpan(0, 0, 0, 0);
+		PcapRecord record;
+		byte[] big_buffer = null;
+		byte[] buffer = null;
+		
+		while (true)
+		{
+			client.GetStream().Read(header, 0, header.Length);
+			
+			UInt16 channel = BitConverter.ToUInt16(header, 0);
+			byte type = header[2];
+			byte frag = header[3];
+			UInt16 size = BitConverter.ToUInt16(header, 4);
+			
+			buffer = new byte[size];
+			client.GetStream().Read(buffer, 0, size);
+			
+			if (frag == PDU.PDU_FRAGMENT_SINGLE)
+			{
+				record = new PcapRecord(buffer, timespan);
+				DisplayRecord(record);
+			}
+			else if (frag == PDU.PDU_FRAGMENT_FIRST)
+			{
+				big_buffer = new byte[size];
+				for (int i = 0; i < big_buffer.Length; i++)
+				{
+					big_buffer[i] = buffer[i];	
+				}
+			}
+			else if (frag == PDU.PDU_FRAGMENT_NEXT)
+			{
+				big_buffer = combine(big_buffer, buffer);
+			}
+			else if (frag == PDU.PDU_FRAGMENT_LAST)
+			{
+				big_buffer = combine(big_buffer, buffer);
+				record = new PcapRecord(big_buffer, timespan);
+				DisplayRecord(record);
+			}
+		}*/
+	}
+	
+	private void DisplayRecord(PcapRecord record)
+	{
+		SurfaceCommand cmd;
+		MemoryStream stream;
+		BinaryReader reader;
+
+		//Thread.Sleep(record.Time.Subtract(previousTime));                        
+		//previousTime = record.Time;
+				
+		stream = new MemoryStream(record.Buffer);
+		reader = new BinaryReader(stream);
+            
+		cmd = SurfaceCommand.Parse(reader);
+		cmd.Execute(receiver);
+
+		window.ProcessUpdates(false); /* force update */ 		
+	}	
+	
 	protected void OnRecordActionActivated (object sender, System.EventArgs e)
 	{
 		throw new System.NotImplementedException ();
 	}
+	
+	private byte[] combine(byte[] a, byte[] b)
+	{
+		byte[] c = new byte[a.Length + b.Length];
+		System.Buffer.BlockCopy(a, 0, c, 0, a.Length);
+		System.Buffer.BlockCopy(b, 0, c, a.Length, b.Length);
+		return c;
+	}
+	
+	public void NewConnection(string address, int port)
+	{
+		Console.WriteLine("Address: " + address);
+		Console.WriteLine("Port: " + port);
+		
+		senderAddress = address;
+		senderPort = port;
+		
+		threadFunction();
+		
+		//Thread myThread = new Thread(new ThreadStart(threadFunction));
+		//myThread.Start();
+	}
+	
+		public void threadFunction()
+		{
+			byte[] header = new byte[PDU.PDU_HEADER_LENGTH];
+			TcpClient client = new TcpClient();
+			client.Connect(senderAddress, senderPort);
+						
+			TimeSpan timespan = new TimeSpan(0, 0, 0, 0);
+			PcapRecord record;
+			byte[] big_buffer = null;
+			byte[] buffer = null;
+						
+			while (true)
+			{
+				client.GetStream().Read(header, 0, header.Length);
+				
+				UInt16 channel = BitConverter.ToUInt16(header, 0);
+				byte type = header[2];
+				byte frag = header[3];
+				UInt16 size = BitConverter.ToUInt16(header, 4);
+				
+				buffer = new byte[size];
+				client.GetStream().Read(buffer, 0, size);
+				
+				if (frag == PDU.PDU_FRAGMENT_SINGLE)
+				{
+					record = new PcapRecord(buffer, timespan);
+					DisplayRecord(record);
+				}
+				else if (frag == PDU.PDU_FRAGMENT_FIRST)
+				{
+					big_buffer = new byte[size];
+					for (int i = 0; i < big_buffer.Length; i++)
+					{
+						big_buffer[i] = buffer[i];	
+					}
+				}
+				else if (frag == PDU.PDU_FRAGMENT_NEXT)
+				{
+					big_buffer = combine(big_buffer, buffer);
+				}
+				else if (frag == PDU.PDU_FRAGMENT_LAST)
+				{
+					big_buffer = combine(big_buffer, buffer);
+					record = new PcapRecord(big_buffer, timespan);
+					DisplayRecord(record);
+				}
+			}				
+			
+		}	
 
 }

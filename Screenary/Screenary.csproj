@@ -9,7 +9,6 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Screenary</RootNamespace>
     <AssemblyName>Screenary</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,26 +33,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System">
-    </Reference>
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="Mono.Posix">
-    </Reference>
-    <Reference Include="Mono.Cairo">
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <Package>mono-nunit</Package>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="Mono.Posix" />
+    <Reference Include="Mono.Cairo" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +65,16 @@
     <Compile Include="gtk-gui\Screenary.ConnectDialog.cs" />
     <Compile Include="Util\PDU.cs" />
     <Compile Include="IConnectObserver.cs" />
+    <Compile Include="Transport\TransportClient.cs" />
+    <Compile Include="Transport\TransportListener.cs" />
+    <Compile Include="Transport\ChannelDispatcher.cs" />
+    <Compile Include="Transport\IChannel.cs" />
+    <Compile Include="Session\SessionChannel.cs" />
+    <Compile Include="Session\SessionClient.cs" />
+    <Compile Include="Session\SessionServer.cs" />
+    <Compile Include="Session\ISessionClient.cs" />
+    <Compile Include="Session\ISessionServer.cs" />
+    <Compile Include="Transport\ITransportListener.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NUnit\" />
+    <Folder Include="Transport\" />
+    <Folder Include="Session\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

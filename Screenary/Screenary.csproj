@@ -75,6 +75,11 @@
     <Compile Include="Session\ISessionClient.cs" />
     <Compile Include="Session\ISessionServer.cs" />
     <Compile Include="Transport\ITransportListener.cs" />
+    <Compile Include="Surface\SurfaceChannel.cs" />
+    <Compile Include="Surface\ISurfaceClient.cs" />
+    <Compile Include="Surface\SurfaceClient.cs" />
+    <Compile Include="Surface\SurfaceServer.cs" />
+    <Compile Include="Surface\ISurfaceServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +97,7 @@
     <Folder Include="NUnit\" />
     <Folder Include="Transport\" />
     <Folder Include="Session\" />
+    <Folder Include="Surface\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

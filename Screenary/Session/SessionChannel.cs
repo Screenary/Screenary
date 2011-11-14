@@ -22,7 +22,7 @@ namespace Screenary
 		{
 		}
 		
-		public UInt16 GetChannelType()
+		public UInt16 GetChannelId()
 		{
 			return PDU_CHANNEL_SESSION;
 		}

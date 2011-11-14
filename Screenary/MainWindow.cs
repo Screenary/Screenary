@@ -26,7 +26,7 @@ using FreeRDP;
 using System.Net;
 using System.Net.Sockets;
 
-public partial class MainWindow : Gtk.Window, IConnectObserver
+public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 {	
 	private Gdk.GC gc;
 	private int width, height;
@@ -195,6 +195,18 @@ public partial class MainWindow : Gtk.Window, IConnectObserver
 		connect.setObserver(this);
 	}
 	
+	public bool OnSurfaceCommand(BinaryReader s)
+	{
+		SurfaceCommand cmd;
+		
+		cmd = SurfaceCommand.Parse(s);
+		cmd.Execute(receiver);
+
+		window.ProcessUpdates(false); /* force update */
+		
+		return true;
+	}
+	
 	private void DisplayRecord(PcapRecord record)
 	{
 		SurfaceCommand cmd;
@@ -231,10 +243,22 @@ public partial class MainWindow : Gtk.Window, IConnectObserver
 		Console.WriteLine("Address: " + address);
 		Console.WriteLine("Port: " + port);
 		
-		senderAddress = address;
-		senderPort = port;
+		ChannelDispatcher dispatcher = new ChannelDispatcher();
+		TransportClient transport = new TransportClient(dispatcher);
+		SurfaceClient surface = new SurfaceClient(this, transport);
+		dispatcher.RegisterChannel(surface);
+
+		transport.Connect(address, port);
 		
-		threadFunction();
+		while (true)
+		{
+			transport.RecvPDU();
+		}
+			
+		//senderAddress = address;
+		//senderPort = port;
+		
+		//threadFunction();
 		
 		//Thread myThread = new Thread(new ThreadStart(threadFunction));
 		//myThread.Start();

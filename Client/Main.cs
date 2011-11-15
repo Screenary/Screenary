@@ -21,7 +21,7 @@ using System;
 using System.IO;
 using Gtk;
 
-namespace Screenary
+namespace Screenary.Client
 {
 	class MainClass
 	{

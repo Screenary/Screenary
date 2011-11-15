@@ -3,4 +3,7 @@
 *.userprefs
 *.pidb
 test-results
+obj
+*.dll
+*.suo
 

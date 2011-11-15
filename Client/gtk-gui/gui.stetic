@@ -134,7 +134,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="Screenary.ConnectDialog" design-size="410 166">
+  <widget class="Gtk.Dialog" id="Screenary.Client.ConnectDialog" design-size="410 166">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Connect to...</property>
     <property name="Icon">stock:gtk-connect Menu</property>

@@ -1,6 +1,6 @@
 using System;
 
-namespace Screenary
+namespace Screenary.Client
 {
 	public interface IConnectObserver
 	{

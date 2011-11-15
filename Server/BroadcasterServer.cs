@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 using Screenary;
 
-namespace Broadcaster
+namespace Screenary.Server
 {
 	/**
 	 * Broadcaster server, current implementation listens for TCP clients 

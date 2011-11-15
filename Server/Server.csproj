@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1784525C-D687-491E-B4F4-7613784022ED}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Broadcaster</RootNamespace>
+    <RootNamespace>Screenary.Server</RootNamespace>
     <AssemblyName>Broadcaster</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Screenary\Screenary.csproj">
-      <Project>{308406DC-FEDC-4B54-BC84-5FE66E71C65B}</Project>
+      <Project>{6893B3C1-5A27-4422-805A-EF22397FC244}</Project>
       <Name>Screenary</Name>
     </ProjectReference>
   </ItemGroup>

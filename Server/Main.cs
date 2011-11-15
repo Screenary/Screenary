@@ -4,7 +4,7 @@ using System.Threading;
 using Screenary;
 using System.IO;
 
-namespace Broadcaster
+namespace Screenary.Server
 {
 	class MainClass
 	{

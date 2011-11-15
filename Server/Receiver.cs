@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using Screenary;
 
-namespace Broadcaster
+namespace Screenary.Server
 {
 	public class Receiver : ISurfaceServer
 	{

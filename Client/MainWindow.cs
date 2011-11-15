@@ -21,6 +21,7 @@ using Gtk;
 using System;
 using System.IO;
 using System.Threading;
+using Screenary.Client;
 using Screenary;
 using FreeRDP;
 using System.Net;
@@ -34,9 +35,6 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
-	
-	private string senderAddress;
-	private int senderPort;
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{

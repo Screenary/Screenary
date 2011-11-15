@@ -14,6 +14,19 @@ namespace Screenary
 			this.transport = transport;
 		}
 		
+		private BinaryWriter InitRspPDU(ref byte[] buffer, int length, UInt32 id, UInt32 status)
+		{
+			BinaryWriter s;
+			
+			buffer = new byte[length + 8];
+			s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write((UInt32) id);
+			s.Write((UInt32) status);
+	
+			return s;
+		}
+		
 		public bool SendJoinRsp()
 		{
 			return true;
@@ -56,6 +69,24 @@ namespace Screenary
 		
 		private bool RecvCreateReq(BinaryReader s)
 		{
+			UInt32 sessionId;
+			string username = "";
+			string password = "";
+			UInt16 usernameLength;
+			UInt16 passwordLength;
+			
+			sessionId = s.ReadUInt32();
+			usernameLength = s.ReadUInt16();
+			passwordLength = s.ReadUInt16();
+			
+			if (usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
+			
+			if (passwordLength > 0)
+				password = new string(s.ReadChars(passwordLength));
+			
+			Console.WriteLine("RecvCreateReq: username:{0} password:{1}", username, password);
+			
 			return true;
 		}
 		
@@ -89,6 +120,14 @@ namespace Screenary
 				default:
 					return false;
 			}
+		}
+		
+		public override void OnOpen()
+		{
+		}
+		
+		public override void OnClose()
+		{
 		}
 	}
 }

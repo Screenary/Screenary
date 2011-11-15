@@ -29,6 +29,9 @@ namespace Screenary
 			return PDU_CHANNEL_SESSION;
 		}
 		
+		public abstract void OnOpen();
+		public abstract void OnClose();
+		
 		public abstract bool OnRecv(byte[] buffer, byte pduType);
 		
 		public virtual bool Send(byte[] buffer, byte pduType)

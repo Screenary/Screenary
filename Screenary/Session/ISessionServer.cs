@@ -2,8 +2,9 @@ using System;
 
 namespace Screenary
 {
-	public enum ISessionServer
+	public interface ISessionServer
 	{
+		
 	}
 }
 

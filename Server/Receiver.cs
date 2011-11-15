@@ -14,6 +14,7 @@ namespace Screenary.Server
 		private TransportClient client;
 		private ChannelDispatcher dispatcher;
 		private SurfaceServer surface;
+		private Session session;
 		
 		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
 		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
@@ -29,11 +30,21 @@ namespace Screenary.Server
 			dispatcher = new ChannelDispatcher();
 			thread = new Thread(ReceiverThreadProc);
 			
-			surface = new SurfaceServer(this, this.client);
 			client.SetChannelDispatcher(dispatcher);
+			
+			surface = new SurfaceServer(this, this.client);
 			dispatcher.RegisterChannel(surface);
 			
+			session = new Session(this.client);
+			dispatcher.RegisterChannel(session.GetServer());
+			
 			thread.Start();
+			
+			/*while (true)
+			{
+				client.RecvPDU();
+				Thread.Sleep(1);
+			}*/
 		}
 		
 		/**

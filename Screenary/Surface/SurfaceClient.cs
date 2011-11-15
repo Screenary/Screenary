@@ -35,6 +35,14 @@ namespace Screenary
 					return false;
 			}
 		}
+		
+		public override void OnOpen()
+		{
+		}
+		
+		public override void OnClose()
+		{
+		}
 	}
 }
 

@@ -60,13 +60,16 @@ namespace Screenary
 				tcpClient = new TcpClient();
 			
 			tcpClient.Connect(this.hostname, this.port);
+			dispatcher.OnConnect();
 	
 			return true;
 		}
 		
 		public bool Disconnect()
 		{
-			tcpClient.Close();	
+			tcpClient.Close();
+			dispatcher.OnDisconnect();
+			
 			return true;
 		}
 		

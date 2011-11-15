@@ -64,6 +64,7 @@
     <Compile Include="ConnectDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.ConnectDialog.cs" />
     <Compile Include="IUserAction.cs" />
+    <Compile Include="Session.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

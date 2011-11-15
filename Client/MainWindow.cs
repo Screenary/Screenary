@@ -36,6 +36,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
 	
+	private Session session;
+	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
@@ -225,6 +227,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	{		
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		TransportClient transport = new TransportClient(dispatcher);
+		
+		session = new Session(transport);
+		dispatcher.RegisterChannel(session.GetClient());
+		
 		SurfaceClient surface = new SurfaceClient(this, transport);
 		dispatcher.RegisterChannel(surface);
 

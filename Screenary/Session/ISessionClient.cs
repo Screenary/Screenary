@@ -4,6 +4,7 @@ namespace Screenary
 {
 	public interface ISessionClient
 	{
+
 	}
 }
 

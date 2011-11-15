@@ -17,6 +17,28 @@ namespace Screenary
 			channels.Add(channel.GetChannelId(), channel);
 		}
 		
+		public void OnConnect()
+		{
+			IChannel channel;
+			
+			foreach (DictionaryEntry entry in channels)
+			{
+				channel = (IChannel) entry.Value;
+				channel.OnOpen();
+			}
+		}
+		
+		public void OnDisconnect()
+		{
+			IChannel channel;
+			
+			foreach (DictionaryEntry entry in channels)
+			{
+				channel = (IChannel) entry.Value;
+				channel.OnClose();
+			}
+		}
+		
 		public bool SendPDU(PDU pdu)
 		{
 			IChannel channel = (IChannel) channels[pdu.ChannelId];

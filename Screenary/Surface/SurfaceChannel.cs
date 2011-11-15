@@ -19,6 +19,9 @@ namespace Screenary
 		{
 			return PDU_CHANNEL_SURFACE;
 		}
+			
+		public abstract void OnOpen();
+		public abstract void OnClose();
 		
 		public abstract bool OnRecv(byte[] buffer, byte pduType);
 		

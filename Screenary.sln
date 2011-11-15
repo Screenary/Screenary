@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screenary", "Screenary\Screenary.csproj", "{308406DC-FEDC-4B54-BC84-5FE66E71C65B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{308406DC-FEDC-4B54-BC84-5FE66E71C65B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeRDP", "FreeRDP\FreeRDP.csproj", "{C5E8D831-864B-4BE7-8027-77727D5A6D80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcaster", "Broadcaster\Broadcaster.csproj", "{1784525C-D687-491E-B4F4-7613784022ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{1784525C-D687-491E-B4F4-7613784022ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screenary", "Screenary\Screenary.csproj", "{6893B3C1-5A27-4422-805A-EF22397FC244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,13 +23,17 @@ Global
 		{308406DC-FEDC-4B54-BC84-5FE66E71C65B}.Debug|x86.Build.0 = Debug|x86
 		{308406DC-FEDC-4B54-BC84-5FE66E71C65B}.Release|x86.ActiveCfg = Release|x86
 		{308406DC-FEDC-4B54-BC84-5FE66E71C65B}.Release|x86.Build.0 = Release|x86
+		{6893B3C1-5A27-4422-805A-EF22397FC244}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6893B3C1-5A27-4422-805A-EF22397FC244}.Debug|x86.Build.0 = Debug|Any CPU
+		{6893B3C1-5A27-4422-805A-EF22397FC244}.Release|x86.ActiveCfg = Release|Any CPU
+		{6893B3C1-5A27-4422-805A-EF22397FC244}.Release|x86.Build.0 = Release|Any CPU
 		{C5E8D831-864B-4BE7-8027-77727D5A6D80}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{C5E8D831-864B-4BE7-8027-77727D5A6D80}.Debug|x86.Build.0 = Debug|Any CPU
 		{C5E8D831-864B-4BE7-8027-77727D5A6D80}.Release|x86.ActiveCfg = Release|Any CPU
 		{C5E8D831-864B-4BE7-8027-77727D5A6D80}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Screenary\Screenary.csproj
+		StartupItem = Client\Client.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = Flat

@@ -5,22 +5,19 @@ using System.Net;
 using System.Threading;
 using Screenary;
 
-namespace Broadcaster
+namespace Screenary.Server
 {
 	/**
 	 * Broadcaster server, current implementation listens for TCP clients 
 	 * and broadcasts contents of data/rfx_sample.pcap within 20 seconds
 	 */ 
-	public class BroadcasterServer
+	public class BroadcasterServer : ITransportListener
 	{
 		/* List of TCP Clients */
 		private ArrayList receivers;
 		
 		/* Server socket */
-		private TcpListener tcpListener;
-		
-		/* Thread listens for connections */
-		private Thread listenThread;
+		private TransportListener listener;
 		
 		/**
 		 * Class constructor, instantiate server socket and create thread to 
@@ -29,13 +26,22 @@ namespace Broadcaster
 		 * @param address
 		 * @param port
 		 */
-		public BroadcasterServer(String address, int port)
+		public BroadcasterServer(string address, int port)
 		{
 			receivers = new ArrayList();
-			tcpListener = new TcpListener(IPAddress.Parse(address), port);
-			listenThread = new Thread(new ThreadStart(listenForClients));
+			listener = new TransportListener(this, address, port);
+			listener.Start();
 			
-			listenThread.Start();
+			//while (true)
+			{
+				TransportClient client;
+				
+				client = listener.AcceptClient();
+				
+				Receiver receiver = new Receiver(client);
+				receivers.Add(receiver);
+				Console.WriteLine("OnAcceptClient");
+			}
 		}
 		
 		/**
@@ -51,21 +57,9 @@ namespace Broadcaster
 			}
 		}
 		
-		/**
-		 * Thread function, listen for TCP Clients. When a client is accepted
-		 * register it to list of receivers
-		 */ 
-		private void listenForClients()
+		public void OnAcceptClient(TransportClient client)
 		{
-			tcpListener.Start();
-			
-			while (true)
-			{
-				TcpClient client = tcpListener.AcceptTcpClient();
-				Receiver receiver = new Receiver(client);
-				receivers.Add(receiver);
-				Console.WriteLine("TCP Client accepted");
-			}
+
 		}
 	}
 }

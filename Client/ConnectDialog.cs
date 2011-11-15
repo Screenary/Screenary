@@ -6,7 +6,7 @@ using FreeRDP;
 using Gtk;
 using System.Threading;
 
-namespace Screenary
+namespace Screenary.Client
 {
 	public partial class ConnectDialog : Gtk.Dialog
 	{

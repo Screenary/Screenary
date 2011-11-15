@@ -6,11 +6,10 @@ namespace Screenary.Client
 	{
 		private global::Gtk.VBox vbox3;
 		private global::Gtk.HBox hbox1;
-		private global::Gtk.Label label1;
-		private global::Gtk.Entry ip;
-		private global::Gtk.HBox hbox2;
-		private global::Gtk.Label label2;
-		private global::Gtk.Entry port;
+		private global::Gtk.Label lblHostname;
+		private global::Gtk.Entry txtHostname;
+		private global::Gtk.Label lblPort;
+		private global::Gtk.Entry txtPort;
 		private global::Gtk.Button buttonCancel;
 		private global::Gtk.Button buttonConnect;
         
@@ -19,7 +18,7 @@ namespace Screenary.Client
 			global::Stetic.Gui.Initialize (this);
 			// Widget Screenary.Client.ConnectDialog
 			this.Name = "Screenary.Client.ConnectDialog";
-			this.Title = global::Mono.Unix.Catalog.GetString ("Connect to...");
+			this.Title = global::Mono.Unix.Catalog.GetString ("Connection");
 			this.Icon = global::Stetic.IconLoader.LoadIcon (this, "gtk-connect", global::Gtk.IconSize.Menu);
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Resizable = false;
@@ -27,7 +26,8 @@ namespace Screenary.Client
 			// Internal child Screenary.Client.ConnectDialog.VBox
 			global::Gtk.VBox w1 = this.VBox;
 			w1.Name = "dialog1_VBox";
-			w1.BorderWidth = ((uint)(2));
+			w1.Spacing = 6;
+			w1.BorderWidth = ((uint)(6));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.vbox3 = new global::Gtk.VBox ();
 			this.vbox3.Name = "vbox3";
@@ -37,77 +37,66 @@ namespace Screenary.Client
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.label1 = new global::Gtk.Label ();
-			this.label1.Name = "label1";
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("IP Address: ");
-			this.hbox1.Add (this.label1);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.label1]));
+			this.lblHostname = new global::Gtk.Label ();
+			this.lblHostname.Name = "lblHostname";
+			this.lblHostname.LabelProp = global::Mono.Unix.Catalog.GetString ("Hostname:");
+			this.hbox1.Add (this.lblHostname);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.lblHostname]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
 			w2.Padding = ((uint)(6));
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.ip = new global::Gtk.Entry ();
-			this.ip.WidthRequest = 277;
-			this.ip.CanFocus = true;
-			this.ip.Name = "ip";
-			this.ip.IsEditable = true;
-			this.ip.InvisibleChar = '•';
-			this.hbox1.Add (this.ip);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.ip]));
+			this.txtHostname = new global::Gtk.Entry ();
+			this.txtHostname.WidthRequest = 277;
+			this.txtHostname.CanFocus = true;
+			this.txtHostname.Name = "txtHostname";
+			this.txtHostname.Text = global::Mono.Unix.Catalog.GetString ("localhost");
+			this.txtHostname.IsEditable = true;
+			this.txtHostname.InvisibleChar = '•';
+			this.hbox1.Add (this.txtHostname);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtHostname]));
 			w3.Position = 1;
-			w3.Expand = false;
-			w3.Fill = false;
-			w3.Padding = ((uint)(15));
-			this.vbox3.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
-			w4.Position = 0;
+			w3.Padding = ((uint)(6));
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.lblPort = new global::Gtk.Label ();
+			this.lblPort.Name = "lblPort";
+			this.lblPort.LabelProp = global::Mono.Unix.Catalog.GetString ("Port:");
+			this.hbox1.Add (this.lblPort);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.lblPort]));
+			w4.Position = 2;
 			w4.Expand = false;
 			w4.Fill = false;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.hbox2 = new global::Gtk.HBox ();
-			this.hbox2.Name = "hbox2";
-			this.hbox2.Spacing = 6;
-			// Container child hbox2.Gtk.Box+BoxChild
-			this.label2 = new global::Gtk.Label ();
-			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Port Number:");
-			this.hbox2.Add (this.label2);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.label2]));
-			w5.Position = 0;
-			w5.Expand = false;
-			w5.Fill = false;
-			w5.Padding = ((uint)(4));
-			// Container child hbox2.Gtk.Box+BoxChild
-			this.port = new global::Gtk.Entry ();
-			this.port.WidthRequest = 144;
-			this.port.CanFocus = true;
-			this.port.Name = "port";
-			this.port.IsEditable = true;
-			this.port.InvisibleChar = '•';
-			this.hbox2.Add (this.port);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.port]));
-			w6.Position = 1;
+			w4.Padding = ((uint)(6));
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.txtPort = new global::Gtk.Entry ();
+			this.txtPort.WidthRequest = 144;
+			this.txtPort.CanFocus = true;
+			this.txtPort.Name = "txtPort";
+			this.txtPort.Text = global::Mono.Unix.Catalog.GetString ("4489");
+			this.txtPort.IsEditable = true;
+			this.txtPort.InvisibleChar = '•';
+			this.hbox1.Add (this.txtPort);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtPort]));
+			w5.Position = 3;
+			w5.Padding = ((uint)(6));
+			this.vbox3.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			w6.Position = 0;
 			w6.Expand = false;
-			w6.Padding = ((uint)(6));
-			this.vbox3.Add (this.hbox2);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox2]));
-			w7.Position = 1;
+			w6.Fill = false;
+			w1.Add (this.vbox3);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(w1 [this.vbox3]));
+			w7.Position = 0;
 			w7.Expand = false;
 			w7.Fill = false;
-			w7.Padding = ((uint)(4));
-			w1.Add (this.vbox3);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(w1 [this.vbox3]));
-			w8.Position = 0;
-			w8.Expand = false;
-			w8.Fill = false;
-			w8.Padding = ((uint)(6));
+			w7.Padding = ((uint)(6));
 			// Internal child Screenary.Client.ConnectDialog.ActionArea
-			global::Gtk.HButtonBox w9 = this.ActionArea;
-			w9.Name = "dialog1_ActionArea";
-			w9.Spacing = 10;
-			w9.BorderWidth = ((uint)(5));
-			w9.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
+			global::Gtk.HButtonBox w8 = this.ActionArea;
+			w8.Name = "dialog1_ActionArea";
+			w8.Spacing = 10;
+			w8.BorderWidth = ((uint)(5));
+			w8.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonCancel = new global::Gtk.Button ();
 			this.buttonCancel.CanDefault = true;
@@ -117,9 +106,9 @@ namespace Screenary.Client
 			this.buttonCancel.UseUnderline = true;
 			this.buttonCancel.Label = "gtk-cancel";
 			this.AddActionWidget (this.buttonCancel, -6);
-			global::Gtk.ButtonBox.ButtonBoxChild w10 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w9 [this.buttonCancel]));
-			w10.Expand = false;
-			w10.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w9 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w8 [this.buttonCancel]));
+			w9.Expand = false;
+			w9.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonConnect = new global::Gtk.Button ();
 			this.buttonConnect.CanDefault = true;
@@ -127,31 +116,31 @@ namespace Screenary.Client
 			this.buttonConnect.Name = "buttonConnect";
 			this.buttonConnect.UseUnderline = true;
 			// Container child buttonConnect.Gtk.Container+ContainerChild
-			global::Gtk.Alignment w11 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
+			global::Gtk.Alignment w10 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
 			// Container child GtkAlignment.Gtk.Container+ContainerChild
-			global::Gtk.HBox w12 = new global::Gtk.HBox ();
-			w12.Spacing = 2;
+			global::Gtk.HBox w11 = new global::Gtk.HBox ();
+			w11.Spacing = 2;
 			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Image w13 = new global::Gtk.Image ();
-			w13.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-connect", global::Gtk.IconSize.Menu);
-			w12.Add (w13);
-			// Container child GtkHBox.Gtk.Container+ContainerChild
-			global::Gtk.Label w15 = new global::Gtk.Label ();
-			w15.LabelProp = global::Mono.Unix.Catalog.GetString ("Connect");
-			w15.UseUnderline = true;
-			w12.Add (w15);
+			global::Gtk.Image w12 = new global::Gtk.Image ();
+			w12.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-connect", global::Gtk.IconSize.Menu);
 			w11.Add (w12);
-			this.buttonConnect.Add (w11);
+			// Container child GtkHBox.Gtk.Container+ContainerChild
+			global::Gtk.Label w14 = new global::Gtk.Label ();
+			w14.LabelProp = global::Mono.Unix.Catalog.GetString ("Connect");
+			w14.UseUnderline = true;
+			w11.Add (w14);
+			w10.Add (w11);
+			this.buttonConnect.Add (w10);
 			this.AddActionWidget (this.buttonConnect, -5);
-			global::Gtk.ButtonBox.ButtonBoxChild w19 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w9 [this.buttonConnect]));
-			w19.Position = 1;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w18 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w8 [this.buttonConnect]));
+			w18.Position = 1;
+			w18.Expand = false;
+			w18.Fill = false;
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 410;
-			this.DefaultHeight = 166;
+			this.DefaultWidth = 608;
+			this.DefaultHeight = 134;
 			this.Show ();
 			this.buttonCancel.Clicked += new global::System.EventHandler (this.OnButtonCancelClicked);
 			this.buttonConnect.Clicked += new global::System.EventHandler (this.OnButtonConnectClicked);

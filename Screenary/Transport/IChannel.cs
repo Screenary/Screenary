@@ -6,6 +6,7 @@ namespace Screenary
 	{
 		UInt16 GetChannelId();
 		bool OnRecv(byte[] buffer, byte pduType);
+		bool Send(byte[] buffer, byte pduType);
 	}
 }
 

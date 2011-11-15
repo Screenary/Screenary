@@ -3,8 +3,10 @@ using System.IO;
 
 namespace Screenary
 {
-	public class SessionChannel : IChannel
+	public abstract class SessionChannel : IChannel
 	{
+		protected TransportClient transport;
+		
 		public const UInt16 PDU_CHANNEL_SESSION = 0x0000;
 		
 		public const byte PDU_SESSION_JOIN_REQ = 0x01;
@@ -27,9 +29,11 @@ namespace Screenary
 			return PDU_CHANNEL_SESSION;
 		}
 		
-		public virtual bool OnRecv(byte[] buffer, byte pduType)
+		public abstract bool OnRecv(byte[] buffer, byte pduType);
+		
+		public virtual bool Send(byte[] buffer, byte pduType)
 		{
-			return true;
+			return transport.SendPDU(buffer, PDU_CHANNEL_SESSION, pduType);
 		}
 	}
 }

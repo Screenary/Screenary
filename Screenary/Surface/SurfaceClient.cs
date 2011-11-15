@@ -6,7 +6,6 @@ namespace Screenary
 	public class SurfaceClient : SurfaceChannel
 	{
 		private ISurfaceClient client;
-		private TransportClient transport;
 		
 		public SurfaceClient(ISurfaceClient client, TransportClient transport)
 		{

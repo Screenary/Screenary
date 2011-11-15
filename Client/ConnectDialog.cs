@@ -10,53 +10,28 @@ namespace Screenary.Client
 {
 	public partial class ConnectDialog : Gtk.Dialog
 	{
-		private SurfaceReceiver receiver;
-		private Gdk.Window window;
-		private string myip;
-		private int myport;
-		private IConnectObserver observer;
+		private IUserAction observer;
 		
-		public ConnectDialog (Gdk.Window window, SurfaceReceiver receiver)
+		public ConnectDialog(IUserAction observer)
 		{
-			this.Build ();
-			this.receiver = receiver;
-			this.window = window;
-		}
-		
-		public void setObserver(IConnectObserver observer)
-		{
-			this.observer = observer;	
-		}
-		
-		public String getIp()
-		{
-			return ip.Text;
-		}
-		
-		public int getPort()
-		{
-			return Convert.ToInt32(port.Text);
+			this.Build();
+			this.observer = observer;
 		}
 
-		protected void OnButtonConnectClicked (object sender, System.EventArgs e)
+		protected void OnButtonConnectClicked(object sender, System.EventArgs e)
 		{
-			Connect newConnection = new Connect();
-			newConnection.ipAddress = this.ip.Text;
-			newConnection.portNumber = this.port.Text;
+			int port;
+			string hostname;
 			
-			myip = this.ip.Text;
-			myport = Convert.ToInt32(this.port.Text);
+			hostname = txtHostname.Text;
+			port = Convert.ToInt32(this.txtPort.Text);
 			
 			this.Destroy();
 
-			// This is extremely temporary... like holy shit
-			if (observer != null)
-			{
-				observer.NewConnection(myip, myport);
-			}
+			observer.OnUserConnect(hostname, port);
 		}
 		
-		protected void OnButtonCancelClicked (object sender, System.EventArgs e)
+		protected void OnButtonCancelClicked(object sender, System.EventArgs e)
 		{
 			this.Destroy();
 		}		

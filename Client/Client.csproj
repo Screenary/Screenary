@@ -62,8 +62,8 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="ConnectDialog.cs" />
-    <Compile Include="IConnectObserver.cs" />
     <Compile Include="gtk-gui\Screenary.Client.ConnectDialog.cs" />
+    <Compile Include="IUserAction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

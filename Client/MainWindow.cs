@@ -27,7 +27,7 @@ using FreeRDP;
 using System.Net;
 using System.Net.Sockets;
 
-public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
+public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 {	
 	private Gdk.GC gc;
 	private int width, height;
@@ -86,17 +86,17 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 	{
 		AboutDialog about = new AboutDialog();
 
-		// Change the Dialog's properties to the appropriate values.
+		/* Change the Dialog's properties to the appropriate values. */
 		about.ProgramName = "Screenary";
 		about.Version = "1.0.0";
 		about.Comments = "A screencasting application for Ubuntu";
     	about.Authors = new string [] {"Marc Andre", "Hai-Long", "Gina", "Terri-Anne", "Marwan"};
 		about.Website = "http://www.screenary.com/";
 		
-		// Show the Dialog and pass it control
+		/* Show the dialog and pass it control */
 		about.Run();
 		
-		// Destroy the dialog
+		/* Destroy the dialog */
 		about.Destroy();
 	}
 
@@ -117,34 +117,34 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
 	{
-		// Create and display a fileChooserDialog
+		/* Create and display a fileChooserDialog */
 		FileChooserDialog chooser = new FileChooserDialog(
 		   "Please select a video to view ...",
-		   this,
-		   FileChooserAction.Open,
+		   this, FileChooserAction.Open,
 		   "Cancel", ResponseType.Cancel,
-		   "Open", ResponseType.Accept );
+		   "Open", ResponseType.Accept);
 		
-		// Open
-		if( chooser.Run() == ( int )ResponseType.Accept )
+		/* Open */
+		if (chooser.Run() == (int) ResponseType.Accept)
 		{
-			// Set the MainWindow Title to the filename.
+			/* Set the MainWindow Title to the filename. */
 			this.Title = "Screenary now showing: " + chooser.Filename.ToString();
 				
-			// Set the filename 
+			/* Set the filename */
 			String filename = chooser.Filename.ToString();
 			
-			// Destroy the fileChooserDialog, otherwise it stays open
+			/* Destroy the fileChooserDialog, otherwise it stays open */
 			chooser.Destroy();
 			
-			// PcapReader
+			/* PcapReader */
 			int count = 0;
 			SurfaceCommand cmd;
 			MemoryStream stream;
 			BinaryReader reader;
-			PcapReader pcap = new PcapReader(File.OpenRead(filename));
 			
+			PcapReader pcap = new PcapReader(File.OpenRead(filename));
 			TimeSpan previousTime = new TimeSpan(0, 0, 0, 0);
+			
 			foreach (PcapRecord record in pcap)
 			{
 				Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
@@ -158,20 +158,19 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 				cmd = SurfaceCommand.Parse(reader);
 				cmd.Execute(receiver);
 				
-				window.ProcessUpdates(false); // Force update
-										
+				window.ProcessUpdates(false); /* Force update */			
 			}
+			
 			pcap.Close();  
 		}
-		
-		// Cancel
 		else
 		{
+			/* Cancel */
 			chooser.Destroy();
 		}
 	} 
 	
-	// Resets the Drawing Area to blank
+	/* Resets the Drawing Area to blank */
 	protected void OnCloseActionActivated (object sender, System.EventArgs e)
 	{
 		this.Title = "Screenary";
@@ -189,8 +188,7 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 
 	protected void OnConnectActionActivated (object sender, System.EventArgs e)
 	{
-		ConnectDialog connect = new ConnectDialog(window, receiver);
-		connect.setObserver(this);
+		ConnectDialog connect = new ConnectDialog(this);
 	}
 	
 	public void OnSurfaceCommand(BinaryReader s)
@@ -199,8 +197,6 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		
 		cmd = SurfaceCommand.Parse(s);
 		cmd.Execute(receiver);
-		
-		Console.WriteLine("OnSurfaceCommand");
 
 		window.ProcessUpdates(false); /* force update */
 	}
@@ -225,11 +221,8 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		throw new System.NotImplementedException();
 	}
 	
-	public void NewConnection(string address, int port)
-	{
-		Console.WriteLine("Address: " + address);
-		Console.WriteLine("Port: " + port);
-		
+	public void OnUserConnect(string address, int port)
+	{		
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		TransportClient transport = new TransportClient(dispatcher);
 		SurfaceClient surface = new SurfaceClient(this, transport);
@@ -240,7 +233,6 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		while (true)
 		{
 			transport.RecvPDU();
-			Thread.Sleep(10);
 		}
 	}
 }

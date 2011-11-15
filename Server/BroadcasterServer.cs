@@ -40,7 +40,6 @@ namespace Screenary.Server
 				
 				Receiver receiver = new Receiver(client);
 				receivers.Add(receiver);
-				Console.WriteLine("OnAcceptClient");
 			}
 		}
 		

@@ -17,12 +17,15 @@ namespace Screenary
 			channels.Add(channel.GetChannelId(), channel);
 		}
 		
+		public bool SendPDU(PDU pdu)
+		{
+			IChannel channel = (IChannel) channels[pdu.ChannelId];
+			return channel.Send(pdu.Buffer, pdu.Type);
+		}
+		
 		public bool DispatchPDU(byte[] buffer, UInt16 channelId, byte pduType)
 		{
 			IChannel channel;
-			
-			channelId = 1;
-			Console.WriteLine("channelId: {0}", channelId);
 			
 			channel = (IChannel) channels[channelId];
 			channel.OnRecv(buffer, pduType);

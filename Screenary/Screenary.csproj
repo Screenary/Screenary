@@ -57,7 +57,6 @@
     <Compile Include="Transport\ITransportListener.cs" />
     <Compile Include="Transport\TransportListener.cs" />
     <Compile Include="Transport\TransportClient.cs" />
-    <Compile Include="Session\Connect.cs" />
     <Compile Include="Session\PDU.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

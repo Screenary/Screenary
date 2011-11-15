@@ -6,7 +6,6 @@ namespace Screenary
 	public class SessionClient : SessionChannel
 	{
 		private ISessionClient client;
-		private TransportClient transport;
 		
 		public SessionClient(ISessionClient client, TransportClient transport)
 		{

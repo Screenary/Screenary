@@ -10,12 +10,12 @@ namespace Screenary.Server
 	{
 		public static void Main (string[] args)
 		{				
-			BroadcasterServer server = new BroadcasterServer("127.0.0.1", 12680);
-			
+			BroadcasterServer server = new BroadcasterServer("127.0.0.1", 4489);
 			PcapReader pcap = new PcapReader(File.OpenRead("../../data/ferrari.pcap"));
+			
 			foreach (PcapRecord record in pcap)
 			{
-				PDU pdu = new PDU(record);
+				PDU pdu = new PDU(record.Buffer, 0, 1);
 				server.addPDU(pdu);
 			}
 			

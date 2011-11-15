@@ -56,7 +56,7 @@ namespace Screenary.Server
 				while (pduQ.Count > 0)
 				{
 					pdu = dequeue();
-					surface.SendSurfaceCommand(pdu.getRecord().Buffer);
+					surface.SendSurfaceCommand(pdu.Buffer);
 				}
 			}
 		}

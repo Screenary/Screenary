@@ -16,6 +16,7 @@ namespace Screenary
 		
 		private bool RecvSurfaceCommand(BinaryReader s)
 		{
+			client.OnSurfaceCommand(s);
 			return true;
 		}
 		
@@ -23,6 +24,8 @@ namespace Screenary
 		{
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
+			
+			pduType = PDU_SURFACE_COMMAND;
 			
 			switch (pduType)
 			{

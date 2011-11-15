@@ -4,7 +4,7 @@ namespace Screenary
 {
 	public interface ITransportListener
 	{
-		bool OnClientConnect(TransportClient client);
+		void OnAcceptClient(TransportClient client);
 	}
 }
 

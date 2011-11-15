@@ -13,9 +13,10 @@ namespace Screenary
 			this.transport = transport;
 		}
 		
-		public bool SendSurfaceCommand()
+		public bool SendSurfaceCommand(byte[] buffer)
 		{
-			return true;
+			Console.WriteLine("SendSurfaceCommand");
+			return transport.SendPDU(buffer, PDU_CHANNEL_SURFACE, PDU_SURFACE_COMMAND);
 		}
 		
 		public override bool OnRecv(byte[] buffer, byte pduType)

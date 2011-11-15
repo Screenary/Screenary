@@ -13,7 +13,7 @@ namespace Screenary
 		private global::Gtk.Entry port;
 		private global::Gtk.Button buttonCancel;
 		private global::Gtk.Button buttonConnect;
-		
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

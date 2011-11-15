@@ -195,16 +195,16 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		connect.setObserver(this);
 	}
 	
-	public bool OnSurfaceCommand(BinaryReader s)
+	public void OnSurfaceCommand(BinaryReader s)
 	{
 		SurfaceCommand cmd;
 		
 		cmd = SurfaceCommand.Parse(s);
 		cmd.Execute(receiver);
+		
+		Console.WriteLine("OnSurfaceCommand");
 
 		window.ProcessUpdates(false); /* force update */
-		
-		return true;
 	}
 	
 	private void DisplayRecord(PcapRecord record)
@@ -212,9 +212,6 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		SurfaceCommand cmd;
 		MemoryStream stream;
 		BinaryReader reader;
-
-		//Thread.Sleep(record.Time.Subtract(previousTime));                        
-		//previousTime = record.Time;
 				
 		stream = new MemoryStream(record.Buffer);
 		reader = new BinaryReader(stream);
@@ -225,17 +222,9 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		window.ProcessUpdates(false); /* force update */ 		
 	}	
 	
-	protected void OnRecordActionActivated (object sender, System.EventArgs e)
+	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException ();
-	}
-	
-	private byte[] combine(byte[] a, byte[] b)
-	{
-		byte[] c = new byte[a.Length + b.Length];
-		System.Buffer.BlockCopy(a, 0, c, 0, a.Length);
-		System.Buffer.BlockCopy(b, 0, c, a.Length, b.Length);
-		return c;
+		throw new System.NotImplementedException();
 	}
 	
 	public void NewConnection(string address, int port)
@@ -253,69 +242,7 @@ public partial class MainWindow : Gtk.Window, IConnectObserver, ISurfaceClient
 		while (true)
 		{
 			transport.RecvPDU();
+			Thread.Sleep(10);
 		}
-			
-		//senderAddress = address;
-		//senderPort = port;
-		
-		//threadFunction();
-		
-		//Thread myThread = new Thread(new ThreadStart(threadFunction));
-		//myThread.Start();
 	}
-	
-		public void threadFunction()
-		{
-			byte[] header = new byte[PDU.PDU_HEADER_LENGTH];
-			TcpClient client = new TcpClient();
-			client.Connect(senderAddress, senderPort);
-						
-			TimeSpan timespan = new TimeSpan(0, 0, 0, 0);
-			PcapRecord record;
-			byte[] big_buffer = null;
-			byte[] buffer = null;
-						
-			while (true)
-			{
-				client.GetStream().Read(header, 0, header.Length);
-				
-				UInt16 channel = BitConverter.ToUInt16(header, 0);
-				byte type = header[2];
-				byte frag = header[3];
-				UInt16 size = BitConverter.ToUInt16(header, 4);
-				
-				buffer = new byte[size];
-				client.GetStream().Read(buffer, 0, size);
-				
-				/* A Single fragment */
-				if (frag == PDU.PDU_FRAGMENT_SINGLE)
-				{
-					record = new PcapRecord(buffer, timespan);
-					DisplayRecord(record);
-				}
-				/* The first of a series of fragments */
-				else if (frag == PDU.PDU_FRAGMENT_FIRST)
-				{
-					big_buffer = new byte[size];
-					for (int i = 0; i < big_buffer.Length; i++)
-					{
-						big_buffer[i] = buffer[i];	
-					}
-				}
-				/* The "in between" of a series of fragments */
-				else if (frag == PDU.PDU_FRAGMENT_NEXT)
-				{
-					big_buffer = combine(big_buffer, buffer);
-				}
-				/* The last of a series of fragments */
-				else if (frag == PDU.PDU_FRAGMENT_LAST)
-				{
-					big_buffer = combine(big_buffer, buffer);
-					record = new PcapRecord(big_buffer, timespan);
-					DisplayRecord(record);
-				}
-			}				
-			
-		}	
-
 }

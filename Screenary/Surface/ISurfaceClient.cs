@@ -5,7 +5,7 @@ namespace Screenary
 {
 	public interface ISurfaceClient
 	{
-		bool OnSurfaceCommand(BinaryReader s);
+		void OnSurfaceCommand(BinaryReader s);
 	}
 }
 

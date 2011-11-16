@@ -108,33 +108,24 @@ namespace Screenary
 		
 		public bool SendPDU(byte[] buffer, UInt16 channelId, byte pduType)
 		{
+			Socket socket;
+			BinaryWriter s;
 			int offset = 0;
 			UInt16 fragSize;
 			int totalSize = 0;
-			
-			Socket socket;
-			BinaryWriter s;
-			MemoryStream fstream;
-			NetworkStream nstream;
 		
 			Monitor.Enter(this);
 			
 			socket = tcpClient.Client;
 			totalSize = (int) buffer.Length;
 			byte[] fragment = new byte[PDU_MAX_FRAG_SIZE];
-			fstream = new MemoryStream(fragment);
 			
 			if (totalSize <= PDU_MAX_PAYLOAD_SIZE)
 			{
 				/* Single fragment */
 				
 				fragSize = (UInt16) totalSize;
-				nstream = tcpClient.GetStream();
-				fstream.Seek(0, SeekOrigin.Begin);
-				s = new BinaryWriter(fstream);
-				
-				Console.WriteLine("PDU_FRAGMENT_SINGLE: offset:{0} frag:{1} total:{2} after:{3}",
-					offset, fragSize, totalSize, offset + fragSize);
+				s = new BinaryWriter(new MemoryStream(fragment));
 				
 				s.Write(channelId);
 				s.Write(pduType);
@@ -143,7 +134,6 @@ namespace Screenary
 				s.Write(buffer, 0, fragSize);
 				
 				SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
-				//nstream.Write(fragment, 0, fragSize + PDU_HEADER_SIZE);
 				offset += fragSize;
 				
 				return true;
@@ -153,12 +143,7 @@ namespace Screenary
 				/* First fragment of a series of fragments */
 				
 				fragSize = (UInt16) PDU_MAX_PAYLOAD_SIZE;
-				nstream = tcpClient.GetStream();
-				fstream.Seek(0, SeekOrigin.Begin);
-				s = new BinaryWriter(fstream);
-		
-				Console.WriteLine("PDU_FRAGMENT_FIRST: offset:{0} frag:{1} total:{2} after:{3}",
-					offset, fragSize, totalSize, offset + fragSize);
+				s = new BinaryWriter(new MemoryStream(fragment));
 				
 				s.Write(channelId);
 				s.Write(pduType);
@@ -167,7 +152,6 @@ namespace Screenary
 				s.Write(buffer, 0, fragSize);
 				
 				SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
-				//nstream.Write(fragment, 0, fragSize + PDU_HEADER_SIZE);
 				offset += fragSize;
 				
 				while (offset < totalSize)
@@ -177,12 +161,7 @@ namespace Screenary
 						/* Last fragment of a series of fragments */
 						
 						fragSize = (UInt16) (totalSize - offset);
-						nstream = tcpClient.GetStream();
-						fstream.Seek(0, SeekOrigin.Begin);
-						s = new BinaryWriter(fstream);
-						
-						Console.WriteLine("PDU_FRAGMENT_LAST: offset:{0} frag:{1} total:{2} after:{3}",
-							offset, fragSize, totalSize, offset + fragSize);
+						s = new BinaryWriter(new MemoryStream(fragment));
 						
 						s.Write(channelId);
 						s.Write(pduType);
@@ -191,7 +170,6 @@ namespace Screenary
 						s.Write(buffer, offset, fragSize);
 						
 						SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
-						//nstream.Write(fragment, 0, fragSize + PDU_HEADER_SIZE);
 						offset += fragSize;
 						
 						return true;
@@ -201,12 +179,7 @@ namespace Screenary
 						/* "in between" fragment of a series of fragments */
 						
 						fragSize = PDU_MAX_PAYLOAD_SIZE;
-						nstream = tcpClient.GetStream();
-						fstream.Seek(0, SeekOrigin.Begin);
-						s = new BinaryWriter(fstream);
-						
-						Console.WriteLine("PDU_FRAGMENT_NEXT: offset:{0} frag:{1} total:{2} after:{3}",
-							offset, fragSize, totalSize, offset + fragSize);
+						s = new BinaryWriter(new MemoryStream(fragment));
 						
 						s.Write(channelId);
 						s.Write(pduType);
@@ -215,7 +188,6 @@ namespace Screenary
 						s.Write(buffer, offset, fragSize);
 						
 						SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
-						//nstream.Write(fragment, 0, fragSize + PDU_HEADER_SIZE);
 						offset += fragSize;
 					}
 				}
@@ -229,15 +201,13 @@ namespace Screenary
 		public bool RecvPDU()
 		{
 			Socket socket;
+			BinaryReader s;
 			byte pduType = 0;
 			int totalSize = 0;
 			byte fragFlags = 0;
 			UInt16 channelId = 0;
 			UInt16 fragSize = 0;
 			byte[] buffer = null;
-			NetworkStream nstream;
-			MemoryStream mstream;
-			BinaryReader s;
 			
 			Monitor.Enter(this);
 			
@@ -245,15 +215,12 @@ namespace Screenary
 			
 			if (tcpClient.GetStream().DataAvailable)
 			{
-				nstream = tcpClient.GetStream();
-				s = new BinaryReader(nstream);
 				socket = tcpClient.Client;
 				
 				while (true)
 				{
 					RecvAll(socket, header, 0, PDU_HEADER_SIZE);
-					mstream = new MemoryStream(header);
-					s = new BinaryReader(mstream);
+					s = new BinaryReader(new MemoryStream(header));
 					
 					channelId = s.ReadUInt16();
 					pduType = s.ReadByte();
@@ -270,8 +237,6 @@ namespace Screenary
 						RecvAll(socket, buffer, 0, fragSize);
 						totalSize = fragSize;
 						
-						Console.WriteLine("PDU_FRAGMENT_SINGLE: frag:{0} total:{1}", fragSize, totalSize);
-						
 						return dispatcher.DispatchPDU(buffer, channelId, pduType);
 					}
 					else if (fragFlags == PDU_FRAGMENT_FIRST)
@@ -281,8 +246,6 @@ namespace Screenary
 						buffer = new byte[fragSize];
 						RecvAll(socket, buffer, 0, fragSize);
 						totalSize = fragSize;
-						
-						Console.WriteLine("PDU_FRAGMENT_FIRST: frag:{0} total:{1}", fragSize, totalSize);
 					}
 					else if (fragFlags == PDU_FRAGMENT_NEXT)
 					{
@@ -291,8 +254,6 @@ namespace Screenary
 						Array.Resize<byte>(ref buffer, totalSize + fragSize);
 						RecvAll(socket, buffer, totalSize, fragSize);
 						totalSize += fragSize;
-						
-						Console.WriteLine("PDU_FRAGMENT_NEXT: frag:{0} total:{1}", fragSize, totalSize);
 					}
 					else if (fragFlags == PDU_FRAGMENT_LAST)
 					{
@@ -302,13 +263,12 @@ namespace Screenary
 						RecvAll(socket, buffer, totalSize, fragSize);
 						totalSize += fragSize;
 						
-						Console.WriteLine("PDU_FRAGMENT_LAST: frag:{0} total:{1}", fragSize, totalSize);
-						
 						return dispatcher.DispatchPDU(buffer, channelId, pduType);
 					}
 					else
 					{
 						Console.WriteLine("Invalid Fragmentation Flags: {0}", fragFlags);
+						return false;
 					}
 				}
 			}

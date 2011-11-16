@@ -203,9 +203,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 			cmd = SurfaceCommand.Parse(s);
 			
 			if (cmd != null)
+			{
 				cmd.Execute(receiver);
-			
-			//window.ProcessUpdates(false);
+				window.ProcessUpdates(false);
+			}
 		}
 		finally {
 			Gdk.Threads.Leave();

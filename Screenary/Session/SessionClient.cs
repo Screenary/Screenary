@@ -133,7 +133,7 @@ namespace Screenary
 		
 		public override void OnOpen()
 		{
-			SendCreateReq("screenary", "awesome");
+			//SendCreateReq("screenary", "awesome");
 		}
 		
 		public override void OnClose()

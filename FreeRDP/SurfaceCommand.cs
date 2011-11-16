@@ -43,6 +43,10 @@ namespace FreeRDP
 					cmd = new FrameMarkerCommand();
 					cmd.Read(fp);
 					break;
+				
+				default:
+					Console.WriteLine("Unknown Surface Command: {0}", cmdType);
+					break;
 			}
 			
 			return cmd;

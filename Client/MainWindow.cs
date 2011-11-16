@@ -31,16 +31,12 @@ using System.Collections.Generic;
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 {	
 	private Gdk.GC gc;
+	private Session session;
 	private int width, height;
 	private Gdk.Window window;
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
-	private Queue<SurfaceCommand> surfcmds;
-	private System.EventHandler SurfaceCommandEvent;
-	private static readonly object surface_lock = new object();
-	
-	private Session session;
 	
 	public MainWindow(): base(Gtk.WindowType.Toplevel)
 	{
@@ -58,9 +54,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, width, height);		
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 		
-		surfcmds = new Queue<SurfaceCommand>();
 		receiver = new SurfaceReceiver(window, surface);
-		SurfaceCommandEvent += new System.EventHandler(this.OnSurfaceCommandEvent);
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -198,15 +192,24 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	{
 		ConnectDialog connect = new ConnectDialog(this);
 	}
-	
-	public void OnSurfaceCommand(BinaryReader s)
-	{	
-		lock(surface_lock)
-		{			
-			surfcmds.Enqueue(SurfaceCommand.Parse(s));
-		}
 		
-		Gtk.Application.Invoke(SurfaceCommandEvent);
+	public void OnSurfaceCommand(BinaryReader s)
+	{
+		SurfaceCommand cmd;
+		
+		Gdk.Threads.Enter();
+		
+		try {
+			cmd = SurfaceCommand.Parse(s);
+			
+			if (cmd != null)
+				cmd.Execute(receiver);
+			
+			//window.ProcessUpdates(false);
+		}
+		finally {
+			Gdk.Threads.Leave();
+		}
 	}
 	
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
@@ -231,26 +234,5 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
 
-	}
-	
-	protected void OnSurfaceCommandEvent(object o, System.EventArgs args)
-	{		
-		lock(surface_lock)
-		{
-			SurfaceCommand cmd;
-			
-			while (surfcmds.Count > 0)
-			{
-				Console.WriteLine("surfcmds.Count: {0}", surfcmds.Count);
-				
-				cmd = surfcmds.Dequeue();
-				
-				Console.WriteLine(cmd.ToString());
-				Console.WriteLine(receiver.ToString());
-					
-				cmd.Execute(receiver);
-				window.ProcessUpdates(false);
-			}	
-		}
 	}
 }

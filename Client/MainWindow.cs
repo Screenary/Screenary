@@ -26,6 +26,7 @@ using Screenary;
 using FreeRDP;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.Generic;
 
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 {	
@@ -33,8 +34,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	private int width, height;
 	private Gdk.Window window;
 	private Gdk.Pixbuf surface;
+	private Mutex surfaceMutex;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
+	private LinkedList<SurfaceCommand> surfcmds;
+	private System.EventHandler SurfaceCommandEvent;
 	
 	private Session session;
 	
@@ -55,6 +59,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 		
 		receiver = new SurfaceReceiver(window, surface);
+		surfcmds = new LinkedList<SurfaceCommand>();
+		SurfaceCommandEvent = new System.EventHandler(this.OnSurfaceCommandEvent);
+		surfaceMutex = new Mutex();
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -198,25 +205,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		SurfaceCommand cmd;
 		
 		cmd = SurfaceCommand.Parse(s);
-		cmd.Execute(receiver);
-
-		window.ProcessUpdates(false); /* force update */
+		
+		surfaceMutex.WaitOne();
+		surfcmds.AddLast(cmd);
+		surfaceMutex.ReleaseMutex();
+		
+		Gtk.Application.Invoke(SurfaceCommandEvent);
 	}
-	
-	private void DisplayRecord(PcapRecord record)
-	{
-		SurfaceCommand cmd;
-		MemoryStream stream;
-		BinaryReader reader;
-				
-		stream = new MemoryStream(record.Buffer);
-		reader = new BinaryReader(stream);
-            
-		cmd = SurfaceCommand.Parse(reader);
-		cmd.Execute(receiver);
-
-		window.ProcessUpdates(false); /* force update */ 		
-	}	
 	
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
@@ -235,10 +230,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		dispatcher.RegisterChannel(surface);
 
 		transport.Connect(address, port);
+	}
+
+	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
+	{
+
+	}
+	
+	protected void OnSurfaceCommandEvent(object o, System.EventArgs args)
+	{		
+		surfaceMutex.WaitOne();
 		
-		while (true)
+		if (surfcmds.Count > 0)
 		{
-			transport.RecvPDU();
+			foreach (SurfaceCommand cmd in surfcmds)
+			{
+				cmd.Execute(receiver);
+				window.ProcessUpdates(false);
+			}
+			
+			surfcmds.Clear();
 		}
+		
+		surfaceMutex.ReleaseMutex();
 	}
 }

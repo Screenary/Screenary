@@ -10,6 +10,7 @@ namespace Screenary
 	{
 		private Int32 port;
 		private string hostname;
+		private Thread thread;
 		private TcpClient tcpClient;
 		private ChannelDispatcher dispatcher;
 		
@@ -60,6 +61,10 @@ namespace Screenary
 				tcpClient = new TcpClient();
 			
 			tcpClient.Connect(this.hostname, this.port);
+			
+			thread = new Thread(() => ThreadProc(this));
+			thread.Start();
+			
 			dispatcher.OnConnect();
 	
 			return true;
@@ -173,6 +178,9 @@ namespace Screenary
 			byte[] buffer = null;
 			BinaryReader s;
 			
+			if (!tcpClient.GetStream().DataAvailable)
+				return false;
+			
 			while (tcpClient.GetStream().DataAvailable)
 			{
 				s = new BinaryReader(tcpClient.GetStream());
@@ -226,6 +234,15 @@ namespace Screenary
 			}
 			
 			return true;
+		}
+		
+		static void ThreadProc(TransportClient client)
+		{
+			while (true)
+			{
+				client.RecvPDU();
+				Thread.Sleep(10);
+			}
 		}
 	}
 }

@@ -81,6 +81,7 @@
     <property name="Icon">stock:gtk-go-forward Menu</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
+    <signal name="ExposeEvent" handler="OnExposeEvent" />
     <child>
       <widget class="Gtk.VBox" id="mainVbox">
         <property name="MemberName" />

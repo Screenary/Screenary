@@ -50,7 +50,9 @@ namespace Screenary
 			IChannel channel;
 			
 			channel = (IChannel) channels[channelId];
-			channel.OnRecv(buffer, pduType);
+			
+			if (channel != null)
+				channel.OnRecv(buffer, pduType);
 			
 			return true;
 		}

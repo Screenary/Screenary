@@ -47,7 +47,7 @@ namespace FreeRDP
 			Gdk.Pixbuf pixbuf;
 			Gdk.Rectangle[] rects;
 			Gdk.Rectangle clippedRect;
-		
+					
 			if (codecID != CODEC_ID_REMOTEFX)
 				return;
 			

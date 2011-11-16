@@ -20,6 +20,8 @@ namespace FreeRDP
 		
 		public override void Execute(SurfaceReceiver receiver)
 		{
+			
+			
 		}
 	}
 }

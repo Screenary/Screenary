@@ -34,11 +34,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	private int width, height;
 	private Gdk.Window window;
 	private Gdk.Pixbuf surface;
-	private Mutex surfaceMutex;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
-	private LinkedList<SurfaceCommand> surfcmds;
+	private Queue<SurfaceCommand> surfcmds;
 	private System.EventHandler SurfaceCommandEvent;
+	private static readonly object surface_lock = new object();
 	
 	private Session session;
 	
@@ -58,10 +58,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		surface = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, width, height);		
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 		
+		surfcmds = new Queue<SurfaceCommand>();
 		receiver = new SurfaceReceiver(window, surface);
-		surfcmds = new LinkedList<SurfaceCommand>();
-		SurfaceCommandEvent = new System.EventHandler(this.OnSurfaceCommandEvent);
-		surfaceMutex = new Mutex();
+		SurfaceCommandEvent += new System.EventHandler(this.OnSurfaceCommandEvent);
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -201,14 +200,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	}
 	
 	public void OnSurfaceCommand(BinaryReader s)
-	{
-		SurfaceCommand cmd;
-		
-		cmd = SurfaceCommand.Parse(s);
-		
-		surfaceMutex.WaitOne();
-		surfcmds.AddLast(cmd);
-		surfaceMutex.ReleaseMutex();
+	{	
+		lock(surface_lock)
+		{			
+			surfcmds.Enqueue(SurfaceCommand.Parse(s));
+		}
 		
 		Gtk.Application.Invoke(SurfaceCommandEvent);
 	}
@@ -239,19 +235,22 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	
 	protected void OnSurfaceCommandEvent(object o, System.EventArgs args)
 	{		
-		surfaceMutex.WaitOne();
-		
-		if (surfcmds.Count > 0)
+		lock(surface_lock)
 		{
-			foreach (SurfaceCommand cmd in surfcmds)
+			SurfaceCommand cmd;
+			
+			while (surfcmds.Count > 0)
 			{
+				Console.WriteLine("surfcmds.Count: {0}", surfcmds.Count);
+				
+				cmd = surfcmds.Dequeue();
+				
+				Console.WriteLine(cmd.ToString());
+				Console.WriteLine(receiver.ToString());
+					
 				cmd.Execute(receiver);
 				window.ProcessUpdates(false);
-			}
-			
-			surfcmds.Clear();
+			}	
 		}
-		
-		surfaceMutex.ReleaseMutex();
 	}
 }

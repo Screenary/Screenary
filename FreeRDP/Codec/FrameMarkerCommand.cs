@@ -20,7 +20,7 @@ namespace FreeRDP
 		
 		public override void Execute(SurfaceReceiver receiver)
 		{
-			//receiver.window.ProcessUpdates(false);	
+			receiver.window.ProcessUpdates(false);	
 		}
 	}
 }

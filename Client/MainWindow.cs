@@ -194,23 +194,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	}
 		
 	public void OnSurfaceCommand(BinaryReader s)
-	{
-		SurfaceCommand cmd;
-		
-		Gdk.Threads.Enter();
-		
-		try {
-			cmd = SurfaceCommand.Parse(s);
+	{		
+		Gtk.Application.Invoke(delegate {
+			
+			SurfaceCommand cmd = SurfaceCommand.Parse(s);
 			
 			if (cmd != null)
 			{
 				cmd.Execute(receiver);
 				window.ProcessUpdates(false);
 			}
-		}
-		finally {
-			Gdk.Threads.Leave();
-		}
+		});
 	}
 	
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)

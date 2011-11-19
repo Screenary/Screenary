@@ -52,7 +52,7 @@
     <Compile Include="Codec\SurfaceBitsCommand.cs" />
     <Compile Include="Codec\SurfaceCommand.cs" />
     <Compile Include="Codec\SurfaceReceiver.cs" />
-    <Compile Include="Core\FreeRDP.cs" />
+    <Compile Include="Core\RDP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

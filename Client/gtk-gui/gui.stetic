@@ -75,6 +75,12 @@
         <property name="ShortLabel" translatable="yes">About</property>
         <signal name="Activated" handler="OnAboutActionActivated" />
       </action>
+      <action id="FreeRDPAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">FreeRDP</property>
+        <property name="ShortLabel" translatable="yes">FreeRDP</property>
+        <signal name="Activated" handler="OnFreeRDPActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -103,6 +109,7 @@
                   <node type="Menu" action="ToolsAction">
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
+                    <node type="Menuitem" action="FreeRDPAction" />
                   </node>
                   <node type="Menu" action="HelpAction">
                     <node type="Menuitem" action="aboutAction" />

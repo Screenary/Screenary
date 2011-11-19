@@ -21,6 +21,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>0414, 0219</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -43,14 +44,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="FrameMarkerCommand.cs" />
-    <Compile Include="Rfx.cs" />
-    <Compile Include="RfxMessage.cs" />
-    <Compile Include="SetSurfaceBitsCommand.cs" />
-    <Compile Include="StreamSurfaceBitsCommand.cs" />
-    <Compile Include="SurfaceCommand.cs" />
-    <Compile Include="SurfaceReceiver.cs" />
-    <Compile Include="SurfaceBitsCommand.cs" />
+    <Compile Include="Codec\FrameMarkerCommand.cs" />
+    <Compile Include="Codec\Rfx.cs" />
+    <Compile Include="Codec\RfxMessage.cs" />
+    <Compile Include="Codec\SetSurfaceBitsCommand.cs" />
+    <Compile Include="Codec\StreamSurfaceBitsCommand.cs" />
+    <Compile Include="Codec\SurfaceBitsCommand.cs" />
+    <Compile Include="Codec\SurfaceCommand.cs" />
+    <Compile Include="Codec\SurfaceReceiver.cs" />
+    <Compile Include="Core\FreeRDP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="None" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Core\" />
+  </ItemGroup>
 </Project>

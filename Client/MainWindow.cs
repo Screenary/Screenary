@@ -236,4 +236,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	{
 
 	}
+
+	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
+	{
+		Client freerdp = new Client();
+	}
 }

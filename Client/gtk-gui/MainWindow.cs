@@ -14,11 +14,12 @@ public partial class MainWindow
 	private global::Gtk.Action RemoteFXAction;
 	private global::Gtk.Action HelpAction;
 	private global::Gtk.Action aboutAction;
+	private global::Gtk.Action FreeRDPAction;
 	private global::Gtk.VBox mainVbox;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.DrawingArea mainDrawingArea;
-	
+    
 	protected virtual void Build ()
 	{
 		global::Stetic.Gui.Initialize (this);
@@ -55,6 +56,9 @@ public partial class MainWindow
 		this.aboutAction = new global::Gtk.Action ("aboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
 		this.aboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.aboutAction, "<Control>a");
+		this.FreeRDPAction = new global::Gtk.Action ("FreeRDPAction", global::Mono.Unix.Catalog.GetString ("FreeRDP"), null, null);
+		this.FreeRDPAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("FreeRDP");
+		w1.Add (this.FreeRDPAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -70,7 +74,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='openAction' action='openAction'/><menuitem name='closeAction' action='closeAction'/><menuitem name='connectAction' action='connectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='openAction' action='openAction'/><menuitem name='closeAction' action='closeAction'/><menuitem name='connectAction' action='connectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add (this.menubar1);
@@ -103,6 +107,7 @@ public partial class MainWindow
 		this.recordAction.Activated += new global::System.EventHandler (this.OnRecordActionActivated);
 		this.RemoteFXAction.Activated += new global::System.EventHandler (this.OnRemoteFXActionActivated);
 		this.aboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
+		this.FreeRDPAction.Activated += new global::System.EventHandler (this.OnFreeRDPActionActivated);
 		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
 	}
 }

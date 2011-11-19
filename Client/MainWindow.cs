@@ -215,7 +215,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException();
+		
 	}
 	
 	public void OnUserConnect(string address, int port)

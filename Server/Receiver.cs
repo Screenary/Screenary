@@ -39,12 +39,6 @@ namespace Screenary.Server
 			dispatcher.RegisterChannel(session.GetServer());
 			
 			thread.Start();
-			
-			/*while (true)
-			{
-				client.RecvPDU();
-				Thread.Sleep(1);
-			}*/
 		}
 		
 		/**

@@ -1,11 +1,12 @@
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {	
 	public unsafe class RDP
 	{
-		[StructLayout(LayoutKind.Explicit,Size=256)]
+		[StructLayout(LayoutKind.Explicit, Size=256)]
 		public class rdpContext
 		{
 			[FieldOffset(0)] public IntPtr instance;
@@ -19,7 +20,7 @@ namespace FreeRDP
 			[FieldOffset(104)] public IntPtr graphics;
 		};
 		
-		[StructLayout(LayoutKind.Explicit)]
+		[StructLayout(LayoutKind.Explicit, CharSet=CharSet.Ansi)]
 		public unsafe class rdpSettings
 		{
 			[FieldOffset(0)] public IntPtr instance;
@@ -40,8 +41,8 @@ namespace FreeRDP
 			[FieldOffset(116)] public int authentication;
 			
 			[FieldOffset(192)] public UInt32 port;
-			[FieldOffset(200)] public int ipv6;
-			//[FieldOffset(204), MarshalAs(UnmanagedType.LPStr)] public string hostname;
+			[FieldOffset(196)] public int ipv6;
+			//[FieldOffset(204)] public string hostname;
 			/*
 			[FieldOffset(212)] public string username;
 			[FieldOffset(220)] public string password;
@@ -55,7 +56,7 @@ namespace FreeRDP
 			[FieldOffset(276)] public int compression;
 		};
 		
-		[StructLayout(LayoutKind.Explicit,Size=320)]
+		[StructLayout(LayoutKind.Explicit, Size=320)]
 		public unsafe class freerdp
 		{
 			[FieldOffset(0)] public IntPtr context;
@@ -115,10 +116,13 @@ namespace FreeRDP
 			
 			settings = instance.settings;
 			
+			Console.WriteLine("width:{0} height:{1} port: {2}",
+				settings.width, settings.height, settings.port);
+			
 			settings.width = 1024;
 			settings.height = 768;
 			settings.autologon = 1;
-			settings.colorDepth = 16;
+			settings.colorDepth = 16;			
 			//settings.hostname = "localhost";
 			//settings.username = "Administrator";
 			//settings.password = "Password";

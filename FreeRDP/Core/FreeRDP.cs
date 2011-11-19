@@ -9,14 +9,14 @@ namespace FreeRDP
 		public class rdpContext
 		{
 			[FieldOffset(0)] public IntPtr instance;
-			[FieldOffset(4)] public IntPtr peer;
+			[FieldOffset(8)] public IntPtr peer;
 			
 			[FieldOffset(64)] public IntPtr rdp;
-			[FieldOffset(68)] public IntPtr gdi;
-			[FieldOffset(72)] public IntPtr rail;
-			[FieldOffset(76)] public IntPtr cache;
-			[FieldOffset(80)] public IntPtr channels;
-			[FieldOffset(84)] public IntPtr graphics;
+			[FieldOffset(72)] public IntPtr gdi;
+			[FieldOffset(80)] public IntPtr rail;
+			[FieldOffset(88)] public IntPtr cache;
+			[FieldOffset(96)] public IntPtr channels;
+			[FieldOffset(104)] public IntPtr graphics;
 		};
 		
 		[StructLayout(LayoutKind.Explicit,Size=320)]
@@ -25,20 +25,20 @@ namespace FreeRDP
 			[FieldOffset(0)] public IntPtr context;
 			
 			[FieldOffset(64)] public IntPtr rdpInput;
-			[FieldOffset(68)] public IntPtr rdpUpdate;
-			[FieldOffset(72)] public IntPtr rdpSettings;
+			[FieldOffset(72)] public IntPtr rdpUpdate;
+			[FieldOffset(80)] public IntPtr rdpSettings;
 			
-			[FieldOffset(128)] public Int32 ContextSize;
-			[FieldOffset(132)] public pContextNew ContextNew;
-			[FieldOffset(136)] public pContextFree ContextFree;
+			[FieldOffset(128)] public int ContextSize;
+			[FieldOffset(136)] public pContextNew ContextNew;
+			[FieldOffset(144)] public pContextFree ContextFree;
 			
 			[FieldOffset(192)] public pPreConnect PreConnect;
-			[FieldOffset(196)] public pPostConnect PostConnect;
-			[FieldOffset(200)] public IntPtr Authenticate;
-			[FieldOffset(204)] public IntPtr VerifyAuthenticate;
+			[FieldOffset(200)] public pPostConnect PostConnect;
+			[FieldOffset(208)] public IntPtr Authenticate;
+			[FieldOffset(216)] public IntPtr VerifyAuthenticate;
 			
 			[FieldOffset(256)] public IntPtr SendChannelData;
-			[FieldOffset(260)] public IntPtr RecvChannelData;
+			[FieldOffset(264)] public IntPtr RecvChannelData;
 		};
 		
 		public delegate void pContextNew(freerdp instance, rdpContext context);
@@ -69,7 +69,12 @@ namespace FreeRDP
 		
 		public Client()
 		{
-			instance = freerdp_new();
+			instance = freerdp_new();			
+			Console.WriteLine("ContextSize: {0}", instance.ContextSize);
+			
+			instance.ContextNew = ContextNew;
+			instance.ContextFree = ContextFree;
+			freerdp_context_new(instance);
 		}
 		
 		~Client()
@@ -79,7 +84,7 @@ namespace FreeRDP
 		
 		void ContextNew(freerdp instance, rdpContext context)
 		{
-
+			Console.WriteLine("ContextNew");
 		}
 		
 		void ContextFree(freerdp instance, rdpContext context)

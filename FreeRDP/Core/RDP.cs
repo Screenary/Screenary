@@ -6,76 +6,77 @@ namespace FreeRDP
 {	
 	public unsafe class RDP
 	{
-		[StructLayout(LayoutKind.Explicit, Size=256)]
-		public class rdpContext
+		[StructLayout(LayoutKind.Sequential)]
+		public struct rdpContext
 		{
-			[FieldOffset(0)] public IntPtr instance;
-			[FieldOffset(8)] public IntPtr peer;
+			public IntPtr instance;
+			public IntPtr peer;
+			public fixed UInt32 paddingA[16 - 2];
 			
-			[FieldOffset(64)] public IntPtr rdp;
-			[FieldOffset(72)] public IntPtr gdi;
-			[FieldOffset(80)] public IntPtr rail;
-			[FieldOffset(88)] public IntPtr cache;
-			[FieldOffset(96)] public IntPtr channels;
-			[FieldOffset(104)] public IntPtr graphics;
+			public int argc;
+			public IntPtr argv;
+			public fixed UInt32 paddingB[32 - 18];
+			
+			public IntPtr rdp;
+			public IntPtr gdi;
+			public IntPtr rail;
+			public IntPtr cache;
+			public IntPtr channels;
+			public IntPtr graphics;
+			public fixed UInt32 paddingC[64 - 38];
 		};
 		
-		[StructLayout(LayoutKind.Explicit, CharSet=CharSet.Ansi)]
-		public unsafe class rdpSettings
+		[StructLayout(LayoutKind.Sequential)]
+		public struct rdpSettings
 		{
-			[FieldOffset(0)] public IntPtr instance;
+			public IntPtr instance;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(16-1))] public UInt32[] paddingA;
 			
-			[FieldOffset(64)] public UInt32 width;
-			[FieldOffset(68)] public UInt32 height;
-			[FieldOffset(72)] public UInt32 rdpVersion;
-			[FieldOffset(76)] public UInt32 colorDepth;
-			[FieldOffset(80)] public UInt32 kbdLayout;
-			[FieldOffset(84)] public UInt32 kbdType;
-			[FieldOffset(88)] public UInt32 kbdSubType;
-			[FieldOffset(92)] public UInt32 kbdFnKeys;
-			[FieldOffset(96)] public UInt32 clientBuild;
-			[FieldOffset(100)] public UInt32 requestedProtocols;
-			[FieldOffset(104)] public UInt32 selectedProtocol;
-			[FieldOffset(108)] public UInt32 encryptionMethod;
-			[FieldOffset(112)] public UInt32 encryptionLevel;
-			[FieldOffset(116)] public int authentication;
+			public UInt32 width;
+			public UInt32 height;
+			public UInt32 rdpVersion;
+			public UInt32 colorDepth;
+			public UInt32 kbdLayout;
+			public UInt32 kbdType;
+			public UInt32 kbdSubType;
+			public UInt32 kbdFnKeys;
+			public UInt32 clientBuild;
+			public UInt32 requestedProtocols;
+			public UInt32 selectedProtocol;
+			public UInt32 encryptionMethod;
+			public UInt32 encryptionLevel;
+			public int authentication;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(48-30))] public UInt32[] paddingB;
 			
-			[FieldOffset(192)] public UInt32 port;
-			[FieldOffset(196)] public int ipv6;
-			//[FieldOffset(204)] public string hostname;
-			/*
-			[FieldOffset(212)] public string username;
-			[FieldOffset(220)] public string password;
-			[FieldOffset(228)] public string domain;
-			[FieldOffset(236)] public string shell;
-			[FieldOffset(244)] public string directory;
-			[FieldOffset(252)] public string ipAddress;
-			[FieldOffset(260)] public string clientDir;
-			*/
-			[FieldOffset(268)] public int autologon;
-			[FieldOffset(276)] public int compression;
+			public UInt32 port;
+			public int ipv6;
 		};
 		
-		[StructLayout(LayoutKind.Explicit, Size=320)]
-		public unsafe class freerdp
+		[StructLayout(LayoutKind.Sequential)]
+		public struct freerdp
 		{
-			[FieldOffset(0)] public IntPtr context;
+			public IntPtr context;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(16-1))] public UInt32[] paddingA;
 			
-			[FieldOffset(64)] public IntPtr input;
-			[FieldOffset(72)] public IntPtr update;
-			[FieldOffset(80)] public rdpSettings settings;
+			public IntPtr input;
+			public IntPtr update;
+			public IntPtr settings;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(32-19))] public UInt32[] paddingB;
 			
-			[FieldOffset(128)] public int ContextSize;
-			[FieldOffset(136)] public pContextNew ContextNew;
-			[FieldOffset(144)] public pContextFree ContextFree;
+			public UIntPtr ContextSize;
+			public pContextNew ContextNew;
+			public pContextFree ContextFree;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(48-35))] public UInt32[] paddingC;
 			
-			[FieldOffset(192)] public pPreConnect PreConnect;
-			[FieldOffset(200)] public pPostConnect PostConnect;
-			[FieldOffset(208)] public IntPtr Authenticate;
-			[FieldOffset(216)] public IntPtr VerifyAuthenticate;
+			public pPreConnect PreConnect;
+			public pPostConnect PostConnect;
+			public IntPtr Authenticate;
+			public IntPtr VerifyAuthenticate;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(64-52))] public UInt32[] paddingD;
 			
-			[FieldOffset(256)] public IntPtr SendChannelData;
-			[FieldOffset(264)] public IntPtr RecvChannelData;
+			public IntPtr SendChannelData;
+			public IntPtr RecvChannelData;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(80-66))] public UInt32[] paddingF;
 		};
 		
 		public delegate void pContextNew(freerdp instance, rdpContext context);
@@ -107,13 +108,13 @@ namespace FreeRDP
 		
 		public RDP()
 		{
-			instance = freerdp_new();			
-			Console.WriteLine("ContextSize: {0}", instance.ContextSize);
+			instance = freerdp_new();
 			
 			instance.ContextNew = ContextNew;
 			instance.ContextFree = ContextFree;
 			freerdp_context_new(instance);
 			
+			/*
 			settings = instance.settings;
 			
 			Console.WriteLine("width:{0} height:{1} port: {2}",
@@ -121,7 +122,6 @@ namespace FreeRDP
 			
 			settings.width = 1024;
 			settings.height = 768;
-			settings.autologon = 1;
 			settings.colorDepth = 16;			
 			//settings.hostname = "localhost";
 			//settings.username = "Administrator";
@@ -129,6 +129,7 @@ namespace FreeRDP
 			
 			instance.PreConnect = PreConnect;
 			instance.PostConnect = PostConnect;
+			*/
 		}
 		
 		~RDP()

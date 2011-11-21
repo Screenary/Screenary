@@ -54,6 +54,11 @@
     <Compile Include="Codec\SurfaceReceiver.cs" />
     <Compile Include="Core\RDP.cs" />
     <Compile Include="Utils\Memory.cs" />
+    <Compile Include="Core\Settings.cs" />
+    <Compile Include="Core\Context.cs" />
+    <Compile Include="Core\Update.cs" />
+    <Compile Include="GDI\GDI.cs" />
+    <Compile Include="Core\FreeRDP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -68,5 +73,6 @@
   <ItemGroup>
     <Folder Include="Core\" />
     <Folder Include="Utils\" />
+    <Folder Include="GDI\" />
   </ItemGroup>
 </Project>

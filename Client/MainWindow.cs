@@ -235,6 +235,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	{
 		RDP rdp = new RDP();
 		
-		//rdp.Connect();
+		rdp.Connect();
 	}
 }

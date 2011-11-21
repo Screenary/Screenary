@@ -11,11 +11,11 @@ namespace FreeRDP
 		{
 			public IntPtr instance;
 			public IntPtr peer;
-			public fixed UInt32 paddingA[16 - 2];
+			public fixed UInt32 paddingA[16-2];
 			
 			public int argc;
 			public IntPtr argv;
-			public fixed UInt32 paddingB[32 - 18];
+			public fixed UInt32 paddingB[32-18];
 			
 			public IntPtr rdp;
 			public IntPtr gdi;
@@ -23,14 +23,14 @@ namespace FreeRDP
 			public IntPtr cache;
 			public IntPtr channels;
 			public IntPtr graphics;
-			public fixed UInt32 paddingC[64 - 38];
+			public fixed UInt32 paddingC[64-38];
 		};
 		
 		[StructLayout(LayoutKind.Sequential)]
 		public struct rdpSettings
 		{
 			public IntPtr instance;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(16-1))] public UInt32[] paddingA;
+			public fixed UInt32 paddingA[16-1];
 			
 			public UInt32 width;
 			public UInt32 height;
@@ -46,90 +46,110 @@ namespace FreeRDP
 			public UInt32 encryptionMethod;
 			public UInt32 encryptionLevel;
 			public int authentication;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(48-30))] public UInt32[] paddingB;
+			public fixed UInt32 paddingB[48-30];
 			
 			public UInt32 port;
 			public int ipv6;
+			public IntPtr hostname;
+			public IntPtr username;
+			public IntPtr password;
+			public IntPtr domain;
+			public IntPtr shell;
+			public IntPtr directory;
+			public IntPtr ipAddress;
+			public IntPtr clientDir;
+			public int autologon;
+			public int compression;
+			public UInt32 performanceFlags;
+			public fixed UInt32 paddingC[80-61];
+			
+			public fixed UInt32 paddingD[112-80];
+			
+			public IntPtr homePath;
+			public UInt32 shareId;
+			public UInt32 pduSource;
+			public IntPtr uniconv;
+			public int serverMode;
+			public fixed UInt32 paddingE[144-117];
+			
+			public int encryption;
+			public int tlsSecurity;
+			public int nlaSecurity;
+			public int rdpSecurity;
+			public fixed UInt32 paddingF[160-148];
 		};
 		
 		[StructLayout(LayoutKind.Sequential)]
 		public struct freerdp
 		{
 			public IntPtr context;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(16-1))] public UInt32[] paddingA;
+			public fixed UInt32 paddingA[16-1];
 			
 			public IntPtr input;
 			public IntPtr update;
-			public IntPtr settings;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(32-19))] public UInt32[] paddingB;
+			public rdpSettings* settings;
+			public fixed UInt32 paddingB[32-19];
 			
 			public UIntPtr ContextSize;
-			public pContextNew ContextNew;
-			public pContextFree ContextFree;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(48-35))] public UInt32[] paddingC;
+			public IntPtr ContextNew;
+			public IntPtr ContextFree;
+			public fixed UInt32 paddingC[48-35];
 			
-			public pPreConnect PreConnect;
-			public pPostConnect PostConnect;
+			public IntPtr PreConnect;
+			public IntPtr PostConnect;
 			public IntPtr Authenticate;
 			public IntPtr VerifyAuthenticate;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(64-52))] public UInt32[] paddingD;
+			public fixed UInt32 paddingD[64-52];
 			
 			public IntPtr SendChannelData;
 			public IntPtr RecvChannelData;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst=(80-66))] public UInt32[] paddingF;
+			public fixed UInt32 paddingF[80-66];
 		};
 		
-		public delegate void pContextNew(freerdp instance, rdpContext context);
-		public delegate void pContextFree(freerdp instance, rdpContext context);
+		public delegate void pContextNew(freerdp* instance, rdpContext* context);
+		public delegate void pContextFree(freerdp* instance, rdpContext* context);
 		
-		public delegate bool pPreConnect(freerdp instance);
-		public delegate bool pPostConnect(freerdp instance);
-		
-		private freerdp instance;
-		private rdpSettings settings;
+		public delegate bool pPreConnect(freerdp* instance);
+		public delegate bool pPostConnect(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_context_new(freerdp instance);
+		public static extern void freerdp_context_new(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_context_free(freerdp instance);
+		public static extern void freerdp_context_free(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern bool freerdp_connect(freerdp instance);
+		public static extern int freerdp_connect(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern bool freerdp_disconnect(freerdp instance);
+		public static extern int freerdp_disconnect(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern freerdp freerdp_new();
+		public static extern freerdp* freerdp_new();
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_free(freerdp instance);
+		public static extern void freerdp_free(freerdp* instance);
+		
+		private freerdp* handle;
+		private rdpSettings* settings;
+		
+		private pContextNew hContextNew;
+		private pContextFree hContextFree;
+		
+		private pPreConnect hPreConnect;
+		private pPostConnect hPostConnect;
 		
 		public RDP()
 		{
-			instance = freerdp_new();
+			handle = freerdp_new();
 			
-			instance.ContextNew = ContextNew;
-			instance.ContextFree = ContextFree;
-			freerdp_context_new(instance);
+			hContextNew = new pContextNew(ContextNew);
+			hContextFree = new pContextFree(ContextFree);
 			
-			/*
-			settings = instance.settings;
-			
-			Console.WriteLine("width:{0} height:{1} port: {2}",
-				settings.width, settings.height, settings.port);
-			
-			settings.width = 1024;
-			settings.height = 768;
-			settings.colorDepth = 16;			
-			//settings.hostname = "localhost";
-			//settings.username = "Administrator";
-			//settings.password = "Password";
-			
-			instance.PreConnect = PreConnect;
-			instance.PostConnect = PostConnect;
-			*/
+			handle->ContextNew = Marshal.GetFunctionPointerForDelegate(hContextNew);
+			handle->ContextFree = Marshal.GetFunctionPointerForDelegate(hContextFree);
+
+			freerdp_context_new(handle);
 		}
 		
 		~RDP()
@@ -137,24 +157,53 @@ namespace FreeRDP
 
 		}
 		
-		void ContextNew(freerdp instance, rdpContext context)
+		private IntPtr GetNativeAnsiString(string str)
+		{
+			ASCIIEncoding strEncoder = new ASCIIEncoding();
+			
+			int size = strEncoder.GetByteCount(str);
+			IntPtr pStr = Memory.Zalloc(size);
+			byte[] buffer = strEncoder.GetBytes(str);
+			Marshal.Copy(buffer, 0, pStr, size);
+			
+			return pStr;
+		}
+		
+		void ContextNew(freerdp* instance, rdpContext* context)
 		{
 			Console.WriteLine("ContextNew");
-		}
-		
-		void ContextFree(freerdp instance, rdpContext context)
-		{
 			
+			hPreConnect = new pPreConnect(PreConnect);
+			hPostConnect = new pPostConnect(PostConnect);
+			
+			instance->PreConnect = Marshal.GetFunctionPointerForDelegate(hPreConnect);
+			instance->PostConnect = Marshal.GetFunctionPointerForDelegate(hPostConnect);
+			
+			settings = instance->settings;
+			
+			Console.WriteLine("width:{0} height:{1} port:{2}",
+				settings->width, settings->height, settings->port);
+			
+			settings->hostname = GetNativeAnsiString("localhost");
+			settings->username = GetNativeAnsiString("Administrator");
+			settings->password = GetNativeAnsiString("Password123!");
+			
+			freerdp_connect(instance);
 		}
 		
-		bool PreConnect(freerdp instance)
+		void ContextFree(freerdp* instance, rdpContext* context)
+		{
+			Console.WriteLine("ContextFree");
+		}
+		
+		bool PreConnect(freerdp* instance)
 		{
 			Console.WriteLine("PreConnect");
 			
 			return true;
 		}
 		
-		bool PostConnect(freerdp instance)
+		bool PostConnect(freerdp* instance)
 		{
 			Console.WriteLine("PostConnect");
 			return true;
@@ -162,12 +211,12 @@ namespace FreeRDP
 		
 		public bool Connect()
 		{
-			return freerdp_connect(instance);
+			return ((freerdp_connect(handle) == 0) ? false : true);
 		}
 		
 		public bool Disconnect()
 		{
-			return freerdp_disconnect(instance);
+			return ((freerdp_disconnect(handle) == 0) ? false : true);
 		}
 	}
 }

@@ -53,6 +53,7 @@
     <Compile Include="Codec\SurfaceCommand.cs" />
     <Compile Include="Codec\SurfaceReceiver.cs" />
     <Compile Include="Core\RDP.cs" />
+    <Compile Include="Utils\Memory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -66,5 +67,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <Folder Include="Core\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>

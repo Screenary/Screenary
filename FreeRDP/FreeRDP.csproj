@@ -59,6 +59,11 @@
     <Compile Include="Core\Update.cs" />
     <Compile Include="GDI\GDI.cs" />
     <Compile Include="Core\FreeRDP.cs" />
+    <Compile Include="Core\PointerUpdate.cs" />
+    <Compile Include="Core\PrimaryUpdate.cs" />
+    <Compile Include="Core\SecondaryUpdate.cs" />
+    <Compile Include="Core\AltSecUpdate.cs" />
+    <Compile Include="Core\WindowUpdate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

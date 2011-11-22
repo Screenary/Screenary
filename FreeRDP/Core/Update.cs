@@ -3,20 +3,20 @@ using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {
-	public unsafe delegate void pBeginPaint(rdpUpdate* update);
-	public unsafe delegate void pEndPaint(rdpUpdate* update);
-	public unsafe delegate void pSetBounds(rdpUpdate* update, IntPtr bounds);
-	public unsafe delegate void pSynchronize(rdpUpdate* update);
-	public unsafe delegate void pDesktopResize(rdpUpdate* update);
-	public unsafe delegate void pBitmapUpdate(rdpUpdate* update, IntPtr bitmap);
-	public unsafe delegate void pPalette(rdpUpdate* update, IntPtr palette);
-	public unsafe delegate void pPlaySound(rdpUpdate* update, IntPtr playSound);
+	public unsafe delegate void pBeginPaint(rdpContext* context);
+	public unsafe delegate void pEndPaint(rdpContext* context);
+	public unsafe delegate void pSetBounds(rdpContext* context, IntPtr bounds);
+	public unsafe delegate void pSynchronize(rdpContext* context);
+	public unsafe delegate void pDesktopResize(rdpContext* context);
+	public unsafe delegate void pBitmapUpdate(rdpContext* context, IntPtr bitmap);
+	public unsafe delegate void pPalette(rdpContext* context, IntPtr palette);
+	public unsafe delegate void pPlaySound(rdpContext* context, IntPtr playSound);
 	
-	public unsafe delegate void pPointerPosition(rdpUpdate* update, IntPtr pointerPosition);
-	public unsafe delegate void pPointerSystem(rdpUpdate* update, IntPtr pointerSystem);
-	public unsafe delegate void pPointerColor(rdpUpdate* update, IntPtr pointerColor);
-	public unsafe delegate void pPointerNew(rdpUpdate* update, IntPtr pointerNew);
-	public unsafe delegate void pPointerCached(rdpUpdate* update, IntPtr pointerCached);
+	public unsafe delegate void pRefreshRect(rdpContext* context, byte count, IntPtr areas);
+	public unsafe delegate void pSuppressOutput(rdpContext* context, byte allow, IntPtr area);
+	
+	public unsafe delegate void pSurfaceCommand(rdpContext* context, IntPtr s);
+	public unsafe delegate void pSurfaceBits(rdpContext* context, IntPtr surfaceBitsCommand);
 	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpUpdate
@@ -34,12 +34,20 @@ namespace FreeRDP
 		public IntPtr PlaySound;
 		public fixed UInt32 paddingB[32-24];
 		
-		public IntPtr PointerPosition;
-		public IntPtr PointerSystem;
-		public IntPtr PointerColor;
-		public IntPtr PointerNew;
-		public IntPtr PointerCached;
+		public rdpPointerUpdate* pointer;
+		public rdpPrimaryUpdate* primary;
+		public rdpSecondaryUpdate* secondary;
+		public rdpAltSecUpdate* altsec;
+		public rdpWindowUpdate* window;
 		public fixed UInt32 paddingC[48-37];
+		
+		public IntPtr RefreshRect;
+		public IntPtr SuppressOutput;
+		public fixed UInt32 paddingD[64-50];
+		
+		public IntPtr SurfaceCommand;
+		public IntPtr SurfaceBits;
+		public fixed UInt32 paddingE[80-66];
 	}
 }
 

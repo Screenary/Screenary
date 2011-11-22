@@ -2,13 +2,47 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace FreeRDP
-{
+{	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct rdpBounds
+	{
+		public Int32 left;
+		public Int32 top;
+		public Int32 right;
+		public Int32 bottom;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct BitmapData
+	{
+		public UInt32 destLeft;
+		public UInt32 destTop;
+		public UInt32 destRight;
+		public UInt32 destBottom;
+		public UInt32 width;
+		public UInt32 height;
+		public UInt32 bitsPerPixel;
+		public UInt32 flags;
+		public UInt32 bitmapLength;
+		public fixed byte bitmapComprHdr[8];
+		public IntPtr bitmapDataStream;
+		public int compressed;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct BitmapUpdate
+	{
+		public UInt32 count;
+		public UInt32 number;
+		public BitmapData* rectangles;
+	}
+	
 	public unsafe delegate void pBeginPaint(rdpContext* context);
 	public unsafe delegate void pEndPaint(rdpContext* context);
-	public unsafe delegate void pSetBounds(rdpContext* context, IntPtr bounds);
+	public unsafe delegate void pSetBounds(rdpContext* context, rdpBounds* bounds);
 	public unsafe delegate void pSynchronize(rdpContext* context);
 	public unsafe delegate void pDesktopResize(rdpContext* context);
-	public unsafe delegate void pBitmapUpdate(rdpContext* context, IntPtr bitmap);
+	public unsafe delegate void pBitmapUpdate(rdpContext* context, BitmapUpdate* bitmap);
 	public unsafe delegate void pPalette(rdpContext* context, IntPtr palette);
 	public unsafe delegate void pPlaySound(rdpContext* context, IntPtr playSound);
 	

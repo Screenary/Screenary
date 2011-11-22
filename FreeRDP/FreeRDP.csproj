@@ -56,14 +56,21 @@
     <Compile Include="Utils\Memory.cs" />
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Context.cs" />
-    <Compile Include="Core\Update.cs" />
     <Compile Include="GDI\GDI.cs" />
     <Compile Include="Core\FreeRDP.cs" />
-    <Compile Include="Core\PointerUpdate.cs" />
-    <Compile Include="Core\PrimaryUpdate.cs" />
-    <Compile Include="Core\SecondaryUpdate.cs" />
-    <Compile Include="Core\AltSecUpdate.cs" />
-    <Compile Include="Core\WindowUpdate.cs" />
+    <Compile Include="Cache\Cache.cs" />
+    <Compile Include="Cache\GlyphCache.cs" />
+    <Compile Include="Cache\BitmapCache.cs" />
+    <Compile Include="Cache\PointerCache.cs" />
+    <Compile Include="Cache\BrushCache.cs" />
+    <Compile Include="Cache\PaletteCache.cs" />
+    <Compile Include="Cache\OffscreenCache.cs" />
+    <Compile Include="Core\Update\SecondaryUpdate.cs" />
+    <Compile Include="Core\Update\PrimaryUpdate.cs" />
+    <Compile Include="Core\Update\PointerUpdate.cs" />
+    <Compile Include="Core\Update\AltSecUpdate.cs" />
+    <Compile Include="Core\Update\WindowUpdate.cs" />
+    <Compile Include="Core\Update\Update.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -79,5 +86,7 @@
     <Folder Include="Core\" />
     <Folder Include="Utils\" />
     <Folder Include="GDI\" />
+    <Folder Include="Cache\" />
+    <Folder Include="Core\Update\" />
   </ItemGroup>
 </Project>

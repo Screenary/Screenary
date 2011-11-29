@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Collections;
 
 namespace Screenary
 {
@@ -7,6 +9,7 @@ namespace Screenary
 	{
 		private UInt32 sessionId;
 		private ISessionClient client;
+		private readonly object channelLock = new object();
 		
 		public SessionClient(ISessionClient client, TransportClient transport)
 		{
@@ -26,22 +29,22 @@ namespace Screenary
 			return s;
 		}
 		
-		public bool SendJoinReq()
+		public void SendJoinReq()
 		{
-			return true;
+
 		}
 		
-		public bool SendLeaveReq()
+		public void SendLeaveReq()
 		{
-			return true;
+
 		}
 		
-		public bool SendAuthReq()
+		public void SendAuthReq()
 		{
-			return true;
+
 		}
 		
-		public bool SendCreateReq(string username, string password)
+		public void SendCreateReq(string username, string password)
 		{
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
@@ -54,30 +57,30 @@ namespace Screenary
 			
 			Console.WriteLine("SendCreateReq");
 			
-			return Send(buffer, PDU_SESSION_CREATE_REQ);
+			Send(buffer, PDU_SESSION_CREATE_REQ);
 		}
 		
-		public bool SendTermReq()
+		public void SendTermReq()
 		{
-			return true;
+
 		}
 		
-		public bool RecvJoinRsp(BinaryReader s)
+		public void RecvJoinRsp(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		public bool RecvLeaveRsp(BinaryReader s)
+		public void RecvLeaveRsp(BinaryReader s)
 		{
-			return true;
+	
 		}
 		
-		public bool RecvAuthRsp(BinaryReader s)
+		public void RecvAuthRsp(BinaryReader s)
 		{
-			return true;
+		
 		}
 		
-		public bool RecvCreateRsp(BinaryReader s)
+		public void RecvCreateRsp(BinaryReader s)
 		{
 			UInt32 sessionId;
 			UInt32 sessionStatus;
@@ -89,22 +92,40 @@ namespace Screenary
 			if (sessionStatus != 0)
 			{
 				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
-				return false;
+				return;
 			}
 			
 			sessionKey = s.ReadChars(12);
 			
 			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKey);
-			
-			return true;
 		}
 		
-		public bool RecvTermRsp(BinaryReader s)
+		public void RecvTermRsp(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		public override bool OnRecv(byte[] buffer, byte pduType)
+		public override void OnRecv(byte[] buffer, byte pduType)
+		{
+			lock (channelLock)
+			{
+				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));
+				Monitor.Pulse(channelLock);
+			}
+		}
+		
+		public override void OnOpen()
+		{
+			thread = new Thread(ChannelThreadProc);
+			thread.Start();
+		}
+		
+		public override void OnClose()
+		{
+			
+		}
+		
+		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
@@ -112,32 +133,44 @@ namespace Screenary
 			switch (pduType)
 			{
 				case PDU_SESSION_JOIN_RSP:
-					return RecvJoinRsp(s);
+					RecvJoinRsp(s);
+					return;
 				
 				case PDU_SESSION_LEAVE_RSP:
-					return RecvLeaveRsp(s);
+					RecvLeaveRsp(s);
+					return;
 				
 				case PDU_SESSION_CREATE_RSP:
-					return RecvCreateRsp(s);
+					RecvCreateRsp(s);
+					return;
 				
 				case PDU_SESSION_TERM_RSP:
-					return RecvTermRsp(s);
+					RecvTermRsp(s);
+					return;
 				
 				case PDU_SESSION_AUTH_RSP:
-					return RecvAuthRsp(s);
+					RecvAuthRsp(s);
+					return;
 				
 				default:
-					return false;
+					return;
 			}
 		}
 		
-		public override void OnOpen()
+		public void ChannelThreadProc()
 		{
 			SendCreateReq("screenary", "awesome");
-		}
-		
-		public override void OnClose()
-		{
+			
+			lock (channelLock)
+			{
+				while (queue.Count < 1)
+				{
+					Monitor.Wait(channelLock);
+				}
+				
+				PDU pdu = (PDU) queue.Dequeue();
+				ProcessPDU(pdu.Buffer, pdu.Type);
+			}
 		}
 	}
 }

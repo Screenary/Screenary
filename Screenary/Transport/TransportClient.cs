@@ -120,7 +120,7 @@ namespace Screenary
 			}
 		}
 		
-		public bool SendPDU(byte[] buffer, UInt16 channelId, byte pduType)
+		public void SendPDU(byte[] buffer, UInt16 channelId, byte pduType)
 		{
 			Socket socket;
 			BinaryWriter s;
@@ -150,7 +150,7 @@ namespace Screenary
 				SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
 				offset += fragSize;
 				
-				return true;
+				return;
 			}
 			else
 			{
@@ -186,7 +186,7 @@ namespace Screenary
 						SendAll(socket, fragment, 0, fragSize + PDU_HEADER_SIZE);
 						offset += fragSize;
 						
-						return true;
+						return;
 					}
 					else
 					{
@@ -209,10 +209,10 @@ namespace Screenary
 			
 			Monitor.Exit(this);
 			
-			return true;
+			return;
 		}
 		
-		public bool RecvPDU()
+		public void RecvPDU()
 		{
 			Socket socket;
 			BinaryReader s;
@@ -251,7 +251,7 @@ namespace Screenary
 						RecvAll(socket, buffer, 0, fragSize);
 						totalSize = fragSize;
 						
-						return dispatcher.DispatchPDU(buffer, channelId, pduType);
+						dispatcher.DispatchPDU(buffer, channelId, pduType);
 					}
 					else if (fragFlags == PDU_FRAGMENT_FIRST)
 					{
@@ -277,19 +277,19 @@ namespace Screenary
 						RecvAll(socket, buffer, totalSize, fragSize);
 						totalSize += fragSize;
 						
-						return dispatcher.DispatchPDU(buffer, channelId, pduType);
+						dispatcher.DispatchPDU(buffer, channelId, pduType);
 					}
 					else
 					{
 						Console.WriteLine("Invalid Fragmentation Flags: {0}", fragFlags);
-						return false;
+						return;
 					}
 				}
 			}
 			
 			Monitor.Exit(this);
 			
-			return true;
+			return;
 		}
 		
 		static void ThreadProc(TransportClient client)

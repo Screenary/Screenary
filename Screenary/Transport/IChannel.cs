@@ -9,8 +9,8 @@ namespace Screenary
 		void OnOpen();
 		void OnClose();
 		
-		bool OnRecv(byte[] buffer, byte pduType);
-		bool Send(byte[] buffer, byte pduType);
+		void OnRecv(byte[] buffer, byte pduType);
+		void Send(byte[] buffer, byte pduType);
 	}
 }
 

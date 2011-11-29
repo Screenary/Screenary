@@ -1,12 +1,14 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Collections;
 
 namespace Screenary
 {
 	public class SessionServer : SessionChannel
 	{
 		private ISessionServer server;
-		private TransportClient transport;
+		private readonly object channelLock = new object();
 		
 		public SessionServer(ISessionServer server, TransportClient transport)
 		{
@@ -27,47 +29,47 @@ namespace Screenary
 			return s;
 		}
 		
-		public bool SendJoinRsp()
+		public void SendJoinRsp()
 		{
-			return true;
+
 		}
 		
-		public bool SendLeaveRsp()
+		public void SendLeaveRsp()
 		{
-			return true;
+
 		}
 		
-		public bool SendAuthRsp()
+		public void SendAuthRsp()
 		{
-			return true;
+			
 		}
 		
-		public bool SendCreateRsp()
+		public void SendCreateRsp()
 		{
-			return true;
+
 		}
 		
-		public bool SendTermRsp()
+		public void SendTermRsp()
 		{
-			return true;
+
 		}
 		
-		private bool RecvJoinReq(BinaryReader s)
+		private void RecvJoinReq(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		private bool RecvLeaveReq(BinaryReader s)
+		private void RecvLeaveReq(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		private bool RecvAuthReq(BinaryReader s)
+		private void RecvAuthReq(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		private bool RecvCreateReq(BinaryReader s)
+		private void RecvCreateReq(BinaryReader s)
 		{
 			UInt32 sessionId;
 			string username = "";
@@ -87,15 +89,35 @@ namespace Screenary
 			
 			Console.WriteLine("RecvCreateReq: username:{0} password:{1}", username, password);
 			
-			return true;
+			return;
 		}
 		
-		private bool RecvTermReq(BinaryReader s)
+		private void RecvTermReq(BinaryReader s)
 		{
-			return true;
+
 		}
 		
-		public override bool OnRecv(byte[] buffer, byte pduType)
+		public override void OnRecv(byte[] buffer, byte pduType)
+		{
+			lock (channelLock)
+			{
+				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));
+				Monitor.Pulse(channelLock);
+			}
+		}
+		
+		public override void OnOpen()
+		{
+			thread = new Thread(ChannelThreadProc);
+			thread.Start();
+		}
+		
+		public override void OnClose()
+		{
+			
+		}
+		
+		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
@@ -103,31 +125,42 @@ namespace Screenary
 			switch (pduType)
 			{
 				case PDU_SESSION_JOIN_REQ:
-					return RecvJoinReq(s);
+					RecvJoinReq(s);
+					return;
 				
 				case PDU_SESSION_LEAVE_REQ:
-					return RecvLeaveReq(s);
+					RecvLeaveReq(s);
+					return;
 				
 				case PDU_SESSION_CREATE_REQ:
-					return RecvCreateReq(s);
+					RecvCreateReq(s);
+					return;
 				
 				case PDU_SESSION_TERM_REQ:
-					return RecvTermReq(s);
+					RecvTermReq(s);
+					return;
 				
 				case PDU_SESSION_AUTH_REQ:
-					return RecvAuthReq(s);
+					RecvAuthReq(s);
+					return;
 				
 				default:
-					return false;
+					return;
 			}
 		}
 		
-		public override void OnOpen()
+		public void ChannelThreadProc()
 		{
-		}
-		
-		public override void OnClose()
-		{
+			lock (channelLock)
+			{
+				while (queue.Count < 1)
+				{
+					Monitor.Wait(channelLock);
+				}
+				
+				PDU pdu = (PDU) queue.Dequeue();
+				ProcessPDU(pdu.Buffer, pdu.Type);
+			}
 		}
 	}
 }

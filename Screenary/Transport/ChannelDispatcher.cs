@@ -40,13 +40,13 @@ namespace Screenary
 			}
 		}
 		
-		public bool SendPDU(PDU pdu)
+		public void SendPDU(PDU pdu)
 		{
 			IChannel channel = (IChannel) channels[pdu.ChannelId];
-			return channel.Send(pdu.Buffer, pdu.Type);
+			channel.Send(pdu.Buffer, pdu.Type);
 		}
 		
-		public bool DispatchPDU(byte[] buffer, UInt16 channelId, byte pduType)
+		public void DispatchPDU(byte[] buffer, UInt16 channelId, byte pduType)
 		{
 			IChannel channel;
 			
@@ -54,8 +54,6 @@ namespace Screenary
 			
 			if (channel != null)
 				channel.OnRecv(buffer, pduType);
-			
-			return true;
 		}
 	}
 }

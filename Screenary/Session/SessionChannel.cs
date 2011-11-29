@@ -1,10 +1,14 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Collections;
 
 namespace Screenary
 {
 	public abstract class SessionChannel : IChannel
 	{
+		protected Queue queue;
+		protected Thread thread;
 		protected TransportClient transport;
 		
 		public const UInt16 PDU_CHANNEL_SESSION = 0x0000;
@@ -22,6 +26,7 @@ namespace Screenary
 		
 		public SessionChannel()
 		{
+			queue = new Queue();
 		}
 		
 		public UInt16 GetChannelId()
@@ -32,11 +37,11 @@ namespace Screenary
 		public abstract void OnOpen();
 		public abstract void OnClose();
 		
-		public abstract bool OnRecv(byte[] buffer, byte pduType);
+		public abstract void OnRecv(byte[] buffer, byte pduType);
 		
-		public virtual bool Send(byte[] buffer, byte pduType)
+		public virtual void Send(byte[] buffer, byte pduType)
 		{
-			return transport.SendPDU(buffer, PDU_CHANNEL_SESSION, pduType);
+			transport.SendPDU(buffer, PDU_CHANNEL_SESSION, pduType);
 		}
 	}
 }

@@ -19,14 +19,14 @@ namespace Screenary.Server
 			if (!WorkingDirectory.EndsWith("/"))
 				WorkingDirectory += "/";
 			
-			if (args[0].Equals("--replay") && (args.Length > 1))
+			if ((args.Length > 1) && (args[0].Equals("--replay")))
 			{
 				replayFile = args[1].ToString();
 				Console.WriteLine("Replay Mode, using {0}", replayFile);
 				replayMode = true;
 			}
 			
-			BroadcasterServer server = new BroadcasterServer("127.0.0.1", 4489);
+			Broadcaster server = new Broadcaster("127.0.0.1", 4489);
 			
 			if (replayMode)
 			{

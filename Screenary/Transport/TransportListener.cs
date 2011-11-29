@@ -28,7 +28,7 @@ namespace Screenary
 				
 			tcpClient = tcpListener.AcceptTcpClient();
 			client = new TransportClient(tcpClient);
-			
+	
 			return client;
 		}
 		
@@ -38,9 +38,11 @@ namespace Screenary
 			{
 				IPAddress ipaddr = IPAddress.Parse(hostname);
 				tcpListener = new TcpListener(ipaddr, port);
+				thread = new Thread(ListenerThreadProc);
 			}
 			
 			tcpListener.Start();
+			thread.Start();
 			
 			return true;
 		}
@@ -48,10 +50,20 @@ namespace Screenary
 		public bool Stop()
 		{
 			if (tcpListener != null)
+			{
 				tcpListener.Stop();
+			}
 			
 			return true;
 		}
+		
+		private void ListenerThreadProc()
+		{
+			while (true)
+			{				
+				TransportClient client = AcceptClient();
+				listener.OnAcceptClient(client);
+			}
+		}
 	}
 }
-

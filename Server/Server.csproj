@@ -37,9 +37,9 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="BroadcasterServer.cs" />
-    <Compile Include="Receiver.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="Broadcaster.cs" />
+    <Compile Include="Client.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

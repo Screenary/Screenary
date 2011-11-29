@@ -11,10 +11,10 @@ namespace Screenary.Server
 	 * Broadcaster server, current implementation listens for TCP clients 
 	 * and broadcasts contents of data/rfx_sample.pcap within 20 seconds
 	 */ 
-	public class BroadcasterServer : ITransportListener
+	public class Broadcaster : ITransportListener
 	{
 		/* List of TCP Clients */
-		private ArrayList receivers;
+		private ArrayList clients;
 		
 		/* Server socket */
 		private TransportListener listener;
@@ -26,39 +26,31 @@ namespace Screenary.Server
 		 * @param address
 		 * @param port
 		 */
-		public BroadcasterServer(string address, int port)
+		public Broadcaster(string address, int port)
 		{
-			receivers = new ArrayList();
+			clients = new ArrayList();
 			listener = new TransportListener(this, address, port);
 			listener.Start();
-			
-			//while (true)
-			{
-				TransportClient client;
-				
-				client = listener.AcceptClient();
-				
-				Receiver receiver = new Receiver(client);
-				receivers.Add(receiver);
-			}
+		}
+		
+		public void OnAcceptClient(TransportClient transportClient)
+		{
+			Console.WriteLine("OnAcceptClient");
+			Client client = new Client(transportClient);
+			clients.Add(client);
 		}
 		
 		/**
-		 * Add PDU to receivers
+		 * Add PDU to clients
 		 * 
 		 * @param pdu
 		 */ 
 		public void addPDU(PDU pdu)
 		{
-			foreach (Receiver receiver in receivers)
+			foreach (Client client in clients)
 			{
-				receiver.addPDU(pdu);
+				client.addPDU(pdu);
 			}
-		}
-		
-		public void OnAcceptClient(TransportClient client)
-		{
-
 		}
 	}
 }

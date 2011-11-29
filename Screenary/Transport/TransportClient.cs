@@ -10,8 +10,8 @@ namespace Screenary
 	{
 		private Int32 port;
 		private string hostname;
-		private Thread thread;
 		private TcpClient tcpClient;
+		private Thread thread = null;
 		private ChannelDispatcher dispatcher;
 		
 		public const int PDU_HEADER_SIZE = 6;
@@ -52,6 +52,21 @@ namespace Screenary
 			this.dispatcher = dispatcher;
 		}
 		
+		public void StartThread()
+		{
+			if (thread == null)
+			{
+				thread = new Thread(() => ThreadProc(this));
+			}
+			
+			thread.Start();
+		}
+		
+		public void StopThread()
+		{
+
+		}
+		
 		public bool Connect(string hostname, Int32 port)
 		{
 			this.hostname = hostname;
@@ -62,8 +77,7 @@ namespace Screenary
 			
 			tcpClient.Connect(this.hostname, this.port);
 			
-			thread = new Thread(() => ThreadProc(this));
-			thread.Start();
+			this.StartThread();
 			
 			dispatcher.OnConnect();
 	

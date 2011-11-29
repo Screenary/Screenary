@@ -13,44 +13,44 @@ namespace Screenary
 			channels = new Hashtable();
 		}
 		
-		public void RegisterChannel(IChannel channel)
+		public void RegisterChannel(Channel channel)
 		{		
 			channels.Add(channel.GetChannelId(), channel);
 		}
 		
 		public void OnConnect()
 		{
-			IChannel channel;
+			Channel channel;
 			
 			foreach (DictionaryEntry entry in channels)
 			{
-				channel = (IChannel) entry.Value;
+				channel = (Channel) entry.Value;
 				channel.OnOpen();
 			}
 		}
 		
 		public void OnDisconnect()
 		{
-			IChannel channel;
+			Channel channel;
 			
 			foreach (DictionaryEntry entry in channels)
 			{
-				channel = (IChannel) entry.Value;
+				channel = (Channel) entry.Value;
 				channel.OnClose();
 			}
 		}
 		
 		public void SendPDU(PDU pdu)
 		{
-			IChannel channel = (IChannel) channels[pdu.ChannelId];
+			Channel channel = (Channel) channels[pdu.ChannelId];
 			channel.Send(pdu.Buffer, pdu.Type);
 		}
 		
 		public void DispatchPDU(byte[] buffer, UInt16 channelId, byte pduType)
 		{
-			IChannel channel;
+			Channel channel;
 			
-			channel = (IChannel) channels[channelId];
+			channel = (Channel) channels[channelId];
 			
 			if (channel != null)
 				channel.OnRecv(buffer, pduType);

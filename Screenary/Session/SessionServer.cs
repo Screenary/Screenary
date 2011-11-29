@@ -7,12 +7,10 @@ namespace Screenary
 {
 	public class SessionServer : SessionChannel
 	{
-		private ISessionServer server;
 		private readonly object channelLock = new object();
 		
-		public SessionServer(ISessionServer server, TransportClient transport)
+		public SessionServer(TransportClient transport)
 		{
-			this.server = server;
 			this.transport = transport;
 		}
 		

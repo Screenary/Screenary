@@ -6,12 +6,10 @@ namespace Screenary
 {
 	public class SurfaceServer : SurfaceChannel
 	{
-		ISurfaceServer server;
 		private readonly object channelLock = new object();
 		
-		public SurfaceServer(ISurfaceServer server, TransportClient transport)
+		public SurfaceServer(TransportClient transport)
 		{
-			this.server = server;
 			this.transport = transport;
 		}
 		

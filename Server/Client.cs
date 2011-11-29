@@ -7,9 +7,8 @@ using Screenary;
 
 namespace Screenary.Server
 {
-	public class Client : ISurfaceServer
+	public class Client : SurfaceServer
 	{
-		private TransportClient transport;
 		private ChannelDispatcher dispatcher;
 		private SurfaceServer surface;
 		private Session session;
@@ -22,18 +21,18 @@ namespace Screenary.Server
 		/**
 		 * Class constructor
 		 */ 
-		public Client(TransportClient transport)
+		public Client(TransportClient transport) : base(transport)
 		{
 			this.transport = transport;
 			dispatcher = new ChannelDispatcher();
 			
 			transport.SetChannelDispatcher(dispatcher);
 			
-			surface = new SurfaceServer(this, this.transport);
+			surface = new Surface(this.transport);
 			dispatcher.RegisterChannel(surface);
 			
 			session = new Session(this.transport);
-			dispatcher.RegisterChannel(session.GetServer());
+			dispatcher.RegisterChannel(session);
 			
 			transport.StartThread();
 		}

@@ -8,12 +8,10 @@ namespace Screenary
 	public class SessionClient : SessionChannel
 	{
 		private UInt32 sessionId;
-		private ISessionClient client;
 		private readonly object channelLock = new object();
 		
-		public SessionClient(ISessionClient client, TransportClient transport)
+		public SessionClient(TransportClient transport)
 		{
-			this.client = client;
 			this.transport = transport;
 			this.sessionId = 0;
 		}

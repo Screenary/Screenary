@@ -218,7 +218,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		TransportClient transport = new TransportClient(dispatcher);
 		
 		session = new Session(transport);
-		dispatcher.RegisterChannel(session.GetClient());
+		dispatcher.RegisterChannel(session);
 		
 		SurfaceClient surface = new SurfaceClient(this, transport);
 		dispatcher.RegisterChannel(surface);

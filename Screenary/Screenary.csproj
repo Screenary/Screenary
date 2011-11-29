@@ -45,22 +45,19 @@
     <Compile Include="Util\PcapWriter.cs" />
     <Compile Include="Util\PcapRecord.cs" />
     <Compile Include="NUnit\PcapReaderTest.cs" />
-    <Compile Include="Session\ISessionClient.cs" />
-    <Compile Include="Session\ISessionServer.cs" />
     <Compile Include="Session\SessionChannel.cs" />
     <Compile Include="Session\SessionClient.cs" />
     <Compile Include="Session\SessionServer.cs" />
     <Compile Include="Surface\ISurfaceClient.cs" />
-    <Compile Include="Surface\ISurfaceServer.cs" />
     <Compile Include="Surface\SurfaceChannel.cs" />
     <Compile Include="Surface\SurfaceClient.cs" />
     <Compile Include="Surface\SurfaceServer.cs" />
     <Compile Include="Transport\ChannelDispatcher.cs" />
-    <Compile Include="Transport\IChannel.cs" />
     <Compile Include="Transport\ITransportListener.cs" />
     <Compile Include="Transport\TransportListener.cs" />
     <Compile Include="Transport\TransportClient.cs" />
-    <Compile Include="Session\PDU.cs" />
+    <Compile Include="Transport\PDU.cs" />
+    <Compile Include="Transport\Channel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

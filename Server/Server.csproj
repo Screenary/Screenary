@@ -40,6 +40,7 @@
     <Compile Include="Session.cs" />
     <Compile Include="Broadcaster.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Surface.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

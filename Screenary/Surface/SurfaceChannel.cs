@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace Screenary
 {
-	public abstract class SurfaceChannel : IChannel
+	public abstract class SurfaceChannel : Channel
 	{
 		protected Queue queue;
 		protected Thread thread;
@@ -20,17 +20,17 @@ namespace Screenary
 			queue = new Queue();
 		}
 		
-		public UInt16 GetChannelId()
+		public override UInt16 GetChannelId()
 		{
 			return PDU_CHANNEL_SURFACE;
 		}
 			
-		public abstract void OnOpen();
-		public abstract void OnClose();
+		public override abstract void OnOpen();
+		public override abstract void OnClose();
 		
-		public abstract void OnRecv(byte[] buffer, byte pduType);
+		public override abstract void OnRecv(byte[] buffer, byte pduType);
 		
-		public virtual void Send(byte[] buffer, byte pduType)
+		public override void Send(byte[] buffer, byte pduType)
 		{
 			transport.SendPDU(buffer, PDU_CHANNEL_SURFACE, pduType);
 		}

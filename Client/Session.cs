@@ -2,18 +2,11 @@ using System;
 
 namespace Screenary.Client
 {
-	public class Session : ISessionClient
-	{
-		private SessionClient client;
-		
-		public Session(TransportClient transport)
+	public class Session : SessionClient
+	{		
+		public Session(TransportClient transport) : base(transport)
 		{
-			client = new SessionClient(this, transport);	
-		}
-		
-		public SessionClient GetClient()
-		{
-			return client;
+
 		}
 	}
 }

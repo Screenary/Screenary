@@ -37,20 +37,72 @@ namespace FreeRDP
 		public BitmapData* rectangles;
 	}
 	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PaletteEntry
+	{
+		public byte red;
+		public byte green;
+		public byte blue;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PaletteUpdate
+	{
+		public UInt32 number;
+		public PaletteEntry* entries;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct rdpPalette
+	{
+		public UInt32 count;
+		public PaletteEntry* entries;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PlaySoundUpdate
+	{
+		public UInt32 duration;
+		public UInt32 frequency;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct SurfaceBitsCmd
+	{
+		public UInt32 cmdType;
+		public UInt32 destLeft;
+		public UInt32 destTop;
+		public UInt32 destRight;
+		public UInt32 destBottom;
+		public UInt32 bpp;
+		public UInt32 codecID;
+		public UInt32 width;
+		public UInt32 height;
+		public UInt32 bitmapDataLength;
+		public byte* bitmapData;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct SurfaceFrameMarker
+	{
+		public UInt32 frameAction;
+		public UInt32 frameId;
+	}
+	
 	public unsafe delegate void pBeginPaint(rdpContext* context);
 	public unsafe delegate void pEndPaint(rdpContext* context);
 	public unsafe delegate void pSetBounds(rdpContext* context, rdpBounds* bounds);
 	public unsafe delegate void pSynchronize(rdpContext* context);
 	public unsafe delegate void pDesktopResize(rdpContext* context);
 	public unsafe delegate void pBitmapUpdate(rdpContext* context, BitmapUpdate* bitmap);
-	public unsafe delegate void pPalette(rdpContext* context, IntPtr palette);
-	public unsafe delegate void pPlaySound(rdpContext* context, IntPtr playSound);
+	public unsafe delegate void pPalette(rdpContext* context, PaletteUpdate* palette);
+	public unsafe delegate void pPlaySound(rdpContext* context, PlaySoundUpdate* playSound);
 	
 	public unsafe delegate void pRefreshRect(rdpContext* context, byte count, IntPtr areas);
 	public unsafe delegate void pSuppressOutput(rdpContext* context, byte allow, IntPtr area);
 	
 	public unsafe delegate void pSurfaceCommand(rdpContext* context, IntPtr s);
-	public unsafe delegate void pSurfaceBits(rdpContext* context, IntPtr surfaceBitsCommand);
+	public unsafe delegate void pSurfaceBits(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
 	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpUpdate

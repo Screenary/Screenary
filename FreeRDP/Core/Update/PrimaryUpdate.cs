@@ -93,28 +93,319 @@ namespace FreeRDP
 		public Int32 height;
 	}
 	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MultiDstBltOrder
+	{
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 bRop;
+		public UInt32 numRectangles;
+		public UInt32 cbData;
+		//public fixed DeltaRect rectangles[45];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MultiPatBltOrder
+	{
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 bRop;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public rdpBrush brush;
+		public UInt32 numRectangles;
+		public UInt32 cbData;
+		//public fixed DeltaRect rectangles[45];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MultiScrBltOrder
+	{
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 bRop;
+		public Int32 nXSrc;
+		public Int32 nYSrc;
+		public UInt32 numRectangles;
+		public UInt32 cbData;
+		//public fixed DeltaRect rectangles[45];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MultiOpaqueRectOrder
+	{
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 color;
+		public UInt32 numRectangles;
+		public UInt32 cbData;
+		//public fixed DeltaRect rectangles[45];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MultiDrawNineGridOrder
+	{
+		public Int32 srcLeft;
+		public Int32 srcTop;
+		public Int32 srcRight;
+		public Int32 srcBottom;
+		public UInt32 bitmapId;
+		public UInt32 nDeltaEntries;
+		public UInt32 cbData;
+		public byte* codeDeltaList;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct LineToOrder
+	{
+		public UInt32 backMode;
+		public Int32 nXStart;
+		public Int32 nYStart;
+		public Int32 nXEnd;
+		public Int32 nYEnd;
+		public UInt32 backColor;
+		public UInt32 bRop2;
+		public UInt32 penStyle;
+		public UInt32 penWidth;
+		public UInt32 penColor;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct DeltaPoint
+	{
+		public Int32 x;
+		public Int32 y;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PolylineOrder
+	{
+		public Int32 xStart;
+		public Int32 yStart;
+		public UInt32 bRop2;
+		public UInt32 penColor;
+		public UInt32 numPoints;
+		public UInt32 cbData;
+		public DeltaPoint* points;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct MemBltOrder
+	{
+		public UInt32 cacheId;
+		public UInt32 colorIndex;
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 bRop;
+		public Int32 nXSrc;
+		public Int32 nYSrc;
+		public UInt32 cacheIndex;
+		public rdpBitmap* bitmap;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct Mem3BltOrder
+	{
+		public UInt32 cacheId;
+		public UInt32 colorIndex;
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nWidth;
+		public Int32 nHeight;
+		public UInt32 bRop;
+		public Int32 nXSrc;
+		public Int32 nYSrc;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public rdpBrush brush;
+		public UInt32 cacheIndex;
+		public rdpBitmap* bitmap;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct SaveBitmapOrder
+	{
+		public UInt32 savedBitmapPosition;
+		public Int32 nLeftRect;
+		public Int32 nTopRect;
+		public Int32 nRightRect;
+		public Int32 nBottomRect;
+		public UInt32 operation;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct GlyphFragmentIndex
+	{
+		public UInt32 index;
+		public UInt32 delta;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct GlyphFragment
+	{
+		public UInt32 operation;
+		public UInt32 index;
+		public UInt32 size;
+		public UInt32 nindices;
+		public GlyphFragmentIndex* indices;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct GlyphIndexOrder
+	{
+		public UInt32 cacheId;
+		public UInt32 flAccel;
+		public UInt32 ulCharInc;
+		public UInt32 fOpRedundant;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public Int32 bkLeft;
+		public Int32 bkTop;
+		public Int32 bkRight;
+		public Int32 bkBottom;
+		public Int32 opLeft;
+		public Int32 opTop;
+		public Int32 opRight;
+		public Int32 opBottom;
+		public rdpBrush brush;
+		public Int32 x;
+		public Int32 y;
+		public UInt32 cbData;
+		public fixed byte data[256];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct FastIndexOrder
+	{
+		public UInt32 cacheId;
+		public UInt32 flAccel;
+		public UInt32 ulCharInc;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public Int32 bkLeft;
+		public Int32 bkTop;
+		public Int32 bkRight;
+		public Int32 bkBottom;
+		public Int32 opLeft;
+		public Int32 opTop;
+		public Int32 opRight;
+		public Int32 opBottom;
+		public int opaqueRect;
+		public Int32 x;
+		public Int32 y;
+		public UInt32 cbData;
+		public fixed byte data[256];
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct FastGlyphOrder
+	{
+		public UInt32 cacheId;
+		public UInt32 flAccel;
+		public UInt32 ulCharInc;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public Int32 bkLeft;
+		public Int32 bkTop;
+		public Int32 bkRight;
+		public Int32 bkBottom;
+		public Int32 opLeft;
+		public Int32 opTop;
+		public Int32 opRight;
+		public Int32 opBottom;
+		public Int32 x;
+		public Int32 y;
+		public UInt32 cbData;
+		public fixed byte data[256];
+		public void* glyphData;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PolygonSCOrder
+	{
+		public Int32 xStart;
+		public Int32 yStart;
+		public UInt32 bRop2;
+		public UInt32 fillMode;
+		public UInt32 brushColor;
+		public UInt32 nDeltaEntries;
+		public UInt32 cbData;
+		public byte* codeDeltaList;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct PolygonCBOrder
+	{
+		public Int32 xStart;
+		public Int32 yStart;
+		public UInt32 bRop2;
+		public UInt32 fillMode;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public rdpBrush brush;
+		public UInt32 nDeltaEntries;
+		public UInt32 cbData;
+		public byte* codeDeltaList;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct EllipseSCOrder
+	{
+		public Int32 leftRect;
+		public Int32 topRect;
+		public Int32 rightRect;
+		public Int32 bottomRect;
+		public UInt32 bRop2;
+		public UInt32 fillMode;
+		public UInt32 color;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct EllipseCBOrder
+	{
+		public Int32 leftRect;
+		public Int32 topRect;
+		public Int32 rightRect;
+		public Int32 bottomRect;
+		public UInt32 bRop2;
+		public UInt32 fillMode;
+		public UInt32 backColor;
+		public UInt32 foreColor;
+		public rdpBrush brush;
+	}
+	
 	public unsafe delegate void pDstBlt(rdpContext* context, DstBltOrder* dstblt);
 	public unsafe delegate void pPatBlt(rdpContext* context, PatBltOrder* patblt);
 	public unsafe delegate void pScrBlt(rdpContext* context, ScrBltOrder* scrblt);
 	public unsafe delegate void pOpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect);
 	public unsafe delegate void pDrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid);
-	public unsafe delegate void pMultiDstBlt(rdpContext* context, IntPtr multi_dstblt);
-	public unsafe delegate void pMultiPatBlt(rdpContext* context, IntPtr multi_patblt);
-	public unsafe delegate void pMultiScrBlt(rdpContext* context, IntPtr multi_scrblt);
-	public unsafe delegate void pMultiOpaqueRect(rdpContext* context, IntPtr multi_opaque_rect);
-	public unsafe delegate void pMultiDrawNineGrid(rdpContext* context, IntPtr multi_draw_nine_grid);
-	public unsafe delegate void pLineTo(rdpContext* context, IntPtr line_to);
-	public unsafe delegate void pPolyline(rdpContext* context, IntPtr polyline);
-	public unsafe delegate void pMemBlt(rdpContext* context, IntPtr memblt);
-	public unsafe delegate void pMem3Blt(rdpContext* context, IntPtr memblt);
-	public unsafe delegate void pSaveBitmap(rdpContext* context, IntPtr save_bitmap);
-	public unsafe delegate void pGlyphIndex(rdpContext* context, IntPtr glyph_index);
-	public unsafe delegate void pFastIndex(rdpContext* context, IntPtr fast_index);
-	public unsafe delegate void pFastGlyph(rdpContext* context, IntPtr fast_glyph);
-	public unsafe delegate void pPolygonSC(rdpContext* context, IntPtr polygon_sc);
-	public unsafe delegate void pPolygonCB(rdpContext* context, IntPtr polygon_cb);
-	public unsafe delegate void pEllipseSC(rdpContext* context, IntPtr ellipse_sc);
-	public unsafe delegate void pEllipseCB(rdpContext* context, IntPtr ellipse_cb);
+	public unsafe delegate void pMultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt);
+	public unsafe delegate void pMultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt);
+	public unsafe delegate void pMultiScrBlt(rdpContext* context, MultiScrBltOrder* multi_scrblt);
+	public unsafe delegate void pMultiOpaqueRect(rdpContext* context, MultiOpaqueRectOrder* multi_opaque_rect);
+	public unsafe delegate void pMultiDrawNineGrid(rdpContext* context, MultiDrawNineGridOrder* multi_draw_nine_grid);
+	public unsafe delegate void pLineTo(rdpContext* context, LineToOrder* line_to);
+	public unsafe delegate void pPolyline(rdpContext* context, PolylineOrder* polyline);
+	public unsafe delegate void pMemBlt(rdpContext* context, MemBltOrder* memblt);
+	public unsafe delegate void pMem3Blt(rdpContext* context, Mem3BltOrder* mem3blt);
+	public unsafe delegate void pSaveBitmap(rdpContext* context, SaveBitmapOrder* save_bitmap);
+	public unsafe delegate void pGlyphIndex(rdpContext* context, GlyphIndexOrder* glyph_index);
+	public unsafe delegate void pFastIndex(rdpContext* context, FastIndexOrder* fast_index);
+	public unsafe delegate void pFastGlyph(rdpContext* context, FastGlyphOrder* fast_glyph);
+	public unsafe delegate void pPolygonSC(rdpContext* context, PolygonSCOrder* polygon_sc);
+	public unsafe delegate void pPolygonCB(rdpContext* context, PolygonCBOrder* polygon_cb);
+	public unsafe delegate void pEllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc);
+	public unsafe delegate void pEllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb);
 	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpPrimaryUpdate

@@ -99,9 +99,9 @@ namespace FreeRDP
 			Console.WriteLine("width:{0} height:{1} port:{2}",
 				settings->width, settings->height, settings->port);
 			
-			settings->hostname = GetNativeAnsiString("localhost");
+			settings->hostname = GetNativeAnsiString("192.168.1.175");
 			settings->username = GetNativeAnsiString("Administrator");
-			settings->password = GetNativeAnsiString("Password123!");
+			settings->password = GetNativeAnsiString("FreeRDP123!");
 			
 			return ((freerdp_connect(handle) == 0) ? false : true);
 		}

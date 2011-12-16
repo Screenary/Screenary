@@ -71,6 +71,10 @@
     <Compile Include="Core\Update\AltSecUpdate.cs" />
     <Compile Include="Core\Update\WindowUpdate.cs" />
     <Compile Include="Core\Update\Update.cs" />
+    <Compile Include="Core\Graphics\Bitmap.cs" />
+    <Compile Include="Core\Graphics\Pointer.cs" />
+    <Compile Include="Core\Graphics\Glyph.cs" />
+    <Compile Include="Core\Graphics\Graphics.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -88,5 +92,6 @@
     <Folder Include="GDI\" />
     <Folder Include="Cache\" />
     <Folder Include="Core\Update\" />
+    <Folder Include="Core\Graphics\" />
   </ItemGroup>
 </Project>

@@ -463,5 +463,93 @@ namespace FreeRDP
 		void EllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc);
 		void EllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb);
 	}
+	
+	public unsafe class PrimaryUpdate
+	{
+		private freerdp* instance;
+		private rdpContext* context;
+		private rdpUpdate* update;
+		private rdpPrimaryUpdate* primary;
+		
+		private pDstBlt DstBlt;
+		private pPatBlt PatBlt;
+		private pScrBlt ScrBlt;
+		private pOpaqueRect OpaqueRect;
+		private pDrawNineGrid DrawNineGrid;
+		private pMultiDstBlt MultiDstBlt;
+		private pMultiPatBlt MultiPatBlt;
+		private pMultiScrBlt MultiScrBlt;
+		private pMultiOpaqueRect MultiOpaqueRect;
+		private pMultiDrawNineGrid MultiDrawNineGrid;
+		private pLineTo LineTo;
+		private pPolyline Polyline;
+		private pMemBlt MemBlt;
+		private pMem3Blt Mem3Blt;
+		private pSaveBitmap SaveBitmap;
+		private pGlyphIndex GlyphIndex;
+		private pFastIndex FastIndex;
+		private pFastGlyph FastGlyph;
+		private pPolygonSC PolygonSC;
+		private pPolygonCB PolygonCB;
+		private pEllipseSC EllipseSC;
+		private pEllipseCB EllipseCB;
+		
+		public PrimaryUpdate(rdpContext* context)
+		{
+			this.context = context;
+			this.instance = context->instance;
+			this.update = instance->update;
+			this.primary = update->primary;
+		}
+		
+		public void RegisterInterface(IPrimaryUpdate iPrimary)
+		{
+			DstBlt = new pDstBlt(iPrimary.DstBlt);
+			PatBlt = new pPatBlt(iPrimary.PatBlt);
+			ScrBlt = new pScrBlt(iPrimary.ScrBlt);
+			OpaqueRect = new pOpaqueRect(iPrimary.OpaqueRect);
+			DrawNineGrid = new pDrawNineGrid(iPrimary.DrawNineGrid);
+			MultiDstBlt = new pMultiDstBlt(iPrimary.MultiDstBlt);
+			MultiPatBlt = new pMultiPatBlt(iPrimary.MultiPatBlt);
+			MultiScrBlt = new pMultiScrBlt(iPrimary.MultiScrBlt);
+			MultiOpaqueRect = new pMultiOpaqueRect(iPrimary.MultiOpaqueRect);
+			MultiDrawNineGrid = new pMultiDrawNineGrid(iPrimary.MultiDrawNineGrid);
+			LineTo = new pLineTo(iPrimary.LineTo);
+			Polyline = new pPolyline(iPrimary.Polyline);
+			MemBlt = new pMemBlt(iPrimary.MemBlt);
+			Mem3Blt = new pMem3Blt(iPrimary.Mem3Blt);
+			SaveBitmap = new pSaveBitmap(iPrimary.SaveBitmap);
+			GlyphIndex = new pGlyphIndex(iPrimary.GlyphIndex);
+			FastIndex = new pFastIndex(iPrimary.FastIndex);
+			FastGlyph = new pFastGlyph(iPrimary.FastGlyph);
+			PolygonSC = new pPolygonSC(iPrimary.PolygonSC);
+			PolygonCB = new pPolygonCB(iPrimary.PolygonCB);
+			EllipseSC = new pEllipseSC(iPrimary.EllipseSC);
+			EllipseCB = new pEllipseCB(iPrimary.EllipseCB);
+			
+			primary->DstBlt = Marshal.GetFunctionPointerForDelegate(DstBlt);
+			primary->PatBlt = Marshal.GetFunctionPointerForDelegate(PatBlt);
+			primary->ScrBlt = Marshal.GetFunctionPointerForDelegate(ScrBlt);
+			primary->OpaqueRect = Marshal.GetFunctionPointerForDelegate(OpaqueRect);
+			primary->DrawNineGrid = Marshal.GetFunctionPointerForDelegate(DrawNineGrid);
+			primary->MultiDstBlt = Marshal.GetFunctionPointerForDelegate(MultiDstBlt);
+			primary->MultiPatBlt = Marshal.GetFunctionPointerForDelegate(MultiPatBlt);
+			primary->MultiScrBlt = Marshal.GetFunctionPointerForDelegate(MultiScrBlt);
+			primary->MultiOpaqueRect = Marshal.GetFunctionPointerForDelegate(MultiOpaqueRect);
+			primary->MultiDrawNineGrid = Marshal.GetFunctionPointerForDelegate(MultiDrawNineGrid);
+			primary->LineTo = Marshal.GetFunctionPointerForDelegate(LineTo);
+			primary->Polyline = Marshal.GetFunctionPointerForDelegate(Polyline);
+			primary->MemBlt = Marshal.GetFunctionPointerForDelegate(MemBlt);
+			primary->Mem3Blt = Marshal.GetFunctionPointerForDelegate(Mem3Blt);
+			primary->SaveBitmap = Marshal.GetFunctionPointerForDelegate(SaveBitmap);
+			primary->GlyphIndex = Marshal.GetFunctionPointerForDelegate(GlyphIndex);
+			primary->FastIndex = Marshal.GetFunctionPointerForDelegate(FastIndex);
+			primary->FastGlyph = Marshal.GetFunctionPointerForDelegate(FastGlyph);
+			primary->PolygonSC = Marshal.GetFunctionPointerForDelegate(PolygonSC);
+			primary->PolygonCB = Marshal.GetFunctionPointerForDelegate(PolygonCB);
+			primary->EllipseSC = Marshal.GetFunctionPointerForDelegate(EllipseSC);
+			primary->EllipseCB = Marshal.GetFunctionPointerForDelegate(EllipseCB);
+		}
+	}
 }
 

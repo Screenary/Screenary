@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {	
-	public unsafe class RDP
+	public unsafe class RDP: IUpdate, IPrimaryUpdate
 	{		
 		[DllImport("libfreerdp-core")]
 		public static extern void freerdp_context_new(freerdp* instance);
@@ -28,6 +28,7 @@ namespace FreeRDP
 		public static extern void freerdp_free(freerdp* instance);
 		
 		private freerdp* handle;
+		private rdpContext* context;
 		private rdpSettings* settings;
 		
 		private pContextNew hContextNew;
@@ -35,11 +36,9 @@ namespace FreeRDP
 		
 		private pPreConnect hPreConnect;
 		private pPostConnect hPostConnect;
-	
-		private pBeginPaint hBeginPaint;
-		private pEndPaint hEndPaint;
 		
-		private pOpaqueRect hOpaqueRect;
+		private Update update;
+		private PrimaryUpdate primary;
 		
 		public RDP()
 		{
@@ -81,6 +80,7 @@ namespace FreeRDP
 			instance->PreConnect = Marshal.GetFunctionPointerForDelegate(hPreConnect);
 			instance->PostConnect = Marshal.GetFunctionPointerForDelegate(hPostConnect);
 			
+			this.context = context;
 			settings = instance->settings;
 		}
 		
@@ -93,20 +93,11 @@ namespace FreeRDP
 		{
 			Console.WriteLine("PreConnect");
 			
-			hBeginPaint = new pBeginPaint(this.BeginPaint);
-			hEndPaint = new pEndPaint(this.EndPaint);
+			update = new Update(instance->context);
+			update.RegisterInterface(this);
 			
-			rdpUpdate* update = instance->update;
-			
-			update->BeginPaint = Marshal.GetFunctionPointerForDelegate(hBeginPaint);
-			update->EndPaint = Marshal.GetFunctionPointerForDelegate(hEndPaint);
-			
-			Console.WriteLine("{0}", update->BeginPaint.ToString());
-			
-			rdpPrimaryUpdate* primary = update->primary;
-			
-			hOpaqueRect = new pOpaqueRect(OpaqueRect);
-			primary->OpaqueRect = Marshal.GetFunctionPointerForDelegate(hOpaqueRect);
+			primary = new PrimaryUpdate(instance->context);
+			primary.RegisterInterface(this);
 			
 			return true;
 		}
@@ -114,10 +105,6 @@ namespace FreeRDP
 		bool PostConnect(freerdp* instance)
 		{
 			Console.WriteLine("PostConnect");
-			
-			rdpUpdate* update = instance->update;
-			Console.WriteLine("{0}", update->BeginPaint.ToString());
-			
 			return true;
 		}
 		
@@ -143,43 +130,125 @@ namespace FreeRDP
 			return ((freerdp_check_fds(handle) == 0) ? false : true);
 		}
 		
-		public void BeginPaint(rdpContext* context)
+		public void BeginPaint(rdpContext* context) { }
+		public void EndPaint(rdpContext* context) { }
+		public void SetBounds(rdpContext* context, rdpBounds* bounds) { }
+		public void Synchronize(rdpContext* context) { }
+		public void DesktopResize(rdpContext* context) { }
+		public void BitmapUpdate(rdpContext* context, BitmapUpdate* bitmap) { }
+		public void Palette(rdpContext* context, PaletteUpdate* palette) { }
+		public void PlaySound(rdpContext* context, PlaySoundUpdate* playSound) { }
+		public void SurfaceBits(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd) { }
+		
+		public void DstBlt(rdpContext* context, DstBltOrder* dstblt)
 		{
-			Console.WriteLine("BeginPaint");
+			Console.WriteLine("DstBlt");
 		}
 		
-		public void EndPaint(rdpContext* context)
+		public void PatBlt(rdpContext* context, PatBltOrder* patblt)
 		{
-			Console.WriteLine("EndPaint");
+			Console.WriteLine("PatBlt");
 		}
 		
-		public void DstBlt(rdpContext* context, DstBltOrder* dstblt) { }
-		public void PatBlt(rdpContext* context, PatBltOrder* patblt) { }
-		public void ScrBlt(rdpContext* context, ScrBltOrder* scrblt) { }
+		public void ScrBlt(rdpContext* context, ScrBltOrder* scrblt)
+		{
+			Console.WriteLine("ScrBlt");
+		}
 		
 		public void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect)
 		{
 			Console.WriteLine("OpaqueRect");
 		}
 		
-		public void DrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid) { }
-		public void MultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt) { }
-		public void MultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt) { }
-		public void MultiScrBlt(rdpContext* context, MultiScrBltOrder* multi_scrblt) { }
-		public void MultiOpaqueRect(rdpContext* context, MultiOpaqueRectOrder* multi_opaque_rect) { }
-		public void MultiDrawNineGrid(rdpContext* context, MultiDrawNineGridOrder* multi_draw_nine_grid) { }
-		public void LineTo(rdpContext* context, LineToOrder* line_to) { }
-		public void Polyline(rdpContext* context, PolylineOrder* polyline) { }
-		public void MemBlt(rdpContext* context, MemBltOrder* memblt) { }
-		public void Mem3Blt(rdpContext* context, Mem3BltOrder* mem3blt) { }
-		public void SaveBitmap(rdpContext* context, SaveBitmapOrder* save_bitmap) { }
-		public void GlyphIndex(rdpContext* context, GlyphIndexOrder* glyph_index) { }
-		public void FastIndex(rdpContext* context, FastIndexOrder* fast_index) { }
-		public void FastGlyph(rdpContext* context, FastGlyphOrder* fast_glyph) { }
-		public void PolygonSC(rdpContext* context, PolygonSCOrder* polygon_sc) { }
-		public void PolygonCB(rdpContext* context, PolygonCBOrder* polygon_cb) { }
-		public void EllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc) { }
-		public void EllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb) { }
+		public void DrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid)
+		{
+			Console.WriteLine("DrawNineGrid");
+		}
+		
+		public void MultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt)
+		{
+			Console.WriteLine("MultiDstBlt");
+		}
+		
+		public void MultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt)
+		{
+			Console.WriteLine("MultiPatBlt");
+		}
+		
+		public void MultiScrBlt(rdpContext* context, MultiScrBltOrder* multi_scrblt)
+		{
+			Console.WriteLine("MultiScrBlt");
+		}
+		
+		public void MultiOpaqueRect(rdpContext* context, MultiOpaqueRectOrder* multi_opaque_rect)
+		{
+			Console.WriteLine("MultiOpaqueRect");
+		}
+		
+		public void MultiDrawNineGrid(rdpContext* context, MultiDrawNineGridOrder* multi_draw_nine_grid)
+		{
+			Console.WriteLine("MultiDrawNineGrid");
+		}
+		
+		public void LineTo(rdpContext* context, LineToOrder* line_to)
+		{
+			Console.WriteLine("LineTo");
+		}
+		
+		public void Polyline(rdpContext* context, PolylineOrder* polyline)
+		{
+			Console.WriteLine("Polyline");
+		}
+		
+		public void MemBlt(rdpContext* context, MemBltOrder* memblt)
+		{
+			Console.WriteLine("MemBlt");
+		}
+		
+		public void Mem3Blt(rdpContext* context, Mem3BltOrder* mem3blt)
+		{
+			Console.WriteLine("Mem3Blt");
+		}
+		
+		public void SaveBitmap(rdpContext* context, SaveBitmapOrder* save_bitmap)
+		{
+			Console.WriteLine("SaveBitmap");
+		}
+		
+		public void GlyphIndex(rdpContext* context, GlyphIndexOrder* glyph_index)
+		{
+			Console.WriteLine("GlyphIndex");
+		}
+		
+		public void FastIndex(rdpContext* context, FastIndexOrder* fast_index)
+		{
+			Console.WriteLine("FastIndex");
+		}
+		
+		public void FastGlyph(rdpContext* context, FastGlyphOrder* fast_glyph)
+		{
+			Console.WriteLine("FastGlyph");
+		}
+		
+		public void PolygonSC(rdpContext* context, PolygonSCOrder* polygon_sc)
+		{
+			Console.WriteLine("PolygonSC");
+		}
+		
+		public void PolygonCB(rdpContext* context, PolygonCBOrder* polygon_cb)
+		{
+			Console.WriteLine("PolygonCB");
+		}
+		
+		public void EllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc)
+		{
+			Console.WriteLine("EllipseSC");
+		}
+		
+		public void EllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb)
+		{
+			Console.WriteLine("EllipseCB");
+		}
 	}
 }
 

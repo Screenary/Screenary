@@ -6,7 +6,7 @@ namespace FreeRDP
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpContext
 	{
-		public IntPtr instance;
+		public freerdp* instance;
 		public IntPtr peer;
 		public fixed UInt32 paddingA[16-2];
 		

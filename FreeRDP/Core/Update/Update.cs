@@ -135,5 +135,64 @@ namespace FreeRDP
 		public IntPtr SurfaceBits;
 		public fixed UInt32 paddingE[80-66];
 	}
-}
+	
+	public unsafe interface IUpdate
+	{
+		void BeginPaint(rdpContext* context);
+		void EndPaint(rdpContext* context);
+		void SetBounds(rdpContext* context, rdpBounds* bounds);
+		void Synchronize(rdpContext* context);
+		void DesktopResize(rdpContext* context);
+		void BitmapUpdate(rdpContext* context, BitmapUpdate* bitmap);
+		void Palette(rdpContext* context, PaletteUpdate* palette);
+		void PlaySound(rdpContext* context, PlaySoundUpdate* playSound);
+		void SurfaceBits(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
+	}
+	
+	public unsafe class Update
+	{
+		private freerdp* instance;
+		private rdpContext* context;
+		private rdpUpdate* update;
+		
+		private pBeginPaint BeginPaint;
+		private pEndPaint EndPaint;
+		private pSetBounds SetBounds;
+		private pSynchronize Synchronize;
+		private pDesktopResize DesktopResize;
+		private pBitmapUpdate BitmapUpdate;
+		private pPalette Palette;
+		private pPlaySound PlaySound;
+		private pSurfaceBits SurfaceBits;
+		
+		public Update(rdpContext* context)
+		{
+			this.context = context;
+			this.instance = context->instance;
+			this.update = instance->update;
+		}
+		
+		public void RegisterInterface(IUpdate iUpdate)
+		{
+			BeginPaint = new pBeginPaint(iUpdate.BeginPaint);
+			EndPaint = new pEndPaint(iUpdate.EndPaint);
+			SetBounds = new pSetBounds(iUpdate.SetBounds);
+			Synchronize = new pSynchronize(iUpdate.Synchronize);
+			DesktopResize = new pDesktopResize(iUpdate.DesktopResize);
+			BitmapUpdate = new pBitmapUpdate(iUpdate.BitmapUpdate);
+			Palette = new pPalette(iUpdate.Palette);
+			PlaySound = new pPlaySound(iUpdate.PlaySound);
+			SurfaceBits = new pSurfaceBits(iUpdate.SurfaceBits);
 
+			update->BeginPaint = Marshal.GetFunctionPointerForDelegate(BeginPaint);
+			update->EndPaint = Marshal.GetFunctionPointerForDelegate(EndPaint);
+			update->SetBounds = Marshal.GetFunctionPointerForDelegate(SetBounds);
+			update->Synchronize = Marshal.GetFunctionPointerForDelegate(Synchronize);
+			update->DesktopResize = Marshal.GetFunctionPointerForDelegate(DesktopResize);
+			update->BitmapUpdate = Marshal.GetFunctionPointerForDelegate(BitmapUpdate);
+			update->Palette = Marshal.GetFunctionPointerForDelegate(Palette);
+			update->PlaySound = Marshal.GetFunctionPointerForDelegate(PlaySound);
+			update->SurfaceBits = Marshal.GetFunctionPointerForDelegate(SurfaceBits);
+		}
+	}
+}

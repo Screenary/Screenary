@@ -131,19 +131,6 @@ namespace FreeRDP
 		public byte* emfRecords;
 	}
 	
-	public unsafe delegate void pCreateOffscreenBitmap(rdpContext* context, CreateOffscreenBitmapOrder* create_offscreen_bitmap);
-	public unsafe delegate void pSwitchSurface(rdpContext* context, SwitchSurfaceOrder* switch_surface);
-	public unsafe delegate void pCreateNineGridBitmap(rdpContext* context, CreateNineGridBitmapOrder* create_nine_grid_bitmap);
-	public unsafe delegate void pFrameMarker(rdpContext* context, FrameMarkerOrder* frame_marker);
-	public unsafe delegate void pStreamBitmapFirst(rdpContext* context, StreamBitmapFirstOrder* stream_bitmap_first);
-	public unsafe delegate void pStreamBitmapNext(rdpContext* context, StreamBitmapNextOrder* stream_bitmap_next);
-	public unsafe delegate void pDrawGdiPlusFirst(rdpContext* context, DrawGdiPlusFirstOrder* draw_gdiplus_first);
-	public unsafe delegate void pDrawGdiPlusNext(rdpContext* context, DrawGdiPlusNextOrder* draw_gdiplus_next);
-	public unsafe delegate void pDrawGdiPlusEnd(rdpContext* context, DrawGdiPlusEndOrder* draw_gdiplus_end);
-	public unsafe delegate void pDrawGdiPlusCacheFirst(rdpContext* context, DrawGdiPlusCacheFirstOrder* draw_gdiplus_cache_first);
-	public unsafe delegate void pDrawGdiPlusCacheNext(rdpContext* context, DrawGdiPlusCacheNextOrder* draw_gdiplus_cache_next);
-	public unsafe delegate void pDrawGdiPlusCacheEnd(rdpContext* context, DrawGdiPlusCacheEndOrder* draw_gdiplus_cache_end);
-	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpAltSecUpdate
 	{
@@ -163,6 +150,93 @@ namespace FreeRDP
 		public IntPtr DrawGdiPlusCacheNext;
 		public IntPtr DrawGdiPlusCacheEnd;
 		public fixed UInt32 paddingB[32-28];
+	}
+	
+	public unsafe interface IAltSecUpdate
+	{
+		void CreateOffscreenBitmap(rdpContext* context, CreateOffscreenBitmapOrder* createOffscreenBitmap);
+		void SwitchSurface(rdpContext* context, SwitchSurfaceOrder* switchSurface);
+		void CreateNineGridBitmap(rdpContext* context, CreateNineGridBitmapOrder* createNineGridBitmap);
+		void FrameMarker(rdpContext* context, FrameMarkerOrder* frameMarker);
+		void StreamBitmapFirst(rdpContext* context, StreamBitmapFirstOrder* streamBitmapFirst);
+		void StreamBitmapNext(rdpContext* context, StreamBitmapNextOrder* streamBitmapNext);
+		void DrawGdiPlusFirst(rdpContext* context, DrawGdiPlusFirstOrder* drawGdiPlusFirst);
+		void DrawGdiPlusNext(rdpContext* context, DrawGdiPlusNextOrder* drawGdiPlusNext);
+		void DrawGdiPlusEnd(rdpContext* context, DrawGdiPlusEndOrder* drawGdiPlusEnd);
+		void DrawGdiPlusCacheFirst(rdpContext* context, DrawGdiPlusCacheFirstOrder* drawGdiPlusCacheFirst);
+		void DrawGdiPlusCacheNext(rdpContext* context, DrawGdiPlusCacheNextOrder* drawGdiPlusCacheNext);
+		void DrawGdiPlusCacheEnd(rdpContext* context, DrawGdiPlusCacheEndOrder* drawGdiPlusCacheEnd);
+	}
+	
+	public unsafe class AltSecUpdate
+	{
+		private freerdp* instance;
+		private rdpContext* context;
+		private rdpUpdate* update;
+		private rdpAltSecUpdate* altsec;
+		
+		delegate void CreateOffscreenBitmapDelegate(rdpContext* context, CreateOffscreenBitmapOrder* createOffscreenBitmap);
+		delegate void SwitchSurfaceDelegate(rdpContext* context, SwitchSurfaceOrder* switchSurface);
+		delegate void CreateNineGridBitmapDelegate(rdpContext* context, CreateNineGridBitmapOrder* createNineGridBitmap);
+		delegate void FrameMarkerDelegate(rdpContext* context, FrameMarkerOrder* frameMarker);
+		delegate void StreamBitmapFirstDelegate(rdpContext* context, StreamBitmapFirstOrder* streamBitmapFirst);
+		delegate void StreamBitmapNextDelegate(rdpContext* context, StreamBitmapNextOrder* streamBitmapNext);
+		delegate void DrawGdiPlusFirstDelegate(rdpContext* context, DrawGdiPlusFirstOrder* drawGdiPlusFirst);
+		delegate void DrawGdiPlusNextDelegate(rdpContext* context, DrawGdiPlusNextOrder* drawGdiPlusNext);
+		delegate void DrawGdiPlusEndDelegate(rdpContext* context, DrawGdiPlusEndOrder* drawGdiPlusEnd);
+		delegate void DrawGdiPlusCacheFirstDelegate(rdpContext* context, DrawGdiPlusCacheFirstOrder* drawGdiPlusCacheFirst);
+		delegate void DrawGdiPlusCacheNextDelegate(rdpContext* context, DrawGdiPlusCacheNextOrder* drawGdiPlusCacheNext);
+		delegate void DrawGdiPlusCacheEndDelegate(rdpContext* context, DrawGdiPlusCacheEndOrder* drawGdiPlusCacheEnd);
+		
+		private CreateOffscreenBitmapDelegate CreateOffscreenBitmap;
+		private SwitchSurfaceDelegate SwitchSurface;
+		private CreateNineGridBitmapDelegate CreateNineGridBitmap;
+		private FrameMarkerDelegate FrameMarker;
+		private StreamBitmapFirstDelegate StreamBitmapFirst;
+		private StreamBitmapNextDelegate StreamBitmapNext;
+		private DrawGdiPlusFirstDelegate DrawGdiPlusFirst;
+		private DrawGdiPlusNextDelegate DrawGdiPlusNext;
+		private DrawGdiPlusEndDelegate DrawGdiPlusEnd;
+		private DrawGdiPlusCacheFirstDelegate DrawGdiPlusCacheFirst;
+		private DrawGdiPlusCacheNextDelegate DrawGdiPlusCacheNext;
+		private DrawGdiPlusCacheEndDelegate DrawGdiPlusCacheEnd;
+		
+		public AltSecUpdate(rdpContext* context)
+		{
+			this.context = context;
+			this.instance = context->instance;
+			this.update = instance->update;
+			this.altsec = update->altsec;
+		}
+		
+		public void RegisterInterface(IAltSecUpdate iAltSec)
+		{
+			CreateOffscreenBitmap = new CreateOffscreenBitmapDelegate(iAltSec.CreateOffscreenBitmap);
+			SwitchSurface = new SwitchSurfaceDelegate(iAltSec.SwitchSurface);
+			CreateNineGridBitmap = new CreateNineGridBitmapDelegate(iAltSec.CreateNineGridBitmap);
+			FrameMarker = new FrameMarkerDelegate(iAltSec.FrameMarker);
+			StreamBitmapFirst = new StreamBitmapFirstDelegate(iAltSec.StreamBitmapFirst);
+			StreamBitmapNext = new StreamBitmapNextDelegate(iAltSec.StreamBitmapNext);
+			DrawGdiPlusFirst = new DrawGdiPlusFirstDelegate(iAltSec.DrawGdiPlusFirst);
+			DrawGdiPlusNext = new DrawGdiPlusNextDelegate(iAltSec.DrawGdiPlusNext);
+			DrawGdiPlusEnd = new DrawGdiPlusEndDelegate(iAltSec.DrawGdiPlusEnd);
+			DrawGdiPlusCacheFirst = new DrawGdiPlusCacheFirstDelegate(iAltSec.DrawGdiPlusCacheFirst);
+			DrawGdiPlusCacheNext = new DrawGdiPlusCacheNextDelegate(iAltSec.DrawGdiPlusCacheNext);
+			DrawGdiPlusCacheEnd = new DrawGdiPlusCacheEndDelegate(iAltSec.DrawGdiPlusCacheEnd);
+			
+			altsec->CreateOffscreenBitmap = Marshal.GetFunctionPointerForDelegate(CreateOffscreenBitmap);
+			altsec->SwitchSurface = Marshal.GetFunctionPointerForDelegate(SwitchSurface);
+			altsec->CreateNineGridBitmap = Marshal.GetFunctionPointerForDelegate(CreateNineGridBitmap);
+			altsec->FrameMarker = Marshal.GetFunctionPointerForDelegate(FrameMarker);
+			altsec->StreamBitmapFirst = Marshal.GetFunctionPointerForDelegate(StreamBitmapFirst);
+			altsec->StreamBitmapNext = Marshal.GetFunctionPointerForDelegate(StreamBitmapNext);
+			altsec->DrawGdiPlusFirst = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusFirst);
+			altsec->DrawGdiPlusNext = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusNext);
+			altsec->DrawGdiPlusEnd = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusEnd);
+			altsec->DrawGdiPlusCacheFirst = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusCacheFirst);
+			altsec->DrawGdiPlusCacheNext = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusCacheNext);
+			altsec->DrawGdiPlusCacheEnd = Marshal.GetFunctionPointerForDelegate(DrawGdiPlusCacheEnd);
+		}
 	}
 }
 

@@ -437,5 +437,31 @@ namespace FreeRDP
 		public IntPtr EllipseCB;
 		public fixed UInt32 paddingB[48-38];
 	}
+	
+	public unsafe interface IPrimaryUpdate
+	{		
+		void DstBlt(rdpContext* context, DstBltOrder* dstblt);
+		void PatBlt(rdpContext* context, PatBltOrder* patblt);
+		void ScrBlt(rdpContext* context, ScrBltOrder* scrblt);
+		void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect);
+		void DrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid);
+		void MultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt);
+		void MultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt);
+		void MultiScrBlt(rdpContext* context, MultiScrBltOrder* multi_scrblt);
+		void MultiOpaqueRect(rdpContext* context, MultiOpaqueRectOrder* multi_opaque_rect);
+		void MultiDrawNineGrid(rdpContext* context, MultiDrawNineGridOrder* multi_draw_nine_grid);
+		void LineTo(rdpContext* context, LineToOrder* line_to);
+		void Polyline(rdpContext* context, PolylineOrder* polyline);
+		void MemBlt(rdpContext* context, MemBltOrder* memblt);
+		void Mem3Blt(rdpContext* context, Mem3BltOrder* mem3blt);
+		void SaveBitmap(rdpContext* context, SaveBitmapOrder* save_bitmap);
+		void GlyphIndex(rdpContext* context, GlyphIndexOrder* glyph_index);
+		void FastIndex(rdpContext* context, FastIndexOrder* fast_index);
+		void FastGlyph(rdpContext* context, FastGlyphOrder* fast_glyph);
+		void PolygonSC(rdpContext* context, PolygonSCOrder* polygon_sc);
+		void PolygonCB(rdpContext* context, PolygonCBOrder* polygon_cb);
+		void EllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc);
+		void EllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb);
+	}
 }
 

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 {	
 	private Gdk.GC gc;
+	private Thread thread;
 	private Session session;
 	private int width, height;
 	private Gdk.Window window;
@@ -236,5 +237,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		RDP rdp = new RDP();
 		
 		rdp.Connect();
+		
+		thread = new Thread(() => ThreadProc(rdp));
+		thread.Start();
+	}
+	
+	static void ThreadProc(RDP rdp)
+	{
+		while (true)
+		{
+			rdp.CheckFileDescriptor();
+			Thread.Sleep(10);
+		}
 	}
 }

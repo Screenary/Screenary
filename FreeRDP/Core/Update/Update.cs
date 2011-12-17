@@ -107,7 +107,7 @@ namespace FreeRDP
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpUpdate
 	{
-		public rdpContext* context;
+		public IntPtr context;
 		public fixed UInt32 paddingA[16-1];
 		
 		public IntPtr BeginPaint;

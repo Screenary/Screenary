@@ -3,6 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {
+	public unsafe delegate void pGlyph_New(rdpContext* context, rdpGlyph* glyph);
+	public unsafe delegate void pGlyph_Free(rdpContext* context, rdpGlyph* glyph);
+	public unsafe delegate void pGlyph_Draw(rdpContext* context, rdpGlyph* glyph, int x, int y);
+	
+	public unsafe delegate void pGlyph_BeginDraw(rdpContext* context, rdpGlyph* glyph,
+		int x, int y, UInt32 bgcolor, UInt32 fgcolor);
+	
+	public unsafe delegate void pGlyph_EndDraw(rdpContext* context, rdpGlyph* glyph,
+		int x, int y, UInt32 bgcolor, UInt32 fgcolor);
+	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpGlyph
 	{

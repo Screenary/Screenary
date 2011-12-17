@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {
+	public unsafe delegate void pPointer_New(rdpContext* context, rdpPointer* pointer);
+	public unsafe delegate void pPointer_Free(rdpContext* context, rdpPointer* pointer);
+	public unsafe delegate void pPointer_Set(rdpContext* context, rdpPointer* pointer);
+	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpPointer
 	{

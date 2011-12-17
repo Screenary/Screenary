@@ -384,29 +384,6 @@ namespace FreeRDP
 		public rdpBrush brush;
 	}
 	
-	public unsafe delegate void pDstBlt(rdpContext* context, DstBltOrder* dstblt);
-	public unsafe delegate void pPatBlt(rdpContext* context, PatBltOrder* patblt);
-	public unsafe delegate void pScrBlt(rdpContext* context, ScrBltOrder* scrblt);
-	public unsafe delegate void pOpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect);
-	public unsafe delegate void pDrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid);
-	public unsafe delegate void pMultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt);
-	public unsafe delegate void pMultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt);
-	public unsafe delegate void pMultiScrBlt(rdpContext* context, MultiScrBltOrder* multi_scrblt);
-	public unsafe delegate void pMultiOpaqueRect(rdpContext* context, MultiOpaqueRectOrder* multi_opaque_rect);
-	public unsafe delegate void pMultiDrawNineGrid(rdpContext* context, MultiDrawNineGridOrder* multi_draw_nine_grid);
-	public unsafe delegate void pLineTo(rdpContext* context, LineToOrder* line_to);
-	public unsafe delegate void pPolyline(rdpContext* context, PolylineOrder* polyline);
-	public unsafe delegate void pMemBlt(rdpContext* context, MemBltOrder* memblt);
-	public unsafe delegate void pMem3Blt(rdpContext* context, Mem3BltOrder* mem3blt);
-	public unsafe delegate void pSaveBitmap(rdpContext* context, SaveBitmapOrder* save_bitmap);
-	public unsafe delegate void pGlyphIndex(rdpContext* context, GlyphIndexOrder* glyph_index);
-	public unsafe delegate void pFastIndex(rdpContext* context, FastIndexOrder* fast_index);
-	public unsafe delegate void pFastGlyph(rdpContext* context, FastGlyphOrder* fast_glyph);
-	public unsafe delegate void pPolygonSC(rdpContext* context, PolygonSCOrder* polygon_sc);
-	public unsafe delegate void pPolygonCB(rdpContext* context, PolygonCBOrder* polygon_cb);
-	public unsafe delegate void pEllipseSC(rdpContext* context, EllipseSCOrder* ellipse_sc);
-	public unsafe delegate void pEllipseCB(rdpContext* context, EllipseCBOrder* ellipse_cb);
-	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpPrimaryUpdate
 	{
@@ -471,28 +448,51 @@ namespace FreeRDP
 		private rdpUpdate* update;
 		private rdpPrimaryUpdate* primary;
 		
-		private pDstBlt DstBlt;
-		private pPatBlt PatBlt;
-		private pScrBlt ScrBlt;
-		private pOpaqueRect OpaqueRect;
-		private pDrawNineGrid DrawNineGrid;
-		private pMultiDstBlt MultiDstBlt;
-		private pMultiPatBlt MultiPatBlt;
-		private pMultiScrBlt MultiScrBlt;
-		private pMultiOpaqueRect MultiOpaqueRect;
-		private pMultiDrawNineGrid MultiDrawNineGrid;
-		private pLineTo LineTo;
-		private pPolyline Polyline;
-		private pMemBlt MemBlt;
-		private pMem3Blt Mem3Blt;
-		private pSaveBitmap SaveBitmap;
-		private pGlyphIndex GlyphIndex;
-		private pFastIndex FastIndex;
-		private pFastGlyph FastGlyph;
-		private pPolygonSC PolygonSC;
-		private pPolygonCB PolygonCB;
-		private pEllipseSC EllipseSC;
-		private pEllipseCB EllipseCB;
+		delegate void DstBltDelegate(rdpContext* context, DstBltOrder* dstBlt);
+		delegate void PatBltDelegate(rdpContext* context, PatBltOrder* patBlt);
+		delegate void ScrBltDelegate(rdpContext* context, ScrBltOrder* scrBlt);
+		delegate void OpaqueRectDelegate(rdpContext* context, OpaqueRectOrder* opaqueRect);
+		delegate void DrawNineGridDelegate(rdpContext* context, DrawNineGridOrder* drawNineGrid);
+		delegate void MultiDstBltDelegate(rdpContext* context, MultiDstBltOrder* multiDstBlt);
+		delegate void MultiPatBltDelegate(rdpContext* context, MultiPatBltOrder* multiPatBlt);
+		delegate void MultiScrBltDelegate(rdpContext* context, MultiScrBltOrder* multiScrBlt);
+		delegate void MultiOpaqueRectDelegate(rdpContext* context, MultiOpaqueRectOrder* multiOpaqueRect);
+		delegate void MultiDrawNineGridDelegate(rdpContext* context, MultiDrawNineGridOrder* multiDrawNineGrid);
+		delegate void LineToDelegate(rdpContext* context, LineToOrder* lineTo);
+		delegate void PolylineDelegate(rdpContext* context, PolylineOrder* polyline);
+		delegate void MemBltDelegate(rdpContext* context, MemBltOrder* memBlt);
+		delegate void Mem3BltDelegate(rdpContext* context, Mem3BltOrder* mem3Blt);
+		delegate void SaveBitmapDelegate(rdpContext* context, SaveBitmapOrder* saveBitmap);
+		delegate void GlyphIndexDelegate(rdpContext* context, GlyphIndexOrder* glyphIndex);
+		delegate void FastIndexDelegate(rdpContext* context, FastIndexOrder* fastIndex);
+		delegate void FastGlyphDelegate(rdpContext* context, FastGlyphOrder* fastGlyph);
+		delegate void PolygonSCDelegate(rdpContext* context, PolygonSCOrder* polygonSC);
+		delegate void PolygonCBDelegate(rdpContext* context, PolygonCBOrder* polygonCB);
+		delegate void EllipseSCDelegate(rdpContext* context, EllipseSCOrder* ellipseSC);
+		delegate void EllipseCBDelegate(rdpContext* context, EllipseCBOrder* ellipseCB);
+		
+		private DstBltDelegate DstBlt;
+		private PatBltDelegate PatBlt;
+		private ScrBltDelegate ScrBlt;
+		private OpaqueRectDelegate OpaqueRect;
+		private DrawNineGridDelegate DrawNineGrid;
+		private MultiDstBltDelegate MultiDstBlt;
+		private MultiPatBltDelegate MultiPatBlt;
+		private MultiScrBltDelegate MultiScrBlt;
+		private MultiOpaqueRectDelegate MultiOpaqueRect;
+		private MultiDrawNineGridDelegate MultiDrawNineGrid;
+		private LineToDelegate LineTo;
+		private PolylineDelegate Polyline;
+		private MemBltDelegate MemBlt;
+		private Mem3BltDelegate Mem3Blt;
+		private SaveBitmapDelegate SaveBitmap;
+		private GlyphIndexDelegate GlyphIndex;
+		private FastIndexDelegate FastIndex;
+		private FastGlyphDelegate FastGlyph;
+		private PolygonSCDelegate PolygonSC;
+		private PolygonCBDelegate PolygonCB;
+		private EllipseSCDelegate EllipseSC;
+		private EllipseCBDelegate EllipseCB;
 		
 		public PrimaryUpdate(rdpContext* context)
 		{
@@ -504,28 +504,28 @@ namespace FreeRDP
 		
 		public void RegisterInterface(IPrimaryUpdate iPrimary)
 		{
-			DstBlt = new pDstBlt(iPrimary.DstBlt);
-			PatBlt = new pPatBlt(iPrimary.PatBlt);
-			ScrBlt = new pScrBlt(iPrimary.ScrBlt);
-			OpaqueRect = new pOpaqueRect(iPrimary.OpaqueRect);
-			DrawNineGrid = new pDrawNineGrid(iPrimary.DrawNineGrid);
-			MultiDstBlt = new pMultiDstBlt(iPrimary.MultiDstBlt);
-			MultiPatBlt = new pMultiPatBlt(iPrimary.MultiPatBlt);
-			MultiScrBlt = new pMultiScrBlt(iPrimary.MultiScrBlt);
-			MultiOpaqueRect = new pMultiOpaqueRect(iPrimary.MultiOpaqueRect);
-			MultiDrawNineGrid = new pMultiDrawNineGrid(iPrimary.MultiDrawNineGrid);
-			LineTo = new pLineTo(iPrimary.LineTo);
-			Polyline = new pPolyline(iPrimary.Polyline);
-			MemBlt = new pMemBlt(iPrimary.MemBlt);
-			Mem3Blt = new pMem3Blt(iPrimary.Mem3Blt);
-			SaveBitmap = new pSaveBitmap(iPrimary.SaveBitmap);
-			GlyphIndex = new pGlyphIndex(iPrimary.GlyphIndex);
-			FastIndex = new pFastIndex(iPrimary.FastIndex);
-			FastGlyph = new pFastGlyph(iPrimary.FastGlyph);
-			PolygonSC = new pPolygonSC(iPrimary.PolygonSC);
-			PolygonCB = new pPolygonCB(iPrimary.PolygonCB);
-			EllipseSC = new pEllipseSC(iPrimary.EllipseSC);
-			EllipseCB = new pEllipseCB(iPrimary.EllipseCB);
+			DstBlt = new DstBltDelegate(iPrimary.DstBlt);
+			PatBlt = new PatBltDelegate(iPrimary.PatBlt);
+			ScrBlt = new ScrBltDelegate(iPrimary.ScrBlt);
+			OpaqueRect = new OpaqueRectDelegate(iPrimary.OpaqueRect);
+			DrawNineGrid = new DrawNineGridDelegate(iPrimary.DrawNineGrid);
+			MultiDstBlt = new MultiDstBltDelegate(iPrimary.MultiDstBlt);
+			MultiPatBlt = new MultiPatBltDelegate(iPrimary.MultiPatBlt);
+			MultiScrBlt = new MultiScrBltDelegate(iPrimary.MultiScrBlt);
+			MultiOpaqueRect = new MultiOpaqueRectDelegate(iPrimary.MultiOpaqueRect);
+			MultiDrawNineGrid = new MultiDrawNineGridDelegate(iPrimary.MultiDrawNineGrid);
+			LineTo = new LineToDelegate(iPrimary.LineTo);
+			Polyline = new PolylineDelegate(iPrimary.Polyline);
+			MemBlt = new MemBltDelegate(iPrimary.MemBlt);
+			Mem3Blt = new Mem3BltDelegate(iPrimary.Mem3Blt);
+			SaveBitmap = new SaveBitmapDelegate(iPrimary.SaveBitmap);
+			GlyphIndex = new GlyphIndexDelegate(iPrimary.GlyphIndex);
+			FastIndex = new FastIndexDelegate(iPrimary.FastIndex);
+			FastGlyph = new FastGlyphDelegate(iPrimary.FastGlyph);
+			PolygonSC = new PolygonSCDelegate(iPrimary.PolygonSC);
+			PolygonCB = new PolygonCBDelegate(iPrimary.PolygonCB);
+			EllipseSC = new EllipseSCDelegate(iPrimary.EllipseSC);
+			EllipseCB = new EllipseCBDelegate(iPrimary.EllipseCB);
 			
 			primary->DstBlt = Marshal.GetFunctionPointerForDelegate(DstBlt);
 			primary->PatBlt = Marshal.GetFunctionPointerForDelegate(PatBlt);

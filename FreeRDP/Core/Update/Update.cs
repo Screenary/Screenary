@@ -89,21 +89,6 @@ namespace FreeRDP
 		public UInt32 frameId;
 	}
 	
-	public unsafe delegate void pBeginPaint(rdpContext* context);
-	public unsafe delegate void pEndPaint(rdpContext* context);
-	public unsafe delegate void pSetBounds(rdpContext* context, rdpBounds* bounds);
-	public unsafe delegate void pSynchronize(rdpContext* context);
-	public unsafe delegate void pDesktopResize(rdpContext* context);
-	public unsafe delegate void pBitmapUpdate(rdpContext* context, BitmapUpdate* bitmap);
-	public unsafe delegate void pPalette(rdpContext* context, PaletteUpdate* palette);
-	public unsafe delegate void pPlaySound(rdpContext* context, PlaySoundUpdate* playSound);
-	
-	public unsafe delegate void pRefreshRect(rdpContext* context, byte count, IntPtr areas);
-	public unsafe delegate void pSuppressOutput(rdpContext* context, byte allow, IntPtr area);
-	
-	public unsafe delegate void pSurfaceCommand(rdpContext* context, IntPtr s);
-	public unsafe delegate void pSurfaceBits(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
-	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpUpdate
 	{
@@ -155,15 +140,30 @@ namespace FreeRDP
 		private rdpContext* context;
 		private rdpUpdate* update;
 		
-		private pBeginPaint BeginPaint;
-		private pEndPaint EndPaint;
-		private pSetBounds SetBounds;
-		private pSynchronize Synchronize;
-		private pDesktopResize DesktopResize;
-		private pBitmapUpdate BitmapUpdate;
-		private pPalette Palette;
-		private pPlaySound PlaySound;
-		private pSurfaceBits SurfaceBits;
+		delegate void BeginPaintDelegate(rdpContext* context);
+		delegate void EndPaintDelegate(rdpContext* context);
+		delegate void SetBoundsDelegate(rdpContext* context, rdpBounds* bounds);
+		delegate void SynchronizeDelegate(rdpContext* context);
+		delegate void DesktopResizeDelegate(rdpContext* context);
+		delegate void BitmapUpdateDelegate(rdpContext* context, BitmapUpdate* bitmap);
+		delegate void PaletteDelegate(rdpContext* context, PaletteUpdate* palette);
+		delegate void PlaySoundDelegate(rdpContext* context, PlaySoundUpdate* playSound);
+		
+		delegate void RefreshRectDelegate(rdpContext* context, byte count, IntPtr areas);
+		delegate void SuppressOutputDelegate(rdpContext* context, byte allow, IntPtr area);
+		
+		delegate void SurfaceCommandDelegate(rdpContext* context, IntPtr s);
+		delegate void SurfaceBitsDelegate(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
+		
+		private BeginPaintDelegate BeginPaint;
+		private EndPaintDelegate EndPaint;
+		private SetBoundsDelegate SetBounds;
+		private SynchronizeDelegate Synchronize;
+		private DesktopResizeDelegate DesktopResize;
+		private BitmapUpdateDelegate BitmapUpdate;
+		private PaletteDelegate Palette;
+		private PlaySoundDelegate PlaySound;
+		private SurfaceBitsDelegate SurfaceBits;
 		
 		public Update(rdpContext* context)
 		{
@@ -174,15 +174,15 @@ namespace FreeRDP
 		
 		public void RegisterInterface(IUpdate iUpdate)
 		{
-			BeginPaint = new pBeginPaint(iUpdate.BeginPaint);
-			EndPaint = new pEndPaint(iUpdate.EndPaint);
-			SetBounds = new pSetBounds(iUpdate.SetBounds);
-			Synchronize = new pSynchronize(iUpdate.Synchronize);
-			DesktopResize = new pDesktopResize(iUpdate.DesktopResize);
-			BitmapUpdate = new pBitmapUpdate(iUpdate.BitmapUpdate);
-			Palette = new pPalette(iUpdate.Palette);
-			PlaySound = new pPlaySound(iUpdate.PlaySound);
-			SurfaceBits = new pSurfaceBits(iUpdate.SurfaceBits);
+			BeginPaint = new BeginPaintDelegate(iUpdate.BeginPaint);
+			EndPaint = new EndPaintDelegate(iUpdate.EndPaint);
+			SetBounds = new SetBoundsDelegate(iUpdate.SetBounds);
+			Synchronize = new SynchronizeDelegate(iUpdate.Synchronize);
+			DesktopResize = new DesktopResizeDelegate(iUpdate.DesktopResize);
+			BitmapUpdate = new BitmapUpdateDelegate(iUpdate.BitmapUpdate);
+			Palette = new PaletteDelegate(iUpdate.Palette);
+			PlaySound = new PlaySoundDelegate(iUpdate.PlaySound);
+			SurfaceBits = new SurfaceBitsDelegate(iUpdate.SurfaceBits);
 
 			update->BeginPaint = Marshal.GetFunctionPointerForDelegate(BeginPaint);
 			update->EndPaint = Marshal.GetFunctionPointerForDelegate(EndPaint);

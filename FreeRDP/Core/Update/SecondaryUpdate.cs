@@ -119,14 +119,6 @@ namespace FreeRDP
 		public byte* data;
 	}
 	
-	public unsafe delegate void pCacheBitmap(rdpContext* context, CacheBitmapOrder* cache_bitmap_order);
-	public unsafe delegate void pCacheBitmapV2(rdpContext* context, CacheBitmapV2Order* cache_bitmap_v2_order);
-	public unsafe delegate void pCacheBitmapV3(rdpContext* context, CacheBitmapV3Order* cache_bitmap_v3_order);
-	public unsafe delegate void pCacheColorTable(rdpContext* context, CacheColorTableOrder* cache_color_table_order);
-	public unsafe delegate void pCacheGlyph(rdpContext* context, CacheGlyphOrder* cache_glyph_order);
-	public unsafe delegate void pCacheGlyphV2(rdpContext* context, CacheGlyphV2Order* cache_glyph_v2_order);
-	public unsafe delegate void pCacheBrush(rdpContext* context, CacheBrushOrder* cache_brush_order);
-	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct rdpSecondaryUpdate
 	{
@@ -141,6 +133,68 @@ namespace FreeRDP
 		public IntPtr CacheGlyphV2;
 		public IntPtr CacheBrush;
 		public fixed UInt32 paddingB[32-23];
+	}
+	
+	public unsafe interface ISecondaryUpdate
+	{
+		void CacheBitmap(rdpContext* context, CacheBitmapOrder* cacheBitmapOrder);
+		void CacheBitmapV2(rdpContext* context, CacheBitmapV2Order* cacheBitmapV2Order);
+		void CacheBitmapV3(rdpContext* context, CacheBitmapV3Order* cacheBitmapV3Order);
+		void CacheColorTable(rdpContext* context, CacheColorTableOrder* cacheColorTableOrder);
+		void CacheGlyph(rdpContext* context, CacheGlyphOrder* cacheGlyphOrder);
+		void CacheGlyphV2(rdpContext* context, CacheGlyphV2Order* cacheGlyphV2Order);
+		void CacheBrush(rdpContext* context, CacheBrushOrder* cacheBrushOrder);
+	}
+	
+	public unsafe class SecondaryUpdate
+	{
+		private freerdp* instance;
+		private rdpContext* context;
+		private rdpUpdate* update;
+		private rdpSecondaryUpdate* secondary;
+		
+		delegate void CacheBitmapDelegate(rdpContext* context, CacheBitmapOrder* cacheBitmapOrder);
+		delegate void CacheBitmapV2Delegate(rdpContext* context, CacheBitmapV2Order* cacheBitmapV2Order);
+		delegate void CacheBitmapV3Delegate(rdpContext* context, CacheBitmapV3Order* cacheBitmapV3Order);
+		delegate void CacheColorTableDelegate(rdpContext* context, CacheColorTableOrder* cacheColorTableOrder);
+		delegate void CacheGlyphDelegate(rdpContext* context, CacheGlyphOrder* cacheGlyphOrder);
+		delegate void CacheGlyphV2Delegate(rdpContext* context, CacheGlyphV2Order* cacheGlyphV2Order);
+		delegate void CacheBrushDelegate(rdpContext* context, CacheBrushOrder* cacheBrushOrder);
+		
+		private CacheBitmapDelegate CacheBitmap;
+		private CacheBitmapV2Delegate CacheBitmapV2;
+		private CacheBitmapV3Delegate CacheBitmapV3;
+		private CacheColorTableDelegate CacheColorTable;
+		private CacheGlyphDelegate CacheGlyph;
+		private CacheGlyphV2Delegate CacheGlyphV2;
+		private CacheBrushDelegate CacheBrush;
+		
+		public SecondaryUpdate(rdpContext* context)
+		{
+			this.context = context;
+			this.instance = context->instance;
+			this.update = instance->update;
+			this.secondary = update->secondary;
+		}
+		
+		public void RegisterInterface(ISecondaryUpdate iSecondary)
+		{
+			CacheBitmap = new CacheBitmapDelegate(iSecondary.CacheBitmap);
+			CacheBitmapV2 = new CacheBitmapV2Delegate(iSecondary.CacheBitmapV2);
+			CacheBitmapV3 = new CacheBitmapV3Delegate(iSecondary.CacheBitmapV3);
+			CacheColorTable = new CacheColorTableDelegate(iSecondary.CacheColorTable);
+			CacheGlyph = new CacheGlyphDelegate(iSecondary.CacheGlyph);
+			CacheGlyphV2 = new CacheGlyphV2Delegate(iSecondary.CacheGlyphV2);
+			CacheBrush = new CacheBrushDelegate(iSecondary.CacheBrush);
+
+			secondary->CacheBitmap = Marshal.GetFunctionPointerForDelegate(CacheBitmap);
+			secondary->CacheBitmapV2 = Marshal.GetFunctionPointerForDelegate(CacheBitmapV2);
+			secondary->CacheBitmapV3 = Marshal.GetFunctionPointerForDelegate(CacheBitmapV3);
+			secondary->CacheColorTable = Marshal.GetFunctionPointerForDelegate(CacheColorTable);
+			secondary->CacheGlyph = Marshal.GetFunctionPointerForDelegate(CacheGlyph);
+			secondary->CacheGlyphV2 = Marshal.GetFunctionPointerForDelegate(CacheGlyphV2);
+			secondary->CacheBrush = Marshal.GetFunctionPointerForDelegate(CacheBrush);			
+		}
 	}
 }
 

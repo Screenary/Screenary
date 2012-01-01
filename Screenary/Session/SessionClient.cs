@@ -32,7 +32,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendJoinReq");
 
 			byte[] buffer = null;
-			int length = sessionKey.Length + 4;
+			int length = sessionKey.Length + 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, 0);
 			
 			s.Write((UInt16) sessionKey.Length);
@@ -46,7 +46,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendLeaveReq");
 
 			byte[] buffer = null;
-			int length = 4 + 4;
+			int length = 0;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
 									
 			Send(buffer, PDU_SESSION_LEAVE_REQ);
@@ -57,7 +57,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendAuthReq");
 
 			byte[] buffer = null;
-			int length = 4 + username.Length + password.Length + 4;
+			int length = username.Length + password.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
 			
 			s.Write((UInt16) username.Length);
@@ -89,7 +89,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendTermReq");
 			
 			byte[] buffer = null;
-			int length = 4 + sessionKey.Length + 4 + 4;
+			int length = sessionKey.Length + 6;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
 			
 			s.Write((UInt16) sessionKey.Length);

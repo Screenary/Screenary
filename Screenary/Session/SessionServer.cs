@@ -32,7 +32,7 @@ namespace Screenary
 			Console.WriteLine("SessionServer.SendJoinRsp");
 			
 			byte[] buffer = null;
-			int length = 4;
+			int length = 0;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, sessionStatus);
 						
 			Send(buffer, PDU_SESSION_JOIN_RSP);
@@ -43,7 +43,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendLeaveRsp");
 						
 			byte[] buffer = null;
-			int length = 4;
+			int length = 0;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, sessionStatus);
 						
 			Send(buffer, PDU_SESSION_LEAVE_RSP);
@@ -54,7 +54,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendAuthRsp");
 
 			byte[] buffer = null;
-			int length = + 4;
+			int length = 0;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, sessionStatus);
 									
 			Send(buffer, PDU_SESSION_AUTH_RSP);			
@@ -65,7 +65,7 @@ namespace Screenary
 			Console.WriteLine("SessionServer.SendCreateRsp");
 			
 			byte[] buffer = null;
-			int length = sessionKey.Length + 4;
+			int length = sessionKey.Length;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, 0);
 			
 			s.Write(sessionKey);
@@ -78,7 +78,7 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendTermRsp");
 
 			byte[] buffer = null;
-			int length = sessionKey.Length + 4;
+			int length = sessionKey.Length;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, sessionStatus);
 			
 			s.Write(sessionKey);

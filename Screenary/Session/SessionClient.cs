@@ -16,7 +16,7 @@ namespace Screenary
 			this.sessionId = 0;
 		}
 		
-		private BinaryWriter InitReqPDU(ref byte[] buffer, int length)
+		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
 		{
 			BinaryWriter s;
 			
@@ -27,62 +27,144 @@ namespace Screenary
 			return s;
 		}
 		
-		public void SendJoinReq()
+		public void SendJoinReq(char[] sessionKey)
 		{
+			Console.WriteLine("SessionClient.SendJoinReq");
 
+			byte[] buffer = null;
+			int length = sessionKey.Length + 2;
+			BinaryWriter s = InitReqPDU(ref buffer, length, 0);
+			
+			s.Write((UInt16) sessionKey.Length);
+			s.Write(sessionKey);
+						
+			Send(buffer, PDU_SESSION_JOIN_REQ);
 		}
 		
-		public void SendLeaveReq()
+		public void SendLeaveReq(UInt32 sessionID)
 		{
+			Console.WriteLine("SessionClient.SendLeaveReq");
 
+			byte[] buffer = null;
+			int length = 0;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
+									
+			Send(buffer, PDU_SESSION_LEAVE_REQ);
 		}
 		
-		public void SendAuthReq()
+		public void SendAuthReq(UInt32 sessionID, string username, string password)
 		{
+			Console.WriteLine("SessionClient.SendAuthReq");
 
-		}
-		
-		public void SendCreateReq(string username, string password)
-		{
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
-			BinaryWriter s = InitReqPDU(ref buffer, length);
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
 			
 			s.Write((UInt16) username.Length);
 			s.Write((UInt16) password.Length);
 			s.Write(username.ToCharArray());
 			s.Write(password.ToCharArray());
+						
+			Send(buffer, PDU_SESSION_AUTH_REQ);
+		}
+		
+		public void SendCreateReq(string username, string password)
+		{
+			Console.WriteLine("SessionClient.SendCreateReq");
+
+			byte[] buffer = null;
+			int length = username.Length + password.Length + 4;
+			BinaryWriter s = InitReqPDU(ref buffer, length, 0);
 			
-			Console.WriteLine("SendCreateReq");
-			
+			s.Write((UInt16) username.Length);
+			s.Write((UInt16) password.Length);
+			s.Write(username.ToCharArray());
+			s.Write(password.ToCharArray());
+				
 			Send(buffer, PDU_SESSION_CREATE_REQ);
 		}
 		
-		public void SendTermReq()
+		public void SendTermReq(UInt32 sessionID, char[] sessionKey, UInt32 sessionStatus)
 		{
-
+			Console.WriteLine("SessionClient.SendTermReq");
+			
+			byte[] buffer = null;
+			int length = sessionKey.Length + 6;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
+			
+			s.Write((UInt16) sessionKey.Length);
+			s.Write(sessionKey);
+			s.Write(sessionStatus);
+			
+			Send(buffer, PDU_SESSION_TERM_REQ);
 		}
 		
 		public void RecvJoinRsp(BinaryReader s)
 		{
+			Console.WriteLine("SessionClient.RecvJoinRsp");
+
+			UInt32 sessionId;
+			UInt32 sessionStatus;
+			
+			sessionId = s.ReadUInt32();
+			sessionStatus = s.ReadUInt32();
+			
+			if (sessionStatus != 0)
+			{
+				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				return;
+			}
+			
+			Console.WriteLine("SessionId: {0}", sessionId);
 
 		}
 		
 		public void RecvLeaveRsp(BinaryReader s)
 		{
-	
+			Console.WriteLine("SessionClient.RecvLeaveRsp");
+
+			UInt32 sessionId;
+			UInt32 sessionStatus;
+			
+			sessionId = s.ReadUInt32();
+			sessionStatus = s.ReadUInt32();
+			
+			if (sessionStatus != 0)
+			{
+				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				return;
+			}
+			
+			Console.WriteLine("SessionId: {0}", sessionId);
 		}
 		
 		public void RecvAuthRsp(BinaryReader s)
 		{
-		
+			Console.WriteLine("SessionClient.RecvAuthRsp");
+
+			UInt32 sessionId;
+			UInt32 sessionStatus;
+			
+			sessionId = s.ReadUInt32();
+			sessionStatus = s.ReadUInt32();
+			
+			if (sessionStatus != 0)
+			{
+				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				return;
+			}
+			
+			Console.WriteLine("SessionId: {0}", sessionId);
 		}
 		
 		public void RecvCreateRsp(BinaryReader s)
 		{
+			Console.WriteLine("SessionClient.RecvCreateRsp");
+			
 			UInt32 sessionId;
 			UInt32 sessionStatus;
 			char[] sessionKey;
+			string sessionKeyString = "";
 			
 			sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
@@ -95,16 +177,43 @@ namespace Screenary
 			
 			sessionKey = s.ReadChars(12);
 			
-			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKey);
+			for(int i = 0; i < sessionKey.Length; i++) {
+				sessionKeyString += sessionKey[i];
+			}		
+			
+			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKeyString);
 		}
 		
 		public void RecvTermRsp(BinaryReader s)
 		{
+			Console.WriteLine("SessionClient.RecvTermRsp");
 
+			UInt32 sessionId;
+			UInt32 sessionStatus;
+			char[] sessionKey;
+			string sessionKeyString = "";
+			
+			sessionId = s.ReadUInt32();
+			sessionStatus = s.ReadUInt32();
+			
+			if (sessionStatus != 0)
+			{
+				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				return;
+			}
+			
+			sessionKey = s.ReadChars(12);
+			
+			for(int i = 0; i < sessionKey.Length; i++) {
+				sessionKeyString += sessionKey[i];
+			}		
+			
+			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKeyString);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
+			Console.WriteLine("SessionClient.OnRecv");
 			lock (channelLock)
 			{
 				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));
@@ -114,6 +223,7 @@ namespace Screenary
 		
 		public override void OnOpen()
 		{
+			Console.WriteLine("SessionClient.OnOpen");
 			thread = new Thread(ChannelThreadProc);
 			thread.Start();
 		}
@@ -125,6 +235,7 @@ namespace Screenary
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
+			Console.WriteLine("SessionClient.ProcessPDU");
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
@@ -157,7 +268,13 @@ namespace Screenary
 		
 		public void ChannelThreadProc()
 		{
-			SendCreateReq("screenary", "awesome");
+			Console.WriteLine("SessionClient.ChannelThreadProc");
+			
+			//SendJoinReq("ABCDEF123456".ToCharArray());
+			//SendLeaveReq(5);
+			//SendAuthReq(5, "screenary", "awesome");
+			//SendCreateReq("screenary", "awesome");
+			//SendTermReq(5, "ABCDEF123456".ToCharArray(), 0);
 			
 			lock (channelLock)
 			{

@@ -191,7 +191,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 
 	protected void OnConnectActionActivated (object sender, System.EventArgs e)
 	{
-		ConnectDialog connect = new ConnectDialog(this);
 	}
 		
 	public void OnSurfaceCommand(BinaryReader s)
@@ -249,5 +248,25 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 			rdp.CheckFileDescriptor();
 			Thread.Sleep(10);
 		}
+	}
+
+	protected void OnCreateSessionActionActivated (object sender, System.EventArgs e)
+	{
+		CreateSessionDialog connect = new CreateSessionDialog(this);
+	}
+
+	protected void OnJoinSessionActionActivated (object sender, System.EventArgs e)
+	{
+		JoinDialog join = new JoinDialog();
+	}
+
+	protected void OnSenderActionToggled (object sender, System.EventArgs e)
+	{
+		throw new System.NotImplementedException ();
+	}
+
+	protected void OnReceiverActionToggled (object sender, System.EventArgs e)
+	{
+		throw new System.NotImplementedException ();
 	}
 }

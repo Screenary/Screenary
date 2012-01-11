@@ -62,10 +62,14 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="ConnectDialog.cs" />
-    <Compile Include="gtk-gui\Screenary.Client.ConnectDialog.cs" />
     <Compile Include="IUserAction.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="CreateSessionDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.CreateSessionDialog.cs" />
+    <Compile Include="JoinDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.JoinDialog.cs" />
+    <Compile Include="AuthenticateDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

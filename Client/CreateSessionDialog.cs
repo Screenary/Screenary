@@ -8,17 +8,17 @@ using System.Threading;
 
 namespace Screenary.Client
 {
-	public partial class ConnectDialog : Gtk.Dialog
+	public partial class CreateSessionDialog : Gtk.Dialog
 	{
 		private IUserAction observer;
 		
-		public ConnectDialog(IUserAction observer)
+		public CreateSessionDialog(IUserAction observer)
 		{
 			this.Build();
 			this.observer = observer;
 		}
 
-		protected void OnButtonConnectClicked(object sender, System.EventArgs e)
+		protected void OnButtonCreateClicked(object sender, System.EventArgs e)
 		{
 			int port;
 			string hostname;

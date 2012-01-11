@@ -15,10 +15,10 @@
         <property name="Label" translatable="yes">File</property>
         <property name="ShortLabel" translatable="yes">File</property>
       </action>
-      <action id="openAction">
+      <action id="OpenFileAction">
         <property name="Type">Action</property>
         <property name="Accelerator">&lt;Control&gt;o</property>
-        <property name="Label" translatable="yes">Open</property>
+        <property name="Label" translatable="yes">Open File</property>
         <property name="ShortLabel" translatable="yes">Open</property>
         <signal name="Activated" handler="OnOpenActionActivated" />
       </action>
@@ -29,7 +29,7 @@
         <property name="ShortLabel" translatable="yes">Close</property>
         <signal name="Activated" handler="OnCloseActionActivated" />
       </action>
-      <action id="connectAction">
+      <action id="ConnectAction">
         <property name="Type">Action</property>
         <property name="Accelerator">&lt;Control&gt;c</property>
         <property name="Label" translatable="yes">Connect</property>
@@ -46,6 +46,7 @@
       <action id="ToolsAction">
         <property name="Type">Action</property>
         <property name="Accelerator">&lt;Alt&gt;t</property>
+        <property name="HideIfEmpty">False</property>
         <property name="Label" translatable="yes">Tools</property>
         <property name="ShortLabel" translatable="yes">Tools</property>
       </action>
@@ -81,6 +82,44 @@
         <property name="ShortLabel" translatable="yes">FreeRDP</property>
         <signal name="Activated" handler="OnFreeRDPActionActivated" />
       </action>
+      <action id="ModeAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Mode</property>
+        <property name="ShortLabel" translatable="yes">Mode</property>
+      </action>
+      <action id="SenderAction">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Sender</property>
+        <property name="ShortLabel" translatable="yes">Sender</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <signal name="Toggled" handler="OnSenderActionToggled" />
+      </action>
+      <action id="ReceiverAction">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Receiver</property>
+        <property name="ShortLabel" translatable="yes">Receiver</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <signal name="Toggled" handler="OnReceiverActionToggled" />
+      </action>
+      <action id="CreateSessionAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Create Session</property>
+        <property name="ShortLabel" translatable="yes">Create Session</property>
+        <signal name="Activated" handler="OnCreateSessionActionActivated" />
+      </action>
+      <action id="JoinSessionAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Join Session</property>
+        <property name="ShortLabel" translatable="yes">Join Session</property>
+        <signal name="Activated" handler="OnJoinSessionActionActivated" />
+      </action>
+      <action id="DocumentationAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Documentation</property>
+        <property name="ShortLabel" translatable="yes">Documentation</property>
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -99,20 +138,28 @@
             <child>
               <widget class="Gtk.MenuBar" id="menubar1">
                 <property name="MemberName" />
+                <property name="CanDefault">True</property>
+                <property name="HasDefault">True</property>
+                <property name="Events">ExposureMask</property>
                 <node name="menubar1" type="Menubar">
                   <node type="Menu" action="FileAction">
-                    <node type="Menuitem" action="openAction" />
-                    <node type="Menuitem" action="closeAction" />
-                    <node type="Menuitem" action="connectAction" />
+                    <node type="Menuitem" action="OpenFileAction" />
+                    <node type="Menu" action="ModeAction">
+                      <node type="Menuitem" action="SenderAction" />
+                      <node type="Menuitem" action="ReceiverAction" />
+                    </node>
                     <node type="Menuitem" action="quitAction" />
                   </node>
                   <node type="Menu" action="ToolsAction">
+                    <node type="Menuitem" action="CreateSessionAction" />
+                    <node type="Menuitem" action="JoinSessionAction" />
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
                   </node>
                   <node type="Menu" action="HelpAction">
                     <node type="Menuitem" action="aboutAction" />
+                    <node type="Menuitem" action="DocumentationAction" />
                   </node>
                 </node>
               </widget>
@@ -142,9 +189,9 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="Screenary.Client.ConnectDialog" design-size="608 134">
+  <widget class="Gtk.Dialog" id="Screenary.Client.CreateSessionDialog" design-size="643 134">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Connection</property>
+    <property name="Title" translatable="yes">Create a new session</property>
     <property name="Icon">stock:gtk-connect Menu</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Resizable">False</property>
@@ -165,9 +212,9 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.Label" id="lblHostname">
-                    <property name="MemberName">hostname</property>
-                    <property name="LabelProp" translatable="yes">Hostname:</property>
+                  <widget class="Gtk.Label" id="lblUsername">
+                    <property name="MemberName">username</property>
+                    <property name="LabelProp" translatable="yes">Username:</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -180,9 +227,8 @@
                 <child>
                   <widget class="Gtk.Entry" id="txtHostname">
                     <property name="MemberName" />
-                    <property name="WidthRequest">277</property>
+                    <property name="WidthRequest">150</property>
                     <property name="CanFocus">True</property>
-                    <property name="Text" translatable="yes">localhost</property>
                     <property name="IsEditable">True</property>
                     <property name="InvisibleChar">•</property>
                   </widget>
@@ -193,9 +239,9 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="lblPort">
-                    <property name="MemberName">port</property>
-                    <property name="LabelProp" translatable="yes">Port:</property>
+                  <widget class="Gtk.Label" id="lblPassword">
+                    <property name="MemberName">password</property>
+                    <property name="LabelProp" translatable="yes">Password:</property>
                   </widget>
                   <packing>
                     <property name="Position">2</property>
@@ -208,9 +254,8 @@
                 <child>
                   <widget class="Gtk.Entry" id="txtPort">
                     <property name="MemberName" />
-                    <property name="WidthRequest">144</property>
+                    <property name="WidthRequest">150</property>
                     <property name="CanFocus">True</property>
-                    <property name="Text" translatable="yes">4489</property>
                     <property name="IsEditable">True</property>
                     <property name="InvisibleChar">•</property>
                   </widget>
@@ -264,16 +309,287 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Button" id="buttonConnect">
-            <property name="MemberName">connect</property>
+          <widget class="Gtk.Button" id="buttonCreate">
+            <property name="MemberName">create</property>
             <property name="CanDefault">True</property>
             <property name="CanFocus">True</property>
             <property name="Type">TextAndIcon</property>
             <property name="Icon">stock:gtk-connect Menu</property>
-            <property name="Label" translatable="yes">Connect</property>
+            <property name="Label" translatable="yes">Create</property>
             <property name="UseUnderline">True</property>
             <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonConnectClicked" />
+            <signal name="Clicked" handler="OnButtonCreateClicked" />
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Dialog" id="Screenary.Client.JoinDialog" design-size="526 142">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">Join a session</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Buttons">2</property>
+    <property name="HelpButton">False</property>
+    <child internal-child="VBox">
+      <widget class="Gtk.VBox" id="dialog1_VBox">
+        <property name="MemberName" />
+        <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.VBox" id="dialog1_VBox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">6</property>
+            <child>
+              <widget class="Gtk.VBox" id="vbox3">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox1">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Label" id="lblSessionKey">
+                        <property name="MemberName">sessionkey</property>
+                        <property name="LabelProp" translatable="yes">Session Key:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Entry" id="txtSessionKey">
+                        <property name="MemberName" />
+                        <property name="WidthRequest">150</property>
+                        <property name="CanFocus">True</property>
+                        <property name="IsEditable">True</property>
+                        <property name="InvisibleChar">•</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+                <property name="Padding">6</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+    <child internal-child="ActionArea">
+      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
+        <property name="MemberName" />
+        <property name="Spacing">10</property>
+        <property name="BorderWidth">5</property>
+        <property name="Size">2</property>
+        <property name="LayoutStyle">End</property>
+        <child>
+          <widget class="Gtk.Button" id="buttonCancel">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="UseStock">True</property>
+            <property name="Type">StockItem</property>
+            <property name="StockId">gtk-cancel</property>
+            <property name="ResponseId">-6</property>
+            <signal name="Clicked" handler="OnButtonCancelClicked" />
+            <property name="label">gtk-cancel</property>
+          </widget>
+          <packing>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Button" id="buttonJoin">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextAndIcon</property>
+            <property name="Icon">stock:gtk-connect Menu</property>
+            <property name="Label" translatable="yes">Join</property>
+            <property name="UseUnderline">True</property>
+            <property name="ResponseId">-5</property>
+            <signal name="Clicked" handler="OnButtonJoinClicked" />
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Dialog" id="Screenary.Client.AuthenticateDialog" design-size="526 135">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">Authenticate</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Buttons">2</property>
+    <property name="HelpButton">False</property>
+    <child internal-child="VBox">
+      <widget class="Gtk.VBox" id="dialog1_VBox">
+        <property name="MemberName" />
+        <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.VBox" id="dialog1_VBox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">6</property>
+            <child>
+              <widget class="Gtk.VBox" id="vbox3">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox1">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Label" id="lblUsername">
+                        <property name="MemberName">username</property>
+                        <property name="LabelProp" translatable="yes">Username:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Entry" id="txtUsername">
+                        <property name="MemberName" />
+                        <property name="WidthRequest">150</property>
+                        <property name="CanFocus">True</property>
+                        <property name="IsEditable">True</property>
+                        <property name="InvisibleChar">•</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="lblPassword">
+                        <property name="MemberName">password</property>
+                        <property name="LabelProp" translatable="yes">Password:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Entry" id="txtPassword">
+                        <property name="MemberName" />
+                        <property name="WidthRequest">150</property>
+                        <property name="CanFocus">True</property>
+                        <property name="IsEditable">True</property>
+                        <property name="InvisibleChar">•</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">3</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Padding">6</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+                <property name="Padding">6</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+    <child internal-child="ActionArea">
+      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
+        <property name="MemberName" />
+        <property name="Spacing">10</property>
+        <property name="BorderWidth">5</property>
+        <property name="Size">2</property>
+        <property name="LayoutStyle">End</property>
+        <child>
+          <widget class="Gtk.Button" id="buttonCancel">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="UseStock">True</property>
+            <property name="Type">StockItem</property>
+            <property name="StockId">gtk-cancel</property>
+            <property name="ResponseId">-6</property>
+            <signal name="Clicked" handler="OnButtonCancelClicked" />
+            <property name="label">gtk-cancel</property>
+          </widget>
+          <packing>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Button" id="buttonOk">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="UseStock">True</property>
+            <property name="Type">StockItem</property>
+            <property name="StockId">gtk-ok</property>
+            <property name="ResponseId">-5</property>
+            <signal name="Clicked" handler="OnButtonOkClicked" />
+            <property name="label">gtk-ok</property>
           </widget>
           <packing>
             <property name="Position">1</property>

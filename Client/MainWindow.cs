@@ -28,7 +28,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
-public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
+public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener //TA's code
 {	
 	private Gdk.GC gc;
 	private Thread thread;
@@ -228,13 +228,21 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		TransportClient transport = new TransportClient(dispatcher);
 		
-		session = new Session(transport);
+		session = new Session(transport, this);
 		dispatcher.RegisterChannel(session);
 		
 		SurfaceClient surface = new SurfaceClient(this, transport);
 		dispatcher.RegisterChannel(surface);
 
 		transport.Connect(address, port);
+		
+		//TA's test code
+		//session.SendCreateReq("username","password");
+		//session.SendTermReq("ABCDEF123456".ToCharArray());
+		//session.SendJoinReq("ABCDEF123456".ToCharArray());
+		//session.SendAuthReq("username","password");
+		//session.SendLeaveReq();
+
 	}
 
 	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -297,6 +305,31 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	
 	protected void OnConnectActionActivated (object sender, System.EventArgs e)
 	{
+	}
+		
+	public void OnRecvJoinRsp(char[] sessionKey)
+	{
+		Console.WriteLine("MainWindow.OnRecvJoinRsp");
+	}
+	
+	public void OnRecvLeaveRsp()
+	{
+		Console.WriteLine("MainWindow.OnRecvLeaveRsp");
+	}
+
+	public void OnRecvAuthRsp()
+	{
+		Console.WriteLine("MainWindow.OnRecvAuthRsp");
+	}
+
+	public void OnRecvCreateRsp(char[] sessionKey)
+	{
+		Console.WriteLine("MainWindow.OnRecvCreateRsp");
+	}
+
+	public void OnRecvTermRsp(char[] sessionKey)
+	{
+		Console.WriteLine("MainWindow.OnRecvTermRsp");
 	}
 		
 }

@@ -37,7 +37,7 @@ namespace Screenary
 			UInt32 sessionStatus = session_join_rsp_pdu.sessionHeader.sessionStatus.status;
 			char[] sessionKey = session_join_rsp_pdu.sessionKey.key;
 			
-			//TODO session_join_rsp_pdu.sessionFlags
+			//TODO session_join_rsp_pdu.sessionFlags ?
 			
 			byte[] buffer = null;
 			int length = sessionKey.Length;
@@ -331,15 +331,20 @@ namespace Screenary
 		{
 			Console.WriteLine("SessionServer.ChannelThreadProc");
 			
-			lock (channelLock)
+			while (true)
 			{
-				while (queue.Count < 1)
+				lock (channelLock)
 				{
-					Monitor.Wait(channelLock);
+					while (queue.Count < 1)
+					{
+						Monitor.Wait(channelLock);
+					}
+					
+					PDU pdu = (PDU) queue.Dequeue();
+					ProcessPDU(pdu.Buffer, pdu.Type);
+	
+					Monitor.Pulse(channelLock);
 				}
-				
-				PDU pdu = (PDU) queue.Dequeue();
-				ProcessPDU(pdu.Buffer, pdu.Type);
 			}
 		}
 		

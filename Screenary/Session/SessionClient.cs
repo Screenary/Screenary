@@ -5,14 +5,16 @@ using System.Collections;
 
 namespace Screenary
 {
-	public class SessionClient : SessionChannel
+	public abstract class SessionClient : SessionChannel
 	{
-		private UInt32 sessionId;
+		protected UInt32 sessionId;
+		protected SESSION_RSP_PDU_HEADER SessionRspPDUHeader;
 		private readonly object channelLock = new object();
 		
 		public SessionClient(TransportClient transport)
 		{
 			this.transport = transport;
+			this.SessionRspPDUHeader.sharedHeader = sharedPDUHeader;
 			this.sessionId = 0;
 		}
 		
@@ -26,39 +28,47 @@ namespace Screenary
 			s.Write((UInt32) sessionId);
 			return s;
 		}
-		
-		public void SendJoinReq(char[] sessionKey)
+
+		protected void SendJoinReq(SESSION_JOIN_REQ_PDU session_join_req_pdu)
 		{
 			Console.WriteLine("SessionClient.SendJoinReq");
-
-			byte[] buffer = null;
-			int length = sessionKey.Length + 2;
-			BinaryWriter s = InitReqPDU(ref buffer, length, 0);
 			
-			s.Write((UInt16) sessionKey.Length);
+			UInt32 sessionId = session_join_req_pdu.sessionHeader.sessionId.id; // this is 0
+			char[] sessionKey = session_join_req_pdu.sessionKey.key;
+			
+			byte[] buffer = null;
+			int length = sessionKey.Length;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
+			
 			s.Write(sessionKey);
 						
 			Send(buffer, PDU_SESSION_JOIN_REQ);
 		}
 		
-		public void SendLeaveReq(UInt32 sessionID)
+		protected void SendLeaveReq(SESSION_LEAVE_REQ_PDU session_leave_req_pdu)
 		{
 			Console.WriteLine("SessionClient.SendLeaveReq");
-
+			
+			UInt32 sessionId = session_leave_req_pdu.sessionHeader.sessionId.id;
+			
 			byte[] buffer = null;
 			int length = 0;
-			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 									
 			Send(buffer, PDU_SESSION_LEAVE_REQ);
 		}
 		
-		public void SendAuthReq(UInt32 sessionID, string username, string password)
+		protected void SendAuthReq(SESSION_AUTH_REQ_PDU session_auth_req_pdu)
 		{
 			Console.WriteLine("SessionClient.SendAuthReq");
 
+			UInt32 sessionId = session_auth_req_pdu.sessionHeader.sessionId.id;
+			string username = session_auth_req_pdu.username;
+			string password = session_auth_req_pdu.password;
+						
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
-			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 			
 			s.Write((UInt16) username.Length);
 			s.Write((UInt16) password.Length);
@@ -68,13 +78,17 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_AUTH_REQ);
 		}
 		
-		public void SendCreateReq(string username, string password)
+		protected void SendCreateReq(SESSION_CREATE_REQ_PDU session_create_req_pdu)
 		{
 			Console.WriteLine("SessionClient.SendCreateReq");
 
+			UInt32 sessionId = session_create_req_pdu.sessionHeader.sessionId.id;//this is 0
+			string username = session_create_req_pdu.username;
+			string password = session_create_req_pdu.password;
+			
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
-			BinaryWriter s = InitReqPDU(ref buffer, length, 0);
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 			
 			s.Write((UInt16) username.Length);
 			s.Write((UInt16) password.Length);
@@ -84,15 +98,18 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_CREATE_REQ);
 		}
 		
-		public void SendTermReq(UInt32 sessionID, char[] sessionKey, UInt32 sessionStatus)
+		protected void SendTermReq(SESSION_TERM_REQ_PDU session_term_req_pdu)
 		{
 			Console.WriteLine("SessionClient.SendTermReq");
 			
-			byte[] buffer = null;
-			int length = sessionKey.Length + 6;
-			BinaryWriter s = InitReqPDU(ref buffer, length, sessionID);
+			UInt32 sessionId = session_term_req_pdu.sessionHeader.sessionId.id;
+			char[] sessionKey = session_term_req_pdu.sessionKey.key;
+			UInt32 sessionStatus = session_term_req_pdu.sessionHeader.sessionStatus.status;
 			
-			s.Write((UInt16) sessionKey.Length);
+			byte[] buffer = null;
+			int length = sessionKey.Length + 4;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
+			
 			s.Write(sessionKey);
 			s.Write(sessionStatus);
 			
@@ -103,20 +120,41 @@ namespace Screenary
 		{
 			Console.WriteLine("SessionClient.RecvJoinRsp");
 
-			UInt32 sessionId;
 			UInt32 sessionStatus;
+			char[] sessionKey;
 			
-			sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
 			
 			if (sessionStatus != 0)
 			{
-				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				Console.WriteLine("Session Join Failed: {0}", sessionStatus);
 				return;
 			}
 			
-			Console.WriteLine("SessionId: {0}", sessionId);
+			this.sessionId = s.ReadUInt32();
 
+			sessionKey = s.ReadChars(12);
+
+			SessionRspPDUHeader.sharedHeader.pduType = PDU_SESSION_TERM_RSP;
+			
+			SESSION_ID SESSION_ID;
+			SESSION_ID.id = sessionId;
+			
+			SESSION_STATUS SESSION_STATUS;
+			SESSION_STATUS.status = sessionStatus;
+			
+			SessionRspPDUHeader.sessionId = SESSION_ID;
+			SessionRspPDUHeader.sessionStatus = SESSION_STATUS;
+			
+			SESSION_SHARED_KEY SESSION_SHARED_KEY;
+			SESSION_SHARED_KEY.key = sessionKey;
+
+			SESSION_JOIN_RSP_PDU session_join_rsp_pdu;
+			session_join_rsp_pdu.sessionHeader = SessionRspPDUHeader;
+			session_join_rsp_pdu.sessionKey = SESSION_SHARED_KEY;
+			session_join_rsp_pdu.sessionFlags = SESSION_FLAGS_PASSWORD_PROTECTED;
+			
+			RecvJoinRsp(session_join_rsp_pdu);
 		}
 		
 		public void RecvLeaveRsp(BinaryReader s)
@@ -131,11 +169,31 @@ namespace Screenary
 			
 			if (sessionStatus != 0)
 			{
-				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				Console.WriteLine("Session Leave Failed: {0}", sessionStatus);
+				return;
+			}
+
+			if (sessionId != this.sessionId)
+			{
+				Console.WriteLine("Session Leave Failed: Wrong sessionId {0}", sessionId);
 				return;
 			}
 			
-			Console.WriteLine("SessionId: {0}", sessionId);
+			SessionRspPDUHeader.sharedHeader.pduType = PDU_SESSION_TERM_RSP;
+			
+			SESSION_ID SESSION_ID;
+			SESSION_ID.id = sessionId;
+			
+			SESSION_STATUS SESSION_STATUS;
+			SESSION_STATUS.status = sessionStatus;
+			
+			SessionRspPDUHeader.sessionId = SESSION_ID;
+			SessionRspPDUHeader.sessionStatus = SESSION_STATUS;
+			
+			SESSION_LEAVE_RSP_PDU session_leave_rsp_pdu;
+			session_leave_rsp_pdu.sessionHeader = SessionRspPDUHeader;
+			
+			RecvLeaveRsp(session_leave_rsp_pdu);
 		}
 		
 		public void RecvAuthRsp(BinaryReader s)
@@ -150,23 +208,40 @@ namespace Screenary
 			
 			if (sessionStatus != 0)
 			{
-				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				Console.WriteLine("Session Authentication Failed: {0}", sessionStatus);
 				return;
 			}
 			
-			Console.WriteLine("SessionId: {0}", sessionId);
+			if (sessionId != this.sessionId)
+			{
+				Console.WriteLine("Session Authentication Failed: Wrong sessionId {0}", sessionId);
+				return;
+			}
+			
+			SessionRspPDUHeader.sharedHeader.pduType = PDU_SESSION_TERM_RSP;
+			
+			SESSION_ID SESSION_ID;
+			SESSION_ID.id = sessionId;
+			
+			SESSION_STATUS SESSION_STATUS;
+			SESSION_STATUS.status = sessionStatus;
+			
+			SessionRspPDUHeader.sessionId = SESSION_ID;
+			SessionRspPDUHeader.sessionStatus = SESSION_STATUS;
+			
+			SESSION_AUTH_RSP_PDU session_auth_rsp_pdu;
+			session_auth_rsp_pdu.sessionHeader = SessionRspPDUHeader;
+			
+			RecvAuthRsp(session_auth_rsp_pdu);
 		}
 		
 		public void RecvCreateRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvCreateRsp");
 			
-			UInt32 sessionId;
 			UInt32 sessionStatus;
 			char[] sessionKey;
-			string sessionKeyString = "";
 			
-			sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
 			
 			if (sessionStatus != 0)
@@ -175,13 +250,28 @@ namespace Screenary
 				return;
 			}
 			
+			this.sessionId = s.ReadUInt32();
 			sessionKey = s.ReadChars(12);
+							
+			SessionRspPDUHeader.sharedHeader.pduType = PDU_SESSION_TERM_RSP;
 			
-			for(int i = 0; i < sessionKey.Length; i++) {
-				sessionKeyString += sessionKey[i];
-			}		
+			SESSION_ID SESSION_ID;
+			SESSION_ID.id = sessionId;
 			
-			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKeyString);
+			SESSION_STATUS SESSION_STATUS;
+			SESSION_STATUS.status = sessionStatus;
+			
+			SessionRspPDUHeader.sessionId = SESSION_ID;
+			SessionRspPDUHeader.sessionStatus = SESSION_STATUS;
+			
+			SESSION_SHARED_KEY SESSION_SHARED_KEY;
+			SESSION_SHARED_KEY.key = sessionKey;
+			
+			SESSION_CREATE_RSP_PDU session_create_rsp_pdu;
+			session_create_rsp_pdu.sessionHeader = SessionRspPDUHeader;
+			session_create_rsp_pdu.sessionKey = SESSION_SHARED_KEY;
+			
+			RecvCreateRsp(session_create_rsp_pdu);
 		}
 		
 		public void RecvTermRsp(BinaryReader s)
@@ -191,24 +281,43 @@ namespace Screenary
 			UInt32 sessionId;
 			UInt32 sessionStatus;
 			char[] sessionKey;
-			string sessionKeyString = "";
 			
 			sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
 			
 			if (sessionStatus != 0)
 			{
-				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				Console.WriteLine("Session Termination Failed: {0}", sessionStatus);
+				return;
+			}
+			
+			if (sessionId != this.sessionId)
+			{
+				Console.WriteLine("Session Termination Failed: Wrong sessionId {0}", sessionId);
 				return;
 			}
 			
 			sessionKey = s.ReadChars(12);
 			
-			for(int i = 0; i < sessionKey.Length; i++) {
-				sessionKeyString += sessionKey[i];
-			}		
+			SessionRspPDUHeader.sharedHeader.pduType = PDU_SESSION_TERM_RSP;
 			
-			Console.WriteLine("SessionId: {0}, SessionKey:{1}", sessionId, sessionKeyString);
+			SESSION_ID SESSION_ID;
+			SESSION_ID.id = sessionId;
+			
+			SESSION_STATUS SESSION_STATUS;
+			SESSION_STATUS.status = sessionStatus;
+			
+			SessionRspPDUHeader.sessionId = SESSION_ID;
+			SessionRspPDUHeader.sessionStatus = SESSION_STATUS;
+			
+			SESSION_SHARED_KEY SESSION_SHARED_KEY;
+			SESSION_SHARED_KEY.key = sessionKey;
+			
+			SESSION_TERM_RSP_PDU session_term_rsp_pdu;
+			session_term_rsp_pdu.sessionHeader = SessionRspPDUHeader;
+			session_term_rsp_pdu.sessionKey = SESSION_SHARED_KEY;
+			
+			RecvTermRsp(session_term_rsp_pdu);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
@@ -270,23 +379,28 @@ namespace Screenary
 		{
 			Console.WriteLine("SessionClient.ChannelThreadProc");
 			
-			//SendJoinReq("ABCDEF123456".ToCharArray());
-			//SendLeaveReq(5);
-			//SendAuthReq(5, "screenary", "awesome");
-			//SendCreateReq("screenary", "awesome");
-			//SendTermReq(5, "ABCDEF123456".ToCharArray(), 0);
-			
-			lock (channelLock)
+			while (true)
 			{
-				while (queue.Count < 1)
+				lock (channelLock)
 				{
-					Monitor.Wait(channelLock);
+					while (queue.Count < 1)
+					{
+						Monitor.Wait(channelLock);
+					}
+					
+					PDU pdu = (PDU) queue.Dequeue();
+					ProcessPDU(pdu.Buffer, pdu.Type);
+	
+					Monitor.Pulse(channelLock);
 				}
-				
-				PDU pdu = (PDU) queue.Dequeue();
-				ProcessPDU(pdu.Buffer, pdu.Type);
 			}
 		}
+		
+		protected abstract void RecvJoinRsp(SESSION_JOIN_RSP_PDU session_join_rsp_pdu);
+		protected abstract void RecvLeaveRsp(SESSION_LEAVE_RSP_PDU session_leave_rsp_pdu);
+		protected abstract void RecvAuthRsp(SESSION_AUTH_RSP_PDU session_auth_rsp_pdu);
+		protected abstract void RecvCreateRsp(SESSION_CREATE_RSP_PDU session_create_rsp_pdu);
+		protected abstract void RecvTermRsp(SESSION_TERM_RSP_PDU session_term_rsp_pdu);
 	}
 }
 

@@ -116,6 +116,12 @@
         <property name="Label" translatable="yes">Documentation</property>
         <property name="ShortLabel" translatable="yes">Documentation</property>
       </action>
+      <action id="ConnectAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Connect</property>
+        <property name="ShortLabel" translatable="yes">Connect</property>
+        <signal name="Activated" handler="OnConnectAction1Activated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -140,6 +146,7 @@
                 <node name="menubar1" type="Menubar">
                   <node type="Menu" action="FileAction">
                     <node type="Menuitem" action="OpenFileAction" />
+                    <node type="Menuitem" action="ConnectAction1" />
                     <node type="Menu" action="ModeAction">
                       <node type="Menuitem" action="SenderAction" />
                       <node type="Menuitem" action="ReceiverAction" />

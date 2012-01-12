@@ -21,6 +21,7 @@ public partial class MainWindow
 	private global::Gtk.Action CreateSessionAction;
 	private global::Gtk.Action JoinSessionAction;
 	private global::Gtk.Action DocumentationAction;
+	private global::Gtk.Action ConnectAction1;
 	private global::Gtk.VBox mainVbox;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
@@ -84,6 +85,9 @@ public partial class MainWindow
 		this.DocumentationAction = new global::Gtk.Action ("DocumentationAction", global::Mono.Unix.Catalog.GetString ("Documentation"), null, null);
 		this.DocumentationAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Documentation");
 		w1.Add (this.DocumentationAction, null);
+		this.ConnectAction1 = new global::Gtk.Action ("ConnectAction1", global::Mono.Unix.Catalog.GetString ("Connect"), null, null);
+		this.ConnectAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("Connect");
+		w1.Add (this.ConnectAction1, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -99,7 +103,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menu name='ModeAction' action='ModeAction'><menuitem name='SenderAction' action='SenderAction'/><menuitem name='ReceiverAction' action='ReceiverAction'/></menu><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menuitem name='ConnectAction1' action='ConnectAction1'/><menu name='ModeAction' action='ModeAction'><menuitem name='SenderAction' action='SenderAction'/><menuitem name='ReceiverAction' action='ReceiverAction'/></menu><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.CanDefault = true;
 		this.menubar1.Events = ((global::Gdk.EventMask)(2));
@@ -140,6 +144,7 @@ public partial class MainWindow
 		this.ReceiverAction.Activated += new global::System.EventHandler (this.OnReceiverActionActivated);
 		this.CreateSessionAction.Activated += new global::System.EventHandler (this.OnCreateSessionActionActivated);
 		this.JoinSessionAction.Activated += new global::System.EventHandler (this.OnJoinSessionActionActivated);
+		this.ConnectAction1.Activated += new global::System.EventHandler (this.OnConnectAction1Activated);
 		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
 	}
 }

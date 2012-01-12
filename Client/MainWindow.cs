@@ -203,10 +203,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		
 		receiver = new SurfaceReceiver(window, surface);
 	}
-
-	protected void OnConnectActionActivated (object sender, System.EventArgs e)
-	{
-	}
 		
 	public void OnSurfaceCommand(BinaryReader s)
 	{		
@@ -290,4 +286,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		recordAction.Visible = false;
 		JoinSessionAction.Visible = true;
 	}
+
+	protected void OnConnectAction1Activated (object sender, System.EventArgs e)
+	{
+		int port = 4489;
+		string hostname = "localhost";
+
+		OnUserConnect(hostname, port);
+	}
+	
+	protected void OnConnectActionActivated (object sender, System.EventArgs e)
+	{
+	}
+		
 }

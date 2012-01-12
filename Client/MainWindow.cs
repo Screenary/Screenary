@@ -38,11 +38,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	private Gdk.Pixbuf surface;
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
+	private int mode;
 	
-	public MainWindow(): base(Gtk.WindowType.Toplevel)
+	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 		
+		mode = m;
 		width = 1024;
 		height = 768;
 		
@@ -56,6 +58,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 		
 		receiver = new SurfaceReceiver(window, surface);
+		
+		//Sender Mode
+		if(mode == 0)
+		{
+			JoinSessionAction.Visible = false;
+		}
+		
+		//Receiver Mode
+		else if (mode == 1)
+		{
+			CreateSessionAction.Visible = false;
+			recordAction.Visible = false;
+		}
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -260,13 +275,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		JoinDialog join = new JoinDialog();
 	}
 
-	protected void OnSenderActionToggled (object sender, System.EventArgs e)
+	protected void OnSenderActionActivated (object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException ();
+		//Switch to Sender mode
+		JoinSessionAction.Visible = false;
+		CreateSessionAction.Visible = true;
+		recordAction.Visible = true;
 	}
 
-	protected void OnReceiverActionToggled (object sender, System.EventArgs e)
+	protected void OnReceiverActionActivated (object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException ();
+		//Switch to Receiver mode
+		CreateSessionAction.Visible = false;
+		recordAction.Visible = false;
+		JoinSessionAction.Visible = true;
 	}
 }

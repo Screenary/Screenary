@@ -70,6 +70,8 @@
     <Compile Include="gtk-gui\Screenary.Client.JoinDialog.cs" />
     <Compile Include="AuthenticateDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />
+    <Compile Include="WelcomeDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.WelcomeDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -29,9 +29,11 @@ namespace Screenary.Client
 		
 		public static void Main (string[] args)
 		{
-			MainWindow window;
+			//MainWindow window;
 			
 			Application.Init();
+			
+			WelcomeDialog welcome = new WelcomeDialog();
 			
 			WorkingDirectory = Directory.GetCurrentDirectory();
 			
@@ -40,8 +42,8 @@ namespace Screenary.Client
 			
 			Directory.SetCurrentDirectory(WorkingDirectory + "../../");
 			
-			window = new MainWindow();
-			window.Show();
+			//window = new MainWindow();
+			//window.Show();
 			
 			Application.Run();
 		}

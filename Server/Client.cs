@@ -34,6 +34,8 @@ namespace Screenary.Server
 			session = new Session(this.transport);
 			dispatcher.RegisterChannel(session);
 			
+			dispatcher.OnConnect();
+			
 			transport.StartThread();
 		}
 		

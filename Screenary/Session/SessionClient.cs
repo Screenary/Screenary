@@ -213,7 +213,6 @@ namespace Screenary
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
-			Console.WriteLine("SessionClient.OnRecv");
 			lock (channelLock)
 			{
 				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));
@@ -235,7 +234,6 @@ namespace Screenary
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
-			Console.WriteLine("SessionClient.ProcessPDU");
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
@@ -269,12 +267,6 @@ namespace Screenary
 		public void ChannelThreadProc()
 		{
 			Console.WriteLine("SessionClient.ChannelThreadProc");
-			
-			//SendJoinReq("ABCDEF123456".ToCharArray());
-			//SendLeaveReq(5);
-			//SendAuthReq(5, "screenary", "awesome");
-			//SendCreateReq("screenary", "awesome");
-			//SendTermReq(5, "ABCDEF123456".ToCharArray(), 0);
 			
 			lock (channelLock)
 			{

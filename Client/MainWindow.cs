@@ -59,13 +59,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		
 		receiver = new SurfaceReceiver(window, surface);
 		
-		//Sender Mode
-		if(mode == 0)
+		/* Sender Mode */
+		if (mode == 0)
 		{
 			JoinSessionAction.Visible = false;
 		}
 		
-		//Receiver Mode
+		/* Receiver Mode */
 		else if (mode == 1)
 		{
 			CreateSessionAction.Visible = false;
@@ -224,7 +224,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 	}
 	
 	public void OnUserConnect(string address, int port)
-	{		
+	{
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		TransportClient transport = new TransportClient(dispatcher);
 		
@@ -235,8 +235,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		dispatcher.RegisterChannel(surface);
 
 		transport.Connect(address, port);
+		
+		Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
 	}
-
+	
+	public void OnUserCreateSession(string username, string password)
+	{
+		session.SendCreateReq(username, password);
+	}
+	
 	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
 
@@ -261,33 +268,33 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		}
 	}
 
-	protected void OnCreateSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
 	{
 		CreateSessionDialog connect = new CreateSessionDialog(this);
 	}
 
-	protected void OnJoinSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
 	{
 		JoinDialog join = new JoinDialog();
 	}
 
-	protected void OnSenderActionActivated (object sender, System.EventArgs e)
+	protected void OnSenderActionActivated(object sender, System.EventArgs e)
 	{
-		//Switch to Sender mode
+		/* Switch to Sender mode */
 		JoinSessionAction.Visible = false;
 		CreateSessionAction.Visible = true;
 		recordAction.Visible = true;
 	}
 
-	protected void OnReceiverActionActivated (object sender, System.EventArgs e)
+	protected void OnReceiverActionActivated(object sender, System.EventArgs e)
 	{
-		//Switch to Receiver mode
+		/* Switch to Receiver mode */
 		CreateSessionAction.Visible = false;
 		recordAction.Visible = false;
 		JoinSessionAction.Visible = true;
 	}
 
-	protected void OnConnectAction1Activated (object sender, System.EventArgs e)
+	protected void OnConnectAction1Activated(object sender, System.EventArgs e)
 	{
 		int port = 4489;
 		string hostname = "localhost";
@@ -295,8 +302,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient
 		OnUserConnect(hostname, port);
 	}
 	
-	protected void OnConnectActionActivated (object sender, System.EventArgs e)
+	protected void OnConnectActionActivated(object sender, System.EventArgs e)
 	{
-	}
 		
+	}
 }

@@ -156,7 +156,7 @@ namespace Screenary
 			UInt16 usernameLength;
 			UInt16 passwordLength;
 			
-			sessionId = s.ReadUInt32(); //will read 0
+			sessionId = s.ReadUInt32(); /* should be 0 */
 			usernameLength = s.ReadUInt16();
 			passwordLength = s.ReadUInt16();
 			
@@ -167,6 +167,8 @@ namespace Screenary
 				password = new string(s.ReadChars(passwordLength));
 			
 			Console.WriteLine("username:{0} password:{1}", username, password);
+			
+			SendCreateRsp(0xAABBCCDD, "9HDKW3X67LBZ".ToCharArray());
 			
 			return;
 		}
@@ -210,6 +212,7 @@ namespace Screenary
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			Console.WriteLine("SessionServer.OnRecv");
+			
 			lock (channelLock)
 			{
 				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));
@@ -232,7 +235,6 @@ namespace Screenary
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
-			Console.WriteLine("SessionServer.ProcessPDU");
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
@@ -272,16 +274,15 @@ namespace Screenary
 			//SendAuthRsp(5, 0);
 			//SendCreateRsp(5, "ABCDEF123456".ToCharArray());
 			//SendTermRsp(5, "ABCDEF123456".ToCharArray(), 0);
-
-			lock (channelLock)
+			
+			while (true)
 			{
-				while (queue.Count < 1)
+				lock (channelLock)
 				{
 					Monitor.Wait(channelLock);
+					PDU pdu = (PDU) queue.Dequeue();
+					ProcessPDU(pdu.Buffer, pdu.Type);
 				}
-				
-				PDU pdu = (PDU) queue.Dequeue();
-				ProcessPDU(pdu.Buffer, pdu.Type);
 			}
 		}
 	}

@@ -37,6 +37,7 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("OnAcceptClient");
 			Client client = new Client(transportClient);
+			
 			clients.Add(client);
 		}
 		

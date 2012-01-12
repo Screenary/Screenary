@@ -7,9 +7,9 @@ namespace Screenary.Client
 		private global::Gtk.VBox vbox3;
 		private global::Gtk.HBox hbox1;
 		private global::Gtk.Label lblUsername;
-		private global::Gtk.Entry txtHostname;
+		private global::Gtk.Entry txtUsername;
 		private global::Gtk.Label lblPassword;
-		private global::Gtk.Entry txtPort;
+		private global::Gtk.Entry txtPassword;
 		private global::Gtk.Button buttonCancel;
 		private global::Gtk.Button buttonCreate;
         
@@ -47,14 +47,14 @@ namespace Screenary.Client
 			w2.Fill = false;
 			w2.Padding = ((uint)(6));
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.txtHostname = new global::Gtk.Entry ();
-			this.txtHostname.WidthRequest = 150;
-			this.txtHostname.CanFocus = true;
-			this.txtHostname.Name = "txtHostname";
-			this.txtHostname.IsEditable = true;
-			this.txtHostname.InvisibleChar = '•';
-			this.hbox1.Add (this.txtHostname);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtHostname]));
+			this.txtUsername = new global::Gtk.Entry ();
+			this.txtUsername.WidthRequest = 150;
+			this.txtUsername.CanFocus = true;
+			this.txtUsername.Name = "txtUsername";
+			this.txtUsername.IsEditable = true;
+			this.txtUsername.InvisibleChar = '•';
+			this.hbox1.Add (this.txtUsername);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtUsername]));
 			w3.Position = 1;
 			w3.Padding = ((uint)(6));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -68,14 +68,14 @@ namespace Screenary.Client
 			w4.Fill = false;
 			w4.Padding = ((uint)(6));
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.txtPort = new global::Gtk.Entry ();
-			this.txtPort.WidthRequest = 150;
-			this.txtPort.CanFocus = true;
-			this.txtPort.Name = "txtPort";
-			this.txtPort.IsEditable = true;
-			this.txtPort.InvisibleChar = '•';
-			this.hbox1.Add (this.txtPort);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtPort]));
+			this.txtPassword = new global::Gtk.Entry ();
+			this.txtPassword.WidthRequest = 150;
+			this.txtPassword.CanFocus = true;
+			this.txtPassword.Name = "txtPassword";
+			this.txtPassword.IsEditable = true;
+			this.txtPassword.InvisibleChar = '•';
+			this.hbox1.Add (this.txtPassword);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.txtPassword]));
 			w5.Position = 3;
 			w5.Padding = ((uint)(6));
 			this.vbox3.Add (this.hbox1);

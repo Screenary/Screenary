@@ -228,7 +228,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Entry" id="txtHostname">
+                  <widget class="Gtk.Entry" id="txtUsername">
                     <property name="MemberName" />
                     <property name="WidthRequest">150</property>
                     <property name="CanFocus">True</property>
@@ -255,7 +255,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Entry" id="txtPort">
+                  <widget class="Gtk.Entry" id="txtPassword">
                     <property name="MemberName" />
                     <property name="WidthRequest">150</property>
                     <property name="CanFocus">True</property>

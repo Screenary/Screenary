@@ -23,6 +23,9 @@ namespace Screenary.Client
 		[XmlAttribute("RdpServerHostname")]
 		public string RdpServerHostname { get; set; }
 		
+		[XmlAttribute("RdpServerUsername")]
+		public string RdpServerUsername { get; set; }
+		
 		[XmlAttribute("RdpServerDomain")]
 		public string RdpServerDomain { get; set; }
 		
@@ -37,6 +40,7 @@ namespace Screenary.Client
 			
 			RdpServerPort = 3389;
 			RdpServerHostname = "localhost";
+			RdpServerUsername = "Administrator";
 			RdpServerDomain = "";
 			RdpServerPassword = "Password123!";
 		}

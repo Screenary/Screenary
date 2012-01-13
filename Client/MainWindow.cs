@@ -280,7 +280,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	{
 		RDP rdp = new RDP();
 		
-		rdp.Connect();
+		rdp.Connect(config.RdpServerHostname, config.RdpServerPort,
+			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
 		
 		thread = new Thread(() => ThreadProc(rdp));
 		thread.Start();

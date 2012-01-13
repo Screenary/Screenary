@@ -6,6 +6,7 @@ namespace Screenary.Client
 	{
 		void OnUserConnect(string address, int port);
 		void OnUserCreateSession(string username, string password);
+		void OnUserJoinSession(string sessionKey);
 	}
 }
 

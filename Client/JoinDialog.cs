@@ -4,16 +4,19 @@ namespace Screenary.Client
 {
 	public partial class JoinDialog : Gtk.Dialog
 	{
-		public JoinDialog ()
+		private IUserAction observer;
+		
+		public JoinDialog (IUserAction observer)
 		{
 			this.Build ();
+			this.observer = observer;
 		}
 
 		protected void OnButtonJoinClicked (object sender, System.EventArgs e)
 		{
 			string sessionKey;
 			sessionKey = txtSessionKey.Text;
-			AuthenticateDialog authentication = new AuthenticateDialog(sessionKey);
+			AuthenticateDialog authentication = new AuthenticateDialog(observer, sessionKey);
 			this.Destroy();
 		}
 

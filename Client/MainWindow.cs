@@ -246,14 +246,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		//session.SendLeaveReq();
 	}
 	
+	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
+	{
+		CreateSessionDialog connect = new CreateSessionDialog(this);
+	}
+	
 	public void OnUserCreateSession(string username, string password)
 	{
 		session.SendCreateReq(username, password);
 	}
 	
+	public void OnUserJoinSession(string sk)
+	{
+		session.SendJoinReq(sk.ToCharArray());
+	}
+
+	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
+	{
+		JoinDialog join = new JoinDialog(this);
+	}
+	
 	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
-
 	}
 
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
@@ -273,16 +287,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 			rdp.CheckFileDescriptor();
 			Thread.Sleep(10);
 		}
-	}
-
-	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
-	{
-		CreateSessionDialog connect = new CreateSessionDialog(this);
-	}
-
-	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
-	{
-		JoinDialog join = new JoinDialog();
 	}
 
 	protected void OnSenderActionActivated(object sender, System.EventArgs e)
@@ -360,4 +364,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine(errorMessage);
 	}
 
+	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
+	{
+		session.SendTermReq(.ToCharArray());
+	}
+
+	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
+	{
+		throw new System.NotImplementedException ();
+	}
 }

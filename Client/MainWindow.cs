@@ -66,6 +66,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		if (mode == 0)
 		{
 			JoinSessionAction.Visible = false;
+			CreateSessionAction.Visible = true;
+			recordAction.Visible = true;
+			LeaveSessionAction1.Visible = false;
+			EndSessionAction1.Visible = true;
 		}
 		
 		/* Receiver Mode */
@@ -73,6 +77,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		{
 			CreateSessionAction.Visible = false;
 			recordAction.Visible = false;
+			JoinSessionAction.Visible = true;
+			EndSessionAction1.Visible = false;
+			LeaveSessionAction1.Visible = true;
 		}
 	}
 	
@@ -252,6 +259,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
 	{
 		CreateSessionDialog connect = new CreateSessionDialog(this);
+		
 	}
 	
 	public void OnUserCreateSession(string username, string password)
@@ -298,6 +306,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		JoinSessionAction.Visible = false;
 		CreateSessionAction.Visible = true;
 		recordAction.Visible = true;
+		LeaveSessionAction1.Visible = false;
+		EndSessionAction1.Visible = true;
+		
 	}
 
 	protected void OnReceiverActionActivated(object sender, System.EventArgs e)
@@ -306,6 +317,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		CreateSessionAction.Visible = false;
 		recordAction.Visible = false;
 		JoinSessionAction.Visible = true;
+		EndSessionAction1.Visible = false;
+		LeaveSessionAction1.Visible = true;
 	}
 
 	protected void OnConnectAction1Activated(object sender, System.EventArgs e)
@@ -366,11 +379,20 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
 	{
-		session.SendTermReq(.ToCharArray());
 	}
 
 	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException ();
 	}
+
+	protected void OnEndSessionAction1Activated (object sender, System.EventArgs e)
+	{
+	//	session.SendTermReq(.ToCharArray());
+	}
+
+	protected void OnLeaveSessionAction1Activated (object sender, System.EventArgs e)
+	{
+		session.SendLeaveReq();
+	}
+
 }

@@ -6,17 +6,19 @@ namespace Screenary.Client
 	{
 		
 		private string sessionKey;
+		private IUserAction observer;
 		
-		public AuthenticateDialog(string sk)
+		public AuthenticateDialog(IUserAction observer, string sk)
 		{
 			this.Build ();
 			this.sessionKey = sk;
+			this.observer = observer;
 			this.Title = "Authentication for session: " + this.sessionKey;
 		}
 
 		protected void OnButtonOkClicked(object sender, System.EventArgs e)
 		{
-			throw new System.NotImplementedException ();
+			observer.OnUserJoinSession(sessionKey);
 		}
 
 		protected void OnButtonCancelClicked(object sender, System.EventArgs e)

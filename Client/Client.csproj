@@ -50,6 +50,7 @@
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -72,6 +73,7 @@
     <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />
     <Compile Include="WelcomeDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.WelcomeDialog.cs" />
+    <Compile Include="Config.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

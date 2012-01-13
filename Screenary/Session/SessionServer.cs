@@ -104,7 +104,6 @@ namespace Screenary
 			sessionKey = s.ReadChars(12);
 					
 			listener.OnSessionJoinRequested(sessionKey);
-		
 		}
 		
 		private void RecvLeaveReq(BinaryReader s)
@@ -256,4 +255,3 @@ namespace Screenary
 		}
 	}
 }
-

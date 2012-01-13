@@ -9,9 +9,9 @@ namespace Screenary.Server
 {
 	public class Client : SurfaceServer, ISessionRequestListener
 	{
-		private ChannelDispatcher dispatcher;
-		private SurfaceServer surface;
 		private Session session;
+		private SurfaceServer surface;
+		private ChannelDispatcher dispatcher;
 		
 		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
 		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
@@ -43,8 +43,7 @@ namespace Screenary.Server
 			//session.SendTermRsp(0, "ABCDEF123456".ToCharArray(), 0);
 			//session.SendJoinRsp(0, "ABCDEF123456".ToCharArray(), 0, 0x01);
 			//session.SendAuthRsp(0, 0);
-			//session.SendLeaveRsp(0, 0);			
-			
+			//session.SendLeaveRsp(0, 0);
 		}
 		
 		/**
@@ -131,7 +130,7 @@ namespace Screenary.Server
 		public void OnSessionLeaveRequested(UInt32 sessionId)
 		{
 			Console.WriteLine("Client.OnSessionLeaveRequested");
-			Console.WriteLine("sessionId: {0}", sessionId);			
+			Console.WriteLine("sessionId: {0}", sessionId);
 		}
 
 		public void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password)
@@ -144,6 +143,8 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("Client.OnSessionCreateRequested");
 			Console.WriteLine("username:{0} password:{1}", username, password);
+			
+			session.SendCreateRsp(0, "ABCDEF123456".ToCharArray());
 		}
 		
 		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)

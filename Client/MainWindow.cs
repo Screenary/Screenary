@@ -31,6 +31,7 @@ using System.Collections.Generic;
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener
 {	
 	private Gdk.GC gc;
+	private Config config;
 	private Thread thread;
 	private Session session;
 	private int width, height;
@@ -47,6 +48,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		mode = m;
 		width = 1024;
 		height = 768;
+		
+		config = Config.Load();
 		
 		window = mainDrawingArea.GdkWindow;
 		drawable = (Gdk.Drawable) window;
@@ -303,10 +306,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnConnectAction1Activated(object sender, System.EventArgs e)
 	{
-		int port = 4489;
-		string hostname = "localhost";
-
-		OnUserConnect(hostname, port);
+		OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 	
 	protected void OnConnectActionActivated(object sender, System.EventArgs e)

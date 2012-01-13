@@ -81,6 +81,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 			EndSessionAction1.Visible = false;
 			LeaveSessionAction1.Visible = true;
 		}
+		
+		if (config.BroadcasterAutoconnect)
+			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
@@ -377,17 +380,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine(errorMessage);
 	}
 
-	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
 	{
+	
 	}
 
-	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
 	{
 	}
 
 	protected void OnEndSessionAction1Activated (object sender, System.EventArgs e)
 	{
-	//	session.SendTermReq(.ToCharArray());
+		session.SendTermReq("ABCDEF123456".ToCharArray());
 	}
 
 	protected void OnLeaveSessionAction1Activated (object sender, System.EventArgs e)

@@ -14,19 +14,31 @@ namespace Screenary.Client
 		[XmlAttribute("BroadcasterHostname")]
 		public string BroadcasterHostname { get; set; }
 		
+		[XmlAttribute("BroadcasterAutoconnect")]
+		public bool BroadcasterAutoconnect { get; set; }
+		
 		[XmlAttribute("RdpServerPort")]
 		public int RdpServerPort { get; set; }
 		
 		[XmlAttribute("RdpServerHostname")]
 		public string RdpServerHostname { get; set; }
 		
+		[XmlAttribute("RdpServerDomain")]
+		public string RdpServerDomain { get; set; }
+		
+		[XmlAttribute("RdpServerPassword")]
+		public string RdpServerPassword { get; set; }
+		
 		public Config()
 		{
 			BroadcasterPort = 4489;
 			BroadcasterHostname = "localhost";
+			BroadcasterAutoconnect = false;
 			
 			RdpServerPort = 3389;
 			RdpServerHostname = "localhost";
+			RdpServerDomain = "";
+			RdpServerPassword = "Password123!";
 		}
 		
 		public static void Save(Config config)

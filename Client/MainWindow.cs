@@ -74,6 +74,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 			CreateSessionAction.Visible = false;
 			recordAction.Visible = false;
 		}
+		
+		if (config.BroadcasterAutoconnect)
+			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 	
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)

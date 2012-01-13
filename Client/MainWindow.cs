@@ -40,6 +40,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private Gdk.Drawable drawable;
 	private SurfaceReceiver receiver;
 	private int mode;
+	private string sessionKey;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
@@ -354,22 +355,24 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
 	}
 
-	public void OnSessionCreationSuccess(char[] sessionKey)
+	public void OnSessionCreationSuccess(char[] sk)
 	{
 		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
 		string sessionKeyString = "";
-		for(int i = 0; i < sessionKey.Length; i++) {
-			sessionKeyString += sessionKey[i];
+		for(int i = 0; i < sk.Length; i++) {
+			sessionKeyString += sk[i];
 		}
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
+		
+		sessionKey = sessionKeyString;
 	}
 
-	public void OnSessionTerminationSuccess(char[] sessionKey)
+	public void OnSessionTerminationSuccess(char[] sk)
 	{
 		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
 		string sessionKeyString = "";
-		for(int i = 0; i < sessionKey.Length; i++) {
-			sessionKeyString += sessionKey[i];
+		for(int i = 0; i < sk.Length; i++) {
+			sessionKeyString += sk[i];
 		}
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 	}
@@ -391,7 +394,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnEndSessionAction1Activated (object sender, System.EventArgs e)
 	{
-		session.SendTermReq("ABCDEF123456".ToCharArray());
+		session.SendTermReq(sessionKey.ToCharArray());
 	}
 
 	protected void OnLeaveSessionAction1Activated (object sender, System.EventArgs e)

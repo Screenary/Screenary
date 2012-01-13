@@ -28,7 +28,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
-public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener //TA's code
+public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener
 {	
 	private Gdk.GC gc;
 	private Thread thread;
@@ -314,28 +314,50 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	}
 
-	public void OnRecvJoinRsp(char[] sessionKey)
+	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
-		Console.WriteLine("MainWindow.OnRecvJoinRsp");
+		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
+		string sessionKeyString = "";
+		for(int i = 0; i < sessionKey.Length; i++) {
+			sessionKeyString += sessionKey[i];
+		}
+		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
 	}
 	
-	public void OnRecvLeaveRsp()
+	public void OnSessionLeaveSuccess()
 	{
-		Console.WriteLine("MainWindow.OnRecvLeaveRsp");
+		Console.WriteLine("MainWindow.OnSessionLeaveSuccess");
 	}
 
-	public void OnRecvAuthRsp()
+	public void OnSessionAuthenticationSuccess()
 	{
-		Console.WriteLine("MainWindow.OnRecvAuthRsp");
+		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
 	}
 
-	public void OnRecvCreateRsp(char[] sessionKey)
+	public void OnSessionCreationSuccess(char[] sessionKey)
 	{
-		Console.WriteLine("MainWindow.OnRecvCreateRsp");
+		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
+		string sessionKeyString = "";
+		for(int i = 0; i < sessionKey.Length; i++) {
+			sessionKeyString += sessionKey[i];
+		}
+		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 	}
 
-	public void OnRecvTermRsp(char[] sessionKey)
+	public void OnSessionTerminationSuccess(char[] sessionKey)
 	{
-		Console.WriteLine("MainWindow.OnRecvTermRsp");
+		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
+		string sessionKeyString = "";
+		for(int i = 0; i < sessionKey.Length; i++) {
+			sessionKeyString += sessionKey[i];
+		}
+		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 	}
+	
+	public void OnSessionOperationFail(String errorMessage)
+	{
+		Console.WriteLine("MainWindow.OnSessionOperationFail");
+		Console.WriteLine(errorMessage);
+	}
+
 }

@@ -7,7 +7,7 @@ using Screenary;
 
 namespace Screenary.Server
 {
-	public class Client : SurfaceServer
+	public class Client : SurfaceServer, ISessionRequestListener
 	{
 		private ChannelDispatcher dispatcher;
 		private SurfaceServer surface;
@@ -31,12 +31,20 @@ namespace Screenary.Server
 			surface = new Surface(this.transport);
 			dispatcher.RegisterChannel(surface);
 			
-			session = new Session(this.transport);
+			session = new Session(this.transport, this);
 			dispatcher.RegisterChannel(session);
 			
 			dispatcher.OnConnect();
 			
 			transport.StartThread();
+			
+			//TA's test code
+			//session.SendCreateRsp(0, "ABCDEF123456".ToCharArray());
+			//session.SendTermRsp(0, "ABCDEF123456".ToCharArray(), 0);
+			//session.SendJoinRsp(0, "ABCDEF123456".ToCharArray(), 0, 0x01);
+			//session.SendAuthRsp(0, 0);
+			//session.SendLeaveRsp(0, 0);			
+			
 		}
 		
 		/**
@@ -109,5 +117,48 @@ namespace Screenary.Server
 				Monitor.Pulse(lockQ);
 			}
 		}
+		
+		public void OnSessionJoinRequested(char[] sessionKey)
+		{
+			Console.WriteLine("Client.OnSessionJoinRequested");
+			string sessionKeyString = "";
+			for(int i = 0; i < sessionKey.Length; i++) {
+				sessionKeyString += sessionKey[i];
+			}
+			Console.WriteLine("SessionKey:{0}", sessionKeyString);
+		}
+		
+		public void OnSessionLeaveRequested(UInt32 sessionId)
+		{
+			Console.WriteLine("Client.OnSessionLeaveRequested");
+			Console.WriteLine("sessionId: {0}", sessionId);			
+		}
+
+		public void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password)
+		{
+			Console.WriteLine("Client.OnSessionAuthenticationRequested");
+			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
+		}
+		
+		public void OnSessionCreateRequested(string username, string password)
+		{
+			Console.WriteLine("Client.OnSessionCreateRequested");
+			Console.WriteLine("username:{0} password:{1}", username, password);
+		}
+		
+		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
+		{
+			Console.WriteLine("Client.OnSessionTerminationRequested");
+			string sessionKeyString = "";
+			for(int i = 0; i < sessionKey.Length; i++) {
+				sessionKeyString += sessionKey[i];
+			}
+			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
+		}	
+		
+		public void OnSessionOperationFail(string errorMessage)
+		{
+			Console.WriteLine("Client.OnSessionOperationFail");
+		}	
 	}
 }

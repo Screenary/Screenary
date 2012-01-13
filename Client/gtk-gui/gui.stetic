@@ -134,6 +134,18 @@
         <property name="ShortLabel" translatable="yes">Leave Session</property>
         <signal name="Activated" handler="OnLeaveSessionActionActivated" />
       </action>
+      <action id="EndSessionAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">End Session</property>
+        <property name="ShortLabel" translatable="yes">End Session</property>
+        <signal name="Activated" handler="OnEndSessionAction1Activated" />
+      </action>
+      <action id="LeaveSessionAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Leave Session</property>
+        <property name="ShortLabel" translatable="yes">Leave Session</property>
+        <signal name="Activated" handler="OnLeaveSessionAction1Activated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -167,12 +179,12 @@
                   </node>
                   <node type="Menu" action="ToolsAction">
                     <node type="Menuitem" action="CreateSessionAction" />
+                    <node type="Menuitem" action="EndSessionAction1" />
                     <node type="Menuitem" action="JoinSessionAction" />
+                    <node type="Menuitem" action="LeaveSessionAction1" />
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
-                    <node type="Menuitem" action="EndSessionAction" />
-                    <node type="Menuitem" action="LeaveSessionAction" />
                   </node>
                   <node type="Menu" action="HelpAction">
                     <node type="Menuitem" action="aboutAction" />

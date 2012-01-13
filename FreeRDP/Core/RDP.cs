@@ -27,6 +27,10 @@ namespace FreeRDP
 		[DllImport("libfreerdp-core")]
 		public static extern void freerdp_free(freerdp* instance);
 		
+		public int Port { get { return (int) settings->port; } set { settings->port = (UInt32) value; } }
+		public int Width { get { return (int) settings->width; } set { settings->width = (UInt32) value; } }
+		public int Height { get { return (int) settings->height; } set { settings->height = (UInt32) value; } }
+		
 		private freerdp* handle;
 		private rdpContext* context;
 		private rdpSettings* settings;
@@ -108,14 +112,14 @@ namespace FreeRDP
 			return true;
 		}
 		
-		public bool Connect()
-		{
+		public bool Connect(string hostname, int port, string username, string domain, string password)
+		{			
 			Console.WriteLine("width:{0} height:{1} port:{2}",
 				settings->width, settings->height, settings->port);
 			
-			settings->hostname = GetNativeAnsiString("192.168.1.175");
-			settings->username = GetNativeAnsiString("Administrator");
-			settings->password = GetNativeAnsiString("FreeRDP123!");
+			settings->hostname = GetNativeAnsiString(hostname);
+			settings->username = GetNativeAnsiString(username);
+			settings->password = GetNativeAnsiString(password);
 			
 			return ((freerdp_connect(handle) == 0) ? false : true);
 		}

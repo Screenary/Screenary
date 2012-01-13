@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" BroadcasterPort="4489" BroadcasterHostname="localhost" BroadcasterAutoconnect="true" RdpServerPort="3389" RdpServerHostname="localhost" RdpServerDomain="" RdpServerPassword="Password123!" />
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" BroadcasterPort="4489" BroadcasterHostname="localhost" BroadcasterAutoconnect="false" RdpServerPort="3389" RdpServerHostname="localhost" RdpServerUsername="Administrator" RdpServerDomain="" RdpServerPassword="Password123!" />

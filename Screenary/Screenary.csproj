@@ -59,6 +59,7 @@
     <Compile Include="Transport\PDU.cs" />
     <Compile Include="Transport\Channel.cs" />
     <Compile Include="Session\ISessionResponseListener.cs" />
+    <Compile Include="Session\ISessionRequestListener.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

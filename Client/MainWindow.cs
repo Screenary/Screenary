@@ -367,13 +367,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine(errorMessage);
 	}
 
-	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
 	{
-		session.SendTermReq(.ToCharArray());
+		session.SendTermReq("ABCDEF123456".ToCharArray());
 	}
 
-	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
 	{
-		throw new System.NotImplementedException ();
+		throw new System.NotImplementedException();
 	}
 }

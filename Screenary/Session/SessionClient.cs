@@ -182,6 +182,7 @@ namespace Screenary
 			UInt32 sessionStatus;
 			char[] sessionKey;
 			
+			this.sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
 			
 			if (sessionStatus != 0)
@@ -191,7 +192,6 @@ namespace Screenary
 				return;
 			}
 			
-			this.sessionId = s.ReadUInt32();
 			sessionKey = s.ReadChars(12);
 							
 			listener.OnSessionCreationSuccess(sessionKey);

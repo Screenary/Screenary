@@ -86,10 +86,21 @@ namespace Screenary
 		
 		public bool Disconnect()
 		{
-			tcpClient.Close();
+			if(tcpClient != null)
+				tcpClient.Close();
+			
 			dispatcher.OnDisconnect();
 			
 			return true;
+		}
+		
+		public bool isConnected()
+		{
+			if(tcpClient == null)
+				return false;
+			else 
+				return tcpClient.Connected;	
+			
 		}
 		
 		private void SendAll(Socket socket, byte[] buffer, int offset, int size)

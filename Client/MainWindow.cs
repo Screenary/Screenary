@@ -41,6 +41,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private SurfaceReceiver receiver;
 	private int mode;
 	private string sessionKey;
+	private TransportClient transport;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
@@ -63,25 +64,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		
 		receiver = new SurfaceReceiver(window, surface);
 		
-		/* Sender Mode */
-		if (mode == 0)
-		{
-			JoinSessionAction.Visible = false;
-			CreateSessionAction.Visible = true;
-			recordAction.Visible = true;
-			LeaveSessionAction1.Visible = false;
-			EndSessionAction1.Visible = true;
-		}
-		
-		/* Receiver Mode */
-		else if (mode == 1)
-		{
-			CreateSessionAction.Visible = false;
-			recordAction.Visible = false;
-			JoinSessionAction.Visible = true;
-			EndSessionAction1.Visible = false;
-			LeaveSessionAction1.Visible = true;
-		}
+		this.transport = null;		
 		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
@@ -105,13 +88,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
+		if(this.transport != null)
+			this.transport.Disconnect();
+		
 		Application.Quit();
 		a.RetVal = true;
 	}
 
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
-	{
-		Application.Quit();
+	{		
+		if(this.transport != null)
+			this.transport.Disconnect();
+		
+		Application.Quit();		
 	}
 
 	protected void OnAboutActionActivated(object sender, System.EventArgs e)
@@ -240,15 +229,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	public void OnUserConnect(string address, int port)
 	{
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
-		TransportClient transport = new TransportClient(dispatcher);
+		this.transport = new TransportClient(dispatcher);
 		
-		session = new Session(transport, this);
+		session = new Session(this.transport, this);
 		dispatcher.RegisterChannel(session);
 		
-		SurfaceClient surface = new SurfaceClient(this, transport);
+		SurfaceClient surface = new SurfaceClient(this, this.transport);
 		dispatcher.RegisterChannel(surface);
 
-		transport.Connect(address, port);
+		this.transport.Connect(address, port);
 		
 		Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
 

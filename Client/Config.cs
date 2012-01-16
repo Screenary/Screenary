@@ -36,7 +36,7 @@ namespace Screenary.Client
 		{
 			BroadcasterPort = 4489;
 			BroadcasterHostname = "localhost";
-			BroadcasterAutoconnect = false;
+			BroadcasterAutoconnect = true;
 			
 			RdpServerPort = 3389;
 			RdpServerHostname = "localhost";

@@ -33,7 +33,8 @@ namespace Screenary.Client
 			
 			Application.Init();
 			
-			WelcomeDialog welcome = new WelcomeDialog();
+			//WelcomeDialog welcome = new WelcomeDialog();
+			MainWindow newSenderReceiver = new MainWindow(0);
 			
 			WorkingDirectory = Directory.GetCurrentDirectory();
 			

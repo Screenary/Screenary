@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections;
 using System.Collections.Generic;
 using Screenary;
 
@@ -38,12 +39,17 @@ namespace Screenary.Server
 			
 			transport.StartThread();
 			
-			//TA's test code
-			//session.SendCreateRsp(0, "ABCDEF123456".ToCharArray());
-			//session.SendTermRsp(0, "ABCDEF123456".ToCharArray(), 0);
-			//session.SendJoinRsp(0, "ABCDEF123456".ToCharArray(), 0, 0x01);
-			//session.SendAuthRsp(0, 0);
-			//session.SendLeaveRsp(0, 0);
+			
+			//Test participants 
+			ArrayList participants = new ArrayList();
+			participants.Add("terri");
+			participants.Add("dona");
+			participants.Add("hai-long");
+			participants.Add("marc");
+			participants.Add("gina");
+			participants.Add("marwan");
+			session.SendPartipantsListRsp(participants);
+		
 		}
 		
 		/**
@@ -120,23 +126,26 @@ namespace Screenary.Server
 		public void OnSessionJoinRequested(char[] sessionKey)
 		{
 			Console.WriteLine("Client.OnSessionJoinRequested");
-			string sessionKeyString = "";
-			for(int i = 0; i < sessionKey.Length; i++) {
-				sessionKeyString += sessionKey[i];
-			}
+			string sessionKeyString = new string(sessionKey);
 			Console.WriteLine("SessionKey:{0}", sessionKeyString);
+			
+			session.SendJoinRsp(0, "ABCDEF123456".ToCharArray(), 0, 0x01);
 		}
 		
 		public void OnSessionLeaveRequested(UInt32 sessionId)
 		{
 			Console.WriteLine("Client.OnSessionLeaveRequested");
-			Console.WriteLine("sessionId: {0}", sessionId);
+			Console.WriteLine("sessionId: {0}", sessionId);		
+			
+			session.SendLeaveRsp(0, 0);
 		}
 
 		public void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password)
 		{
 			Console.WriteLine("Client.OnSessionAuthenticationRequested");
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
+			
+			session.SendAuthRsp(0, 0);
 		}
 		
 		public void OnSessionCreateRequested(string username, string password)
@@ -150,16 +159,22 @@ namespace Screenary.Server
 		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
 		{
 			Console.WriteLine("Client.OnSessionTerminationRequested");
-			string sessionKeyString = "";
-			for(int i = 0; i < sessionKey.Length; i++) {
-				sessionKeyString += sessionKey[i];
-			}
+			string sessionKeyString = new string(sessionKey);
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
+
+			session.SendTermRsp(0, "ABCDEF123456".ToCharArray(), 0);
 		}	
 		
 		public void OnSessionOperationFail(string errorMessage)
 		{
 			Console.WriteLine("Client.OnSessionOperationFail");
+			Console.WriteLine("errorMessage: {0}", errorMessage);
+		}	
+		
+		public void OnSessionPartipantListUpdated(ArrayList participants)
+		{
+			Console.WriteLine("Client.OnSessionPartipantsListSuccess");
+			session.SendPartipantsListRsp(participants);
 		}	
 	}
 }

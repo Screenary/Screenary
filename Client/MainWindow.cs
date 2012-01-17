@@ -41,6 +41,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private SurfaceReceiver receiver;
 	private int mode;
 	private string sessionKey;
+	private int screenuserid;
 	private TransportClient transport;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
@@ -260,9 +261,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		session.SendCreateReq(username, password);
 	}
 	
-	public void OnUserJoinSession(string sk)
+	public void OnUserJoinSession(string sk, string username, string password)
 	{
-		session.SendJoinReq(sk.ToCharArray());
+		session.SendJoinReq(sk.ToCharArray(), username, password);
 	}
 
 	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
@@ -325,14 +326,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	}
 
-	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
+	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected, string userid)
 	{
 		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
 		string sessionKeyString = "";
 		for(int i = 0; i < sessionKey.Length; i++) {
 			sessionKeyString += sessionKey[i];
 		}
-		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
+		
+		this.sessionKey = sessionKeyString;
+		screenuserid = Convert.ToInt32(userid);
+		
+		Console.WriteLine("SessionKey:{0}, Password Protected:{1} userid:{2} ", sessionKeyString, isPasswordProtected, userid);
 	}
 	
 	public void OnSessionLeaveSuccess()
@@ -352,9 +357,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		for(int i = 0; i < sk.Length; i++) {
 			sessionKeyString += sk[i];
 		}
-		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
-		sessionKey = sessionKeyString;
+		String [] str = sessionKeyString.Split('_');
+		sessionKey = str[0];
+		screenuserid = Convert.ToInt32(str[1]);
+		Console.WriteLine("SessionKey:{0} screenuserid{1}", sessionKey, screenuserid);		
+		
 	}
 
 	public void OnSessionTerminationSuccess(char[] sk)
@@ -380,16 +388,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
 	{
+
 	}
 
 	protected void OnEndSessionAction1Activated (object sender, System.EventArgs e)
 	{
-		session.SendTermReq(sessionKey.ToCharArray());
+		string msg = sessionKey+ "_" + screenuserid.ToString();
+		session.SendTermReq(msg.ToCharArray());
 	}
 
 	protected void OnLeaveSessionAction1Activated (object sender, System.EventArgs e)
 	{
-		session.SendLeaveReq();
+		session.SendLeaveReq(sessionKey, screenuserid);
 	}
 
 }

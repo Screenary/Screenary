@@ -114,7 +114,7 @@ namespace Screenary
 			
 			Send(buffer, PDU_SESSION_TERM_REQ);
 		}
-		
+				
 		public void RecvJoinRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvJoinRsp");
@@ -257,6 +257,35 @@ namespace Screenary
 			listener.OnSessionTerminationSuccess(sessionKey);
 		}
 		
+		public void RecvParticipantListRsp(BinaryReader s)
+		{
+			Console.WriteLine("SessionClient.RecvPartipantsListRsp");
+			
+			ArrayList participants = new ArrayList();
+			
+			int length = (int) s.ReadUInt16();
+			
+			/*subtract bytes stored for total length*/
+			length -= 2;
+			
+			while(length > 0)
+			{
+				string username = "";
+
+				UInt16 usernameLength = s.ReadUInt16();
+				
+				if (usernameLength > 0)
+					username = new string(s.ReadChars(usernameLength));
+								
+				participants.Add(username);
+				
+				/*subtract bytes stored for length and string*/
+				length -= (username.Length + 2);
+			}
+			
+			listener.OnSessionPartipantListUpdate(participants);
+		}
+
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			lock (channelLock)
@@ -305,6 +334,10 @@ namespace Screenary
 					RecvAuthRsp(s);
 					return;
 				
+				case PDU_SESSION_PARTICIPANTS_RSP:
+					RecvParticipantListRsp(s);
+					return;
+					
 				default:
 					return;
 			}

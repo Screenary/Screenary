@@ -23,6 +23,7 @@ namespace Screenary
 		public const byte PDU_SESSION_CREATE_RSP = 0x83;
 		public const byte PDU_SESSION_TERM_RSP = 0x84;
 		public const byte PDU_SESSION_AUTH_RSP = 0x85;
+		public const byte PDU_SESSION_PARTICIPANTS_RSP = 0x86;		
 		
 		public const byte SESSION_FLAGS_PASSWORD_PROTECTED = 0x01;
 						

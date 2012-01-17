@@ -27,6 +27,7 @@ using FreeRDP;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Collections;
 
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener
 {	
@@ -328,10 +329,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
 		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
-		string sessionKeyString = "";
-		for(int i = 0; i < sessionKey.Length; i++) {
-			sessionKeyString += sessionKey[i];
-		}
+		string sessionKeyString = new string(sessionKey);
 		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
 	}
 	
@@ -348,10 +346,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	public void OnSessionCreationSuccess(char[] sk)
 	{
 		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
-		string sessionKeyString = "";
-		for(int i = 0; i < sk.Length; i++) {
-			sessionKeyString += sk[i];
-		}
+		string sessionKeyString = new string(sk);
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
 		sessionKey = sessionKeyString;
@@ -360,10 +355,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	public void OnSessionTerminationSuccess(char[] sk)
 	{
 		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
-		string sessionKeyString = "";
-		for(int i = 0; i < sk.Length; i++) {
-			sessionKeyString += sk[i];
-		}
+		string sessionKeyString = new string(sk);
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 	}
 	
@@ -373,6 +365,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine(errorMessage);
 	}
 
+	public void OnSessionPartipantListUpdate(ArrayList participants)
+	{
+		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");
+		Console.WriteLine("participants.Count " + participants.Count);
+		
+		foreach(string username in participants)
+		{
+			Console.WriteLine("participant: " + username);
+		}
+	}
+	
 	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
 	{
 	

@@ -45,7 +45,7 @@ namespace Screenary
 		
 		public void SendLeaveRsp(UInt32 sessionId, UInt32 sessionStatus)
 		{
-			Console.WriteLine("SessionClient.SendLeaveRsp");
+			Console.WriteLine("SessionServer.SendLeaveRsp");
 									
 			byte[] buffer = null;
 			int length = 0;
@@ -56,7 +56,7 @@ namespace Screenary
 		
 		public void SendAuthRsp(UInt32 sessionId, UInt32 sessionStatus)
 		{
-			Console.WriteLine("SessionClient.SendAuthRsp");
+			Console.WriteLine("SessionServer.SendAuthRsp");
 			
 			byte[] buffer = null;
 			int length = 0;
@@ -82,7 +82,7 @@ namespace Screenary
 		
 		public void SendTermRsp(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
 		{
-			Console.WriteLine("SessionClient.SendTermRsp");
+			Console.WriteLine("SessionServer.SendTermRsp");
 
 			byte[] buffer = null;
 			int length = sessionKey.Length;
@@ -93,13 +93,41 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_TERM_RSP);
 		}
 		
+		public void SendPartipantsListRsp(ArrayList participants)
+		{
+			Console.WriteLine("SessionServer.SendPartipantsListRsp");
+			
+			/*Bytes for storing length*/
+			int length = 2;
+			
+			/*Determine length of buffer*/
+			foreach(string username in participants)
+			{
+				length += username.Length + 2;
+			}
+
+			byte[] buffer = new byte[length];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+	
+			s.Write((UInt16) length);
+			
+			/*Write to buffer*/
+			foreach(string username in participants)
+			{
+				s.Write((UInt16) username.Length);
+				s.Write(username.ToCharArray());
+			}
+						
+			Send(buffer, PDU_SESSION_PARTICIPANTS_RSP);
+			
+		}
+		
 		private void RecvJoinReq(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvJoinReq");
+			Console.WriteLine("SessionServer.RecvJoinReq");
 			
 			UInt32 sessionId;
 			char[] sessionKey;
-			
 			sessionId = s.ReadUInt32();
 			sessionKey = s.ReadChars(12);
 					
@@ -108,7 +136,7 @@ namespace Screenary
 		
 		private void RecvLeaveReq(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvLeaveReq");
+			Console.WriteLine("SessionServer.RecvLeaveReq");
 
 			UInt32 sessionId = s.ReadUInt32();
 
@@ -117,7 +145,7 @@ namespace Screenary
 		
 		private void RecvAuthReq(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvAuthReq");
+			Console.WriteLine("SessionServer.RecvAuthReq");
 
 			UInt32 sessionId;
 			UInt16 usernameLength;
@@ -181,7 +209,7 @@ namespace Screenary
 			
 			listener.OnSessionTerminationRequested(sessionId, sessionKey, sessionStatus);
 		}
-		
+				
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			Console.WriteLine("SessionServer.OnRecv");
@@ -239,7 +267,7 @@ namespace Screenary
 		}
 		
 		public void ChannelThreadProc()
-		{
+		{			
 			Console.WriteLine("SessionServer.ChannelThreadProc");
 			
 			while (true)

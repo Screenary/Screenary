@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 namespace Screenary
 {
@@ -10,5 +11,6 @@ namespace Screenary
 		void OnSessionCreationSuccess(char[] sessionKey);
 		void OnSessionTerminationSuccess(char[] sessionKey);
 		void OnSessionOperationFail(string errorMessage);
+		void OnSessionPartipantListUpdate(ArrayList participants);
 	}
 }

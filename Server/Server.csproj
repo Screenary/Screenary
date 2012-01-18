@@ -41,6 +41,8 @@
     <Compile Include="Broadcaster.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Surface.cs" />
+    <Compile Include="ScreencastingSession.cs" />
+    <Compile Include="ScreenSessions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

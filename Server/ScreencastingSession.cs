@@ -1,79 +1,74 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Screenary.Server
 {
 	public class ScreencastingSession
 	{
-		public Boolean isTerminated { get; set; }
-		public String password { get; set; }
-		public char[] key { get; set; }
-		public UInt32 senderId { get; set; }
-		private List<UInt32> receiverIds = new List<UInt32>();
+		public char[] sessionKey {get; set;}
+		public UInt32 senderId {get; set;}
+		public string senderUsername {get; set;}
+		private string sessionPassword;
 		
-		public ScreencastingSession ( string password, char[] key, UInt32 senderId)
+		/* Lists of TCP Clients */
+		public Dictionary<Client, UInt32> joinedClients {get; set;}
+		public Dictionary<Client, User> authenticatedClients {get; set;}
+		
+		public struct User
 		{
-			this.password = password;
-			this.key = key;
+			public UInt32 receiverId;
+			public string receiverUsername;
+		}
+		
+		public ScreencastingSession(char[] sessionKey, UInt32 senderId, string senderUsername, string sessionPassword)
+		{
+			this.sessionKey = sessionKey;
 			this.senderId = senderId;
+			this.senderUsername = senderUsername;
+			this.sessionPassword = sessionPassword;
+			joinedClients = new Dictionary<Client, UInt32>();
+			authenticatedClients = new Dictionary<Client, User>();
+		}
+
+		public void AddJoinedUser(Client client, UInt32 id)
+		{
+			joinedClients.Add(client, id);
 		}
 		
-		private UInt32 AddReceiver(UInt32 receiverId)
+		public void AddAuthenticatedUser(Client client, UInt32 id, string username)
 		{
-			UInt32 sessionStatus = 1;
-			if(!isTerminated)
+			joinedClients.Remove(client);
+			User user;
+			user.receiverId = id;
+			user.receiverUsername = username;
+			authenticatedClients.Add(client, user);
+		}
+
+		public void RemoveAuthenticatedUser(Client client)
+		{
+			authenticatedClients.Remove(client);
+		}		
+		
+		public Boolean Authenticate(Client client, UInt32 sessionId, string username, string password)
+		{
+			Boolean isAuthenticated = (this.sessionPassword == password);
+			if(isAuthenticated)
 			{
-				if(!receiverIds.Contains(receiverId))
-				{
-					receiverIds.Add(receiverId);
-					sessionStatus = 0;
-				}
+				this.AddAuthenticatedUser(client, sessionId, username);				
 			}
-			return sessionStatus;
+			
+			return isAuthenticated;
 		}
 		
-		public UInt32 RemoveReceiver(UInt32 receiverId)
+		public ArrayList GetParticipantUsernames()
 		{
-			UInt32 sessionStatus = 1;
-			if(!isTerminated)
+			ArrayList participantUsernames = new ArrayList();
+			foreach(User user in authenticatedClients.Values)
 			{
-				if(receiverIds.Remove(receiverId))
-				{
-					sessionStatus = 0;
-				}
+				participantUsernames.Add(user.receiverUsername);
 			}
-			return sessionStatus;
-		}
-		
-		public string Authenticate(UInt32 receiverId, String password)
-		{
-			UInt32 sessionStatus = 1;
-			if(!isTerminated)
-			{
-				if(this.password == password)
-				{
-					this.AddReceiver(receiverId);
-					return receiverId.ToString();
-				}
-				else
-				{
-					//authentication failed
-					return "-4";					
-				}
-			}
-			return "-2";
-		}
-		
-		public UInt32 Terminate()
-		{
-			UInt32 sessionStatus = 1;
-			if(!isTerminated)
-			{
-				isTerminated = true;
-				sessionStatus = 0;
-			}
-			return sessionStatus;
+			return participantUsernames;
 		}
 	}
 }
-

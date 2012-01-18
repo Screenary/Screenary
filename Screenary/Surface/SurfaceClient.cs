@@ -61,16 +61,21 @@ namespace Screenary
 		}
 		
 		public void ChannelThreadProc()
-		{
-			lock (channelLock)
-			{
-				while (queue.Count < 1)
+		{			
+			while (true)
+			{				
+				lock (channelLock)
 				{
-					Monitor.Wait(channelLock);
+					while (queue.Count < 1)
+					{
+						Monitor.Wait(channelLock);
+					}
+												
+					PDU pdu = (PDU) queue.Dequeue();
+					ProcessPDU(pdu.Buffer, pdu.Type);
+			
+					Monitor.Pulse(channelLock);
 				}
-				
-				PDU pdu = (PDU) queue.Dequeue();
-				ProcessPDU(pdu.Buffer, pdu.Type);
 			}
 		}
 	}

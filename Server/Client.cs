@@ -10,9 +10,11 @@ namespace Screenary.Server
 {
 	public class Client : SurfaceServer, ISessionRequestListener
 	{
+		private IClientRequestListener listener;
 		private Session session;
 		private SurfaceServer surface;
 		private ChannelDispatcher dispatcher;
+		
 		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
 		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
 		private readonly object lockQ = new object();
@@ -21,8 +23,12 @@ namespace Screenary.Server
 		/**
 		 * Class constructor
 		 */ 
-		public Client(TransportClient transport) : base(transport)
+		public Client(TransportClient transport, IClientRequestListener listener) : base(transport)
 		{
+			this.thread = new Thread(ReceiverThreadProc);
+			thread.Start();
+			
+			this.listener = listener;
 			this.transport = transport;
 			dispatcher = new ChannelDispatcher();
 			
@@ -37,17 +43,6 @@ namespace Screenary.Server
 			dispatcher.OnConnect();
 			
 			transport.StartThread();
-			
-			
-			//Test participants 
-			ArrayList participants = new ArrayList();
-			participants.Add("terri");
-			participants.Add("dona");
-			participants.Add("hai-long");
-			participants.Add("marc");
-			participants.Add("gina");
-			participants.Add("marwan");
-			session.SendPartipantsListRsp(participants);
 		
 		}
 		
@@ -122,32 +117,29 @@ namespace Screenary.Server
 			}
 		}
 		
-		public void OnSessionJoinRequested(char[] sessionKey, string username, string password)
+		public void OnSessionJoinRequested(char[] sessionKey)
 		{
 			Console.WriteLine("Client.OnSessionJoinRequested");
 			string sessionKeyString = new string(sessionKey);
+			Console.WriteLine("SessionKey:{0}", sessionKeyString);
 			
-			ScreenSessions scr = ScreenSessions.Instance;
-			string userid = scr.joinScreenSession(sessionKeyString, username, password);
+			UInt32 sessionId = UInt32.MaxValue;
+			UInt32 sessionStatus = UInt32.MaxValue;
+			byte sessionFlags = 0x00;
 			
-			//error if userid is -2(session is terminated), -3(session does not exist), -4(authentication failed)
-			//send the userid instead of sessionStatus
-			session.SendJoinRsp(0, sessionKey,userid, 0, new byte());
-				
-			Console.WriteLine("SessionKey:{0}" +" username: "+username +" password: "+password, sessionKeyString);		
-
-
+			listener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
+			session.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
 		}
 		
-		public void OnSessionLeaveRequested(UInt32 sessionId, string sessionKey, string userid)
+		public void OnSessionLeaveRequested(UInt32 sessionId)
 		{
-			Console.WriteLine("Client.OnSessionLeaveRequested");			
-			Console.WriteLine("sessionId: {0}" + " sessionkey "+sessionKey+" userid: "+userid, sessionId);
+			Console.WriteLine("Client.OnSessionLeaveRequested");
+			Console.WriteLine("sessionId: {0}", sessionId);
 			
-			ScreenSessions scr = ScreenSessions.Instance;
-			uint resp = (uint) scr.leaveScreenSession(sessionKey, Convert.ToUInt32(userid));
+			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			session.SendLeaveRsp(0, resp);
+			listener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus);
+			session.SendLeaveRsp(sessionId, sessionStatus);		
 		}
 
 		public void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password)
@@ -155,35 +147,32 @@ namespace Screenary.Server
 			Console.WriteLine("Client.OnSessionAuthenticationRequested");
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 			
-			session.SendAuthRsp(0, 0);
+			UInt32 sessionStatus = UInt32.MaxValue;
+			
+			listener.OnSessionAuthenticationRequested(this, sessionId, session.sessionKey, username, password, ref sessionStatus);
+			session.SendAuthRsp(sessionId, sessionStatus);
 		}
 		
 		public void OnSessionCreateRequested(string username, string password)
 		{
 			Console.WriteLine("Client.OnSessionCreateRequested");
-			Console.WriteLine("username:{0} password:{1}", username, password);		
-			ScreenSessions scr = ScreenSessions.Instance;
-			string key_userid = scr.createScreenSession(password);
-			session.SendCreateRsp(0, key_userid.ToCharArray());
+			Console.WriteLine("username:{0} password:{1}", username, password);
+			
+			UInt32 sessionId = UInt32.MaxValue;
+			char[] sessionKey = "000000000000".ToCharArray();
+			
+			listener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
+			session.SendCreateRsp(sessionId, sessionKey);
 		}
 		
 		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
 		{
 			Console.WriteLine("Client.OnSessionTerminationRequested");
-
 			string sessionKeyString = new string(sessionKey);
-			
-			String [] str = sessionKeyString.Split('_');
-			sessionKeyString = str[0];
-			int screenuserid = Convert.ToInt32(str[1]);
-			ScreenSessions scr = ScreenSessions.Instance;
-			UInt32 status = scr.terminateScreenSession(sessionKeyString, screenuserid);			
-			
-			session.SendTermRsp(0, sessionKeyString.ToCharArray(), status);
-			
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
 
-			session.SendTermRsp(0, "ABCDEF123456".ToCharArray(), 0);
+			listener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
+			session.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
 		public void OnSessionOperationFail(string errorMessage)

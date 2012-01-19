@@ -181,7 +181,7 @@ namespace Screenary.Server
 			Console.WriteLine("errorMessage: {0}", errorMessage);
 		}	
 		
-		public void OnSessionParticipantListUpdated(ArrayList participants)
+		public void OnSessionPartipantListUpdated(ArrayList participants)
 		{
 			Console.WriteLine("Client.OnSessionPartipantsListSuccess");
 			session.SendPartipantsListRsp(participants);

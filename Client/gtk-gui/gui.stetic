@@ -7,7 +7,7 @@
   <import>
     <widget-library name="../../bin/Debug/ScreenaryClient.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1026 829">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1247 856">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -28,13 +28,6 @@
         <property name="Label" translatable="yes">Close</property>
         <property name="ShortLabel" translatable="yes">Close</property>
         <signal name="Activated" handler="OnCloseActionActivated" />
-      </action>
-      <action id="ConnectAction">
-        <property name="Type">Action</property>
-        <property name="Accelerator">&lt;Control&gt;c</property>
-        <property name="Label" translatable="yes">Connect</property>
-        <property name="ShortLabel" translatable="yes">Connect</property>
-        <signal name="Activated" handler="OnConnectActionActivated" />
       </action>
       <action id="quitAction">
         <property name="Type">Action</property>
@@ -116,11 +109,11 @@
         <property name="Label" translatable="yes">Documentation</property>
         <property name="ShortLabel" translatable="yes">Documentation</property>
       </action>
-      <action id="ConnectAction1">
+      <action id="ConnectAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Connect</property>
         <property name="ShortLabel" translatable="yes">Connect</property>
-        <signal name="Activated" handler="OnConnectAction1Activated" />
+        <signal name="Activated" handler="OnConnectActionActivated" />
       </action>
       <action id="EndSessionAction">
         <property name="Type">Action</property>
@@ -134,25 +127,12 @@
         <property name="ShortLabel" translatable="yes">Leave Session</property>
         <signal name="Activated" handler="OnLeaveSessionActionActivated" />
       </action>
-      <action id="EndSessionAction1">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">End Session</property>
-        <property name="ShortLabel" translatable="yes">End Session</property>
-        <signal name="Activated" handler="OnEndSessionAction1Activated" />
-      </action>
-      <action id="LeaveSessionAction1">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Leave Session</property>
-        <property name="ShortLabel" translatable="yes">Leave Session</property>
-        <signal name="Activated" handler="OnLeaveSessionAction1Activated" />
-      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
     <property name="Icon">stock:gtk-go-forward Menu</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
-    <signal name="ExposeEvent" handler="OnExposeEvent" />
     <child>
       <widget class="Gtk.VBox" id="mainVbox">
         <property name="MemberName" />
@@ -170,7 +150,7 @@
                 <node name="menubar1" type="Menubar">
                   <node type="Menu" action="FileAction">
                     <node type="Menuitem" action="OpenFileAction" />
-                    <node type="Menuitem" action="ConnectAction1" />
+                    <node type="Menuitem" action="ConnectAction" />
                     <node type="Menu" action="ModeAction">
                       <node type="Menuitem" action="SenderAction" />
                       <node type="Menuitem" action="ReceiverAction" />
@@ -179,9 +159,9 @@
                   </node>
                   <node type="Menu" action="ToolsAction">
                     <node type="Menuitem" action="CreateSessionAction" />
-                    <node type="Menuitem" action="EndSessionAction1" />
+                    <node type="Menuitem" action="EndSessionAction" />
                     <node type="Menuitem" action="JoinSessionAction" />
-                    <node type="Menuitem" action="LeaveSessionAction1" />
+                    <node type="Menuitem" action="LeaveSessionAction" />
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
@@ -200,9 +180,100 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.DrawingArea" id="mainDrawingArea">
+              <widget class="Gtk.HBox" id="hbox1">
                 <property name="MemberName" />
-                <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.VBox" id="vbox5">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.DrawingArea" id="mainDrawingArea">
+                        <property name="MemberName" />
+                        <property name="WidthRequest">1024</property>
+                        <property name="HeightRequest">768</property>
+                        <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Statusbar" id="notificationBar">
+                        <property name="MemberName" />
+                        <property name="Spacing">6</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.VBox" id="vbox2">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.VBox" id="vbox3">
+                        <property name="MemberName" />
+                        <property name="Spacing">6</property>
+                        <child>
+                          <widget class="Gtk.Label" id="lblParticipants">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">Participants</property>
+                          </widget>
+                          <packing>
+                            <property name="Position">0</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                            <property name="MemberName" />
+                            <property name="ShadowType">In</property>
+                            <child>
+                              <widget class="Gtk.TextView" id="txtParticipants">
+                                <property name="MemberName" />
+                                <property name="WidthRequest">200</property>
+                                <property name="CanFocus">True</property>
+                                <property name="ShowScrollbars">True</property>
+                                <property name="Editable">False</property>
+                                <property name="CursorVisible">False</property>
+                                <property name="Overwrite">True</property>
+                                <property name="Text" translatable="yes" />
+                                <property name="Justification">Center</property>
+                              </widget>
+                            </child>
+                          </widget>
+                          <packing>
+                            <property name="Position">1</property>
+                            <property name="AutoSize">True</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="Position">1</property>

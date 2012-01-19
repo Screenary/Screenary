@@ -19,6 +19,7 @@ namespace Screenary.Client
 		protected void OnButtonOkClicked(object sender, System.EventArgs e)
 		{
 			observer.OnUserJoinSession(sessionKey, txtUsername.Text, txtPassword.Text);
+			this.Destroy();
 		}
 
 		protected void OnButtonCancelClicked(object sender, System.EventArgs e)

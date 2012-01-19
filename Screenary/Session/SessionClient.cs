@@ -283,7 +283,7 @@ namespace Screenary
 				length -= (username.Length + 2);
 			}
 			
-			listener.OnSessionPartipantListUpdate(participants);
+			listener.OnSessionParticipantListUpdate(participants);
 		}
 
 		public override void OnRecv(byte[] buffer, byte pduType)

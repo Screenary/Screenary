@@ -44,6 +44,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private string sessionKey;
 	private int screenuserid;
 	private TransportClient transport;
+	private ArrayList participants;
+	private const int id = 1;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
@@ -66,6 +68,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		
 		receiver = new SurfaceReceiver(window, surface);
 		
+		OutOfSessionWindow();
+		
 		this.transport = null;		
 		
 		if (config.BroadcasterAutoconnect)
@@ -82,11 +86,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 				rect.Width, rect.Height, Gdk.RgbDither.None, 0, 0);
 		}
 	}
-
-	protected void OnMainDrawingAreaConfigureEvent(object o, Gtk.ConfigureEventArgs args)
-	{	
-
-	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
@@ -96,6 +95,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Application.Quit();
 		a.RetVal = true;
 	}
+	
+//Window Setups:
+	protected void InSessionWindow()
+	{
+		this.vbox3.Visible = true;
+	}
+	
+	protected void OutOfSessionWindow()
+	{
+		this.vbox3.Visible = false;
+	}
+	
 
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{		
@@ -242,7 +253,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		this.transport.Connect(address, port);
 		
 		Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
-
+		notificationBar.Push (id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
+		
 		//TA's test code
 		//session.SendCreateReq("username","password");
 		//session.SendTermReq("ABCDEF123456".ToCharArray());
@@ -254,7 +266,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
 	{
 		CreateSessionDialog connect = new CreateSessionDialog(this);
-		
+	}
+	
+	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
+	{
+		JoinDialog join = new JoinDialog(this);
 	}
 	
 	public void OnUserCreateSession(string username, string password)
@@ -265,15 +281,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	public void OnUserJoinSession(string sk, string username, string password)
 	{
 		session.SendJoinReq(sk.ToCharArray(), username, password);
-	}
-
-	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
-	{
-		JoinDialog join = new JoinDialog(this);
-	}
-	
-	protected void OnExposeEvent(object o, Gtk.ExposeEventArgs args)
-	{
 	}
 
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
@@ -302,9 +309,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		JoinSessionAction.Visible = false;
 		CreateSessionAction.Visible = true;
 		recordAction.Visible = true;
-		LeaveSessionAction1.Visible = false;
-		EndSessionAction1.Visible = true;
-		
+		LeaveSessionAction.Visible = false;
+		EndSessionAction.Visible = true;
 	}
 
 	protected void OnReceiverActionActivated(object sender, System.EventArgs e)
@@ -313,18 +319,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		CreateSessionAction.Visible = false;
 		recordAction.Visible = false;
 		JoinSessionAction.Visible = true;
-		EndSessionAction1.Visible = false;
-		LeaveSessionAction1.Visible = true;
+		EndSessionAction.Visible = false;
+		LeaveSessionAction.Visible = true;
 	}
 
-	protected void OnConnectAction1Activated(object sender, System.EventArgs e)
-	{
-		OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
-	}
-	
 	protected void OnConnectActionActivated(object sender, System.EventArgs e)
 	{
-
+		OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected, string userid)
@@ -337,16 +338,41 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		screenuserid = Convert.ToInt32(userid);
 		
 		Console.WriteLine("SessionKey:{0}, Password Protected:{1} userid:{2} ", sessionKeyString, isPasswordProtected, userid);
+		
+		notificationBar.Pop (id);
+		notificationBar.Push (id,"You have successfully joined the session! SessionKey: " + sessionKeyString);
+		
+		InSessionWindow();
+		
+		DisplayParticipants();
+	}
+	
+	public void DisplayParticipants()
+	{
+		Gtk.TextBuffer buffer;
+		buffer = txtParticipants.Buffer;
+	
+		foreach(string username in participants)
+		{
+			buffer.InsertAtCursor(username + "\r\n");
+		}
 	}
 	
 	public void OnSessionLeaveSuccess()
 	{
 		Console.WriteLine("MainWindow.OnSessionLeaveSuccess");
+		
+		OutOfSessionWindow();
+		
+		notificationBar.Pop (id);
+		notificationBar.Push (id, "You have succesfully left the session.");
 	}
 
 	public void OnSessionAuthenticationSuccess()
 	{
 		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
+		
+		InSessionWindow();
 	}
 
 	public void OnSessionCreationSuccess(char[] sk)
@@ -357,15 +383,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		String [] str = sessionKeyString.Split('_');
 		sessionKey = str[0];
 		screenuserid = Convert.ToInt32(str[1]);
-		Console.WriteLine("SessionKey:{0} screenuserid{1}", sessionKey, screenuserid);		
 		
+		Console.WriteLine("SessionKey:{0} screenuserid{1}", sessionKey, screenuserid);
+		
+		InSessionWindow();
+		
+		DisplayParticipants();
+	
+		notificationBar.Pop(id);
+		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKey);
 	}
 
 	public void OnSessionTerminationSuccess(char[] sk)
 	{
 		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
 		string sessionKeyString = new string(sk);
+		
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
+		
+		OutOfSessionWindow();
+		
+		notificationBar.Pop(id);
+		notificationBar.Push (id, "You have succesfully terminated the session.");
 	}
 	
 	public void OnSessionOperationFail(String errorMessage)
@@ -374,36 +413,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		Console.WriteLine(errorMessage);
 	}
 
-	public void OnSessionPartipantListUpdate(ArrayList participants)
+	public void OnSessionParticipantListUpdate(ArrayList participants)
 	{
 		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");
 		Console.WriteLine("participants.Count " + participants.Count);
+		
+		this.participants = participants;
 		
 		foreach(string username in participants)
 		{
 			Console.WriteLine("participant: " + username);
 		}
 	}
-	
-	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
-	{
-	
-	}
 
-	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
-	{
-
-	}
-
-	protected void OnEndSessionAction1Activated (object sender, System.EventArgs e)
+	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
 	{
 		string msg = sessionKey+ "_" + screenuserid.ToString();
 		session.SendTermReq(msg.ToCharArray());
 	}
 
-	protected void OnLeaveSessionAction1Activated (object sender, System.EventArgs e)
+	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
 	{
 		session.SendLeaveReq(sessionKey, screenuserid);
 	}
-
+	
 }

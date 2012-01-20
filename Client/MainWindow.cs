@@ -42,7 +42,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private SurfaceReceiver receiver;
 	private int mode;
 	private string sessionKey;
-	private int screenuserid;
 	private TransportClient transport;
 	private ArrayList participants;
 	private const int id = 1;
@@ -254,13 +253,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		
 		Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
 		notificationBar.Push (id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
-		
-		//TA's test code
-		//session.SendCreateReq("username","password");
-		//session.SendTermReq("ABCDEF123456".ToCharArray());
-		//session.SendJoinReq("ABCDEF123456".ToCharArray());
-		//session.SendAuthReq("username","password");
-		//session.SendLeaveReq();
 	}
 	
 	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
@@ -278,9 +270,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		session.SendCreateReq(username, password);
 	}
 	
-	public void OnUserJoinSession(string sk, string username, string password)
+	public void OnUserJoinSession(string sessionKey)
 	{
-		session.SendJoinReq(sk.ToCharArray(), username, password);
+		session.SendJoinReq(sessionKey.ToCharArray());
+	}
+	
+	public void OnUserAuthenticateSession(string sessionKey, string username, string password)
+	{		
+		session.SendAuthReq(username, password);
 	}
 
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
@@ -328,17 +325,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 
-	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected, string userid)
+	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
 		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
-
 		string sessionKeyString = new string(sessionKey);
-		
-		this.sessionKey = sessionKeyString;
-		screenuserid = Convert.ToInt32(userid);
-		
-		Console.WriteLine("SessionKey:{0}, Password Protected:{1} userid:{2} ", sessionKeyString, isPasswordProtected, userid);
-		
+		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
+		//AuthenticateDialog authentication = new AuthenticateDialog(this, sessionKeyString); //TODO this causes errors and I don't know why (TA)
+		session.SendAuthReq("terri", "anne");//temp code until statement above works.
+				
 		notificationBar.Pop (id);
 		notificationBar.Push (id,"You have successfully joined the session! SessionKey: " + sessionKeyString);
 		
@@ -349,12 +343,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	
 	public void DisplayParticipants()
 	{
-		Gtk.TextBuffer buffer;
-		buffer = txtParticipants.Buffer;
-	
-		foreach(string username in participants)
+		if(participants != null) 
 		{
-			buffer.InsertAtCursor(username + "\r\n");
+			Gtk.TextBuffer buffer;
+			buffer = txtParticipants.Buffer;
+		
+			foreach(string username in participants)
+			{
+				buffer.InsertAtCursor(username + "\r\n");
+			}
 		}
 	}
 	
@@ -375,16 +372,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		InSessionWindow();
 	}
 
-	public void OnSessionCreationSuccess(char[] sk)
+	public void OnSessionCreationSuccess(char[] sessionKey)
 	{
 		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
-		string sessionKeyString = new string(sk);
+		string sessionKeyString = new string(sessionKey);
+		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
-		String [] str = sessionKeyString.Split('_');
-		sessionKey = str[0];
-		screenuserid = Convert.ToInt32(str[1]);
-		
-		Console.WriteLine("SessionKey:{0} screenuserid{1}", sessionKey, screenuserid);
+		this.sessionKey = sessionKeyString;
 		
 		InSessionWindow();
 		
@@ -394,11 +388,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKey);
 	}
 
-	public void OnSessionTerminationSuccess(char[] sk)
+	public void OnSessionTerminationSuccess(char[] sessionKey)
 	{
 		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
-		string sessionKeyString = new string(sk);
-		
+		string sessionKeyString = new string(sessionKey);
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
 		OutOfSessionWindow();
@@ -409,16 +402,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	
 	public void OnSessionOperationFail(String errorMessage)
 	{
-		Console.WriteLine("MainWindow.OnSessionOperationFail");
-		Console.WriteLine(errorMessage);
+		Console.WriteLine("MainWindow.OnSessionOperationFail = " + errorMessage);
 	}
 
 	public void OnSessionParticipantListUpdate(ArrayList participants)
 	{
-		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");
-		Console.WriteLine("participants.Count " + participants.Count);
-		
+		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");		
 		this.participants = participants;
+		
+		Console.WriteLine("participants.Count " + participants.Count);
 		
 		foreach(string username in participants)
 		{
@@ -428,13 +420,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
 	{
-		string msg = sessionKey+ "_" + screenuserid.ToString();
-		session.SendTermReq(msg.ToCharArray());
+		session.SendTermReq(sessionKey.ToCharArray());
 	}
 
 	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
 	{
-		session.SendLeaveReq(sessionKey, screenuserid);
+		session.SendLeaveReq();
 	}
 	
 }

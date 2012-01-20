@@ -7,6 +7,7 @@ namespace Screenary
 {	
 	public class SessionServer : SessionChannel
 	{
+		public char[] sessionKey {get;set;} //TODO TA privacy issue?
 		private ISessionRequestListener listener;
 		private readonly object channelLock = new object();
 				
@@ -29,17 +30,17 @@ namespace Screenary
 			return s;
 		}
 		
-		public void SendJoinRsp(UInt32 sessionId, char[] sessionKey, string userid, UInt32 sessionStatus, byte sessionFlags)
+		public void SendJoinRsp(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus, byte sessionFlags)
 		{
 			Console.WriteLine("SessionServer.SendJoinRsp");
 									
+			this.sessionKey = sessionKey;
+
 			byte[] buffer = null;
-			int length = sessionKey.Length +userid.Length + 1 + 4;
+			int length = sessionKey.Length + 1;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId, sessionStatus);
-			s.Write((UInt16) sessionKey.Length);			
+						
 			s.Write(sessionKey);
-			s.Write((UInt16) userid.Length);			
-			s.Write(userid.ToCharArray());
 			s.Write(sessionFlags);
 
 			Send(buffer, PDU_SESSION_JOIN_RSP);
@@ -68,9 +69,11 @@ namespace Screenary
 		}
 		
 		public void SendCreateRsp(UInt32 sessionId, char[] sessionKey)
-		{
+		{			
 			Console.WriteLine("SessionServer.SendCreateRsp");
 						
+			this.sessionKey = sessionKey;
+			
 			UInt32 sessionStatus = 0;
 			
 			byte[] buffer = null;
@@ -131,25 +134,9 @@ namespace Screenary
 			UInt32 sessionId;
 			char[] sessionKey;
 			sessionId = s.ReadUInt32();
-			
-			UInt16 sessionKeyLength = s.ReadUInt16();
-			sessionKey = s.ReadChars(sessionKeyLength);
-			
-			UInt16 usernameLength;
-			UInt16 passwordLength;
-			string username = "";
-			string password = "";
-			
-			usernameLength = s.ReadUInt16();
-			passwordLength = s.ReadUInt16();
-			
-			if (usernameLength > 0)
-				username = new string(s.ReadChars(usernameLength));
-			
-			if (passwordLength > 0)
-				password = new string(s.ReadChars(passwordLength));
-			
-			listener.OnSessionJoinRequested(sessionKey, username, password);
+			sessionKey = s.ReadChars(12);
+					
+			listener.OnSessionJoinRequested(sessionKey);
 		}
 		
 		private void RecvLeaveReq(BinaryReader s)
@@ -157,23 +144,8 @@ namespace Screenary
 			Console.WriteLine("SessionServer.RecvLeaveReq");
 
 			UInt32 sessionId = s.ReadUInt32();
-			
-			UInt16 sessionKeyLength;
-			UInt16 useridLength;
-			string sessionKey = "";
-			string userid = "";
-			
-			sessionKeyLength = s.ReadUInt16();
-			
-			if (sessionKeyLength > 0)
-				sessionKey = new string(s.ReadChars(sessionKeyLength));
-			
-			useridLength = s.ReadUInt16();		
-			
-			if (useridLength > 0)
-				userid = new string(s.ReadChars(useridLength));
-			
-			listener.OnSessionLeaveRequested(sessionId, sessionKey, userid);
+
+			listener.OnSessionLeaveRequested(sessionId);
 		}
 		
 		private void RecvAuthReq(BinaryReader s)
@@ -236,8 +208,8 @@ namespace Screenary
 			
 			if (sessionStatus != 0)
 			{
-				Console.WriteLine("Session Termination Failed: {0}", sessionStatus);
-				//return;
+				Console.WriteLine("Session Creation Failed: {0}", sessionStatus);
+				return;
 			}
 			
 			listener.OnSessionTerminationRequested(sessionId, sessionKey, sessionStatus);
@@ -256,14 +228,12 @@ namespace Screenary
 		
 		public override void OnOpen()
 		{
-			Console.WriteLine("SessionServer.OnOpen");
 			thread = new Thread(ChannelThreadProc);
 			thread.Start();
 		}
 		
 		public override void OnClose()
 		{
-			Console.WriteLine("SessionServer.OnClose");
 			
 		}
 		

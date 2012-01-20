@@ -5,7 +5,7 @@ namespace Screenary
 {
 	public interface ISessionResponseListener
 	{	
-		void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected, string userid);
+		void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected);
 		void OnSessionLeaveSuccess();
 		void OnSessionAuthenticationSuccess();
 		void OnSessionCreationSuccess(char[] sessionKey);

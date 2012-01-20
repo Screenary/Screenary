@@ -29,39 +29,52 @@ namespace Screenary
 			return s;
 		}
 
-		public void SendJoinReq(char[] sessionKey)
+		public void SendJoinReq(char[] sessionKey, string username, string password)
 		{
 			Console.WriteLine("SessionClient.SendJoinReq");
 			
 			UInt32 sessionId = 0;
 			
 			byte[] buffer = null;
-			int length = sessionKey.Length;
+			int length = sessionKey.Length + username.Length + password.Length + 6;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 			
+			s.Write((UInt16) sessionKey.Length);
 			s.Write(sessionKey);
-						
+			s.Write((UInt16) username.Length);
+			s.Write((UInt16) password.Length);
+			s.Write(username.ToCharArray());
+			s.Write(password.ToCharArray());			
+			
 			Send(buffer, PDU_SESSION_JOIN_REQ);
 		}
 		
-		public void SendLeaveReq()
+		public void SendLeaveReq(string sessionKey, int screenuserid)
 		{
 			Console.WriteLine("SessionClient.SendLeaveReq");
 						
 			byte[] buffer = null;
-			int length = 0;
+			string screenuserid_string = Convert.ToString(screenuserid);
+			int length = sessionKey.Length + screenuserid_string.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
-									
+			
+			s.Write((UInt16) sessionKey.Length);
+			s.Write(sessionKey.ToCharArray());
+			s.Write((UInt16) screenuserid_string.Length);
+			s.Write(screenuserid_string.ToCharArray());
+			
 			Send(buffer, PDU_SESSION_LEAVE_REQ);
 		}
 		
 		public void SendAuthReq(string username, string password)
 		{
 			Console.WriteLine("SessionClient.SendAuthReq");
+
+			UInt32 sessionId = 0;
 						
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
-			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 			
 			s.Write((UInt16) username.Length);
 			s.Write((UInt16) password.Length);
@@ -121,7 +134,11 @@ namespace Screenary
 				return;
 			}
 			
-			sessionKey = s.ReadChars(12);
+			UInt16 sessionKeyLength = s.ReadUInt16(); 
+			sessionKey = s.ReadChars(sessionKeyLength);
+			UInt16 userIDLength = s.ReadUInt16(); 
+			string userid = new String(s.ReadChars(userIDLength));
+			
 			sessionFlags = s.ReadByte();
 			
 			if(sessionFlags == SESSION_FLAGS_PASSWORD_PROTECTED)
@@ -129,7 +146,28 @@ namespace Screenary
 				isPasswordProtected = true;
 			}
 			
-			listener.OnSessionJoinSuccess(sessionKey, isPasswordProtected);
+			if(userid.Equals("-3"))
+			{				
+				Console.WriteLine("Session Join Failed: Session does not exist");
+				listener.OnSessionOperationFail("Session Join Failed: Session does not exist");
+				return;	
+			}
+			else if(userid.Equals("-4"))
+			{				
+				Console.WriteLine("Session Join Failed: Authentication failed");
+				listener.OnSessionOperationFail("Session Join Failed: Authentication failed");
+				return;	
+			}
+			else if(userid.Equals("-2"))
+			{				
+				Console.WriteLine("Session Join Failed: Session Non active");
+				listener.OnSessionOperationFail("Session Join Failed: Session Non active");
+				return;	
+			}
+			else
+			{
+				listener.OnSessionJoinSuccess(sessionKey, isPasswordProtected, userid);
+			}
 		}
 		
 		public void RecvLeaveRsp(BinaryReader s)
@@ -162,15 +200,9 @@ namespace Screenary
 			sessionId = s.ReadUInt32();
 			sessionStatus = s.ReadUInt32();
 			
-			if (sessionStatus != 0)
+			if (sessionStatus != 0 || sessionId != this.sessionId)
 			{
 				Console.WriteLine("Session Authentication Failed: {0}", sessionStatus);
-				listener.OnSessionOperationFail("Session Authentication Failed");
-				return;
-			}
-			else if (sessionId != this.sessionId)
-			{
-				Console.WriteLine("Session Authentication Failed:" + sessionId + "!=" + this.sessionId);
 				listener.OnSessionOperationFail("Session Authentication Failed");
 				return;
 			}
@@ -251,7 +283,7 @@ namespace Screenary
 				length -= (username.Length + 2);
 			}
 			
-			listener.OnSessionPartipantListUpdate(participants);
+			listener.OnSessionParticipantListUpdate(participants);
 		}
 
 		public override void OnRecv(byte[] buffer, byte pduType)
@@ -265,6 +297,7 @@ namespace Screenary
 		
 		public override void OnOpen()
 		{
+			Console.WriteLine("SessionClient.OnOpen");
 			thread = new Thread(ChannelThreadProc);
 			thread.Start();
 		}

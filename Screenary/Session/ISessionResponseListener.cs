@@ -5,12 +5,12 @@ namespace Screenary
 {
 	public interface ISessionResponseListener
 	{	
-		void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected);
+		void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected, string userid);
 		void OnSessionLeaveSuccess();
 		void OnSessionAuthenticationSuccess();
 		void OnSessionCreationSuccess(char[] sessionKey);
 		void OnSessionTerminationSuccess(char[] sessionKey);
 		void OnSessionOperationFail(string errorMessage);
-		void OnSessionPartipantListUpdate(ArrayList participants);
+		void OnSessionParticipantListUpdate(ArrayList participants);
 	}
 }

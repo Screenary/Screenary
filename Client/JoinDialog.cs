@@ -16,7 +16,7 @@ namespace Screenary.Client
 		{
 			string sessionKey;
 			sessionKey = txtSessionKey.Text;
-			observer.OnUserJoinSession(sessionKey);
+			AuthenticateDialog authentication = new AuthenticateDialog(observer, sessionKey);
 			this.Destroy();
 		}
 

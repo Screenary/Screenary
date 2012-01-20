@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using Screenary;
-using System.IO;
 
 namespace Screenary.Server
 {
@@ -14,7 +12,9 @@ namespace Screenary.Server
 	 * and broadcasts contents of data/rfx_sample.pcap within 20 seconds
 	 */ 
 	public class Broadcaster : ITransportListener
-	{		
+	{
+		/* List of TCP Clients */
+		private ArrayList clients;
 		
 		/* Server socket */
 		private TransportListener listener;
@@ -27,7 +27,8 @@ namespace Screenary.Server
 		 * @param port
 		 */
 		public Broadcaster(string address, int port)
-		{						
+		{
+			clients = new ArrayList();
 			listener = new TransportListener(this, address, port);
 			listener.Start();
 		}
@@ -35,19 +36,23 @@ namespace Screenary.Server
 		public void OnAcceptClient(TransportClient transportClient)
 		{
 			Console.WriteLine("OnAcceptClient");
-			new Client(transportClient, ScreenSessions.Instance);
+			Client client = new Client(transportClient);
+			
+			clients.Add(client);
 		}
 		
 		/**
-		 * Add PDU to clients belonging to a given session
+		 * Add PDU to clients
 		 * 
 		 * @param pdu
-		 */
-		public void addPDU(PDU pdu, char[] sessionKey)
+		 */ 
+		public void addPDU(PDU pdu)
 		{
-			ScreenSessions.Instance.addPDU(pdu, sessionKey);
+			foreach (Client client in clients)
+			{
+				client.addPDU(pdu);
+			}
 		}
-		
 	}
 }
 

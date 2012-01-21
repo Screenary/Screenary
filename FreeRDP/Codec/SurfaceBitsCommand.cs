@@ -1,9 +1,10 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {
-	public class SurfaceBitsCommand : SurfaceCommand
+	public unsafe class SurfaceBitsCommand : SurfaceCommand
 	{		
 		protected byte[] buffer;
 		
@@ -37,6 +38,25 @@ namespace FreeRDP
 			height = fp.ReadUInt16(); /* height */
 			bitmapDataLength = fp.ReadUInt32(); /* bitmapDataLength */
 			bitmapData = fp.ReadBytes((int) bitmapDataLength); /* bitmapData */
+		}
+		
+		public void Read(SurfaceBits* surfaceBits)
+		{
+			destLeft = (UInt16) surfaceBits->destLeft; /* destLeft */
+			destTop = (UInt16) surfaceBits->destTop; /* destTop */
+			destRight = (UInt16) surfaceBits->destRight; /* destRight */
+			destBottom = (UInt16) surfaceBits->destBottom; /* destBottom */
+			bpp = (Byte) surfaceBits->bpp; /* bpp */
+			codecID = (Byte) surfaceBits->codecID; /* codecID */
+			width = (UInt16) surfaceBits->width; /* width */
+			height = (UInt16) surfaceBits->height; /* height */
+			
+			bitmapDataLength = (UInt32) surfaceBits->bitmapDataLength; /* bitmapDataLength */
+			
+			bitmapData = new byte[bitmapDataLength];
+			
+			Marshal.Copy(new IntPtr(surfaceBits->bitmapData),
+				bitmapData, 0, (int) bitmapDataLength); /* bitmapData */
 		}
 		
 		public override void Execute(SurfaceReceiver receiver)

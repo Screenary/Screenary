@@ -67,7 +67,8 @@ namespace FreeRDP
 		public int tlsSecurity;
 		public int nlaSecurity;
 		public int rdpSecurity;
-		public fixed UInt32 paddingF[160-148];
+		public UInt32 ntlmVersion;
+		public fixed UInt32 paddingF[160-149];
 		
 		/* Session */
 		public int consoleAudio;
@@ -114,8 +115,8 @@ namespace FreeRDP
 		/* Certificate */
 		public IntPtr certFile;
 		public IntPtr privateKeyFile;
-		public fixed char clientHostname[32];
-		public fixed char clientProductId[32];
+		public fixed byte clientHostname[32];
+		public fixed byte clientProductId[32];
 		public IntPtr serverRandom;
 		public IntPtr serverCertificate;
 		public int ignoreCertificate;
@@ -134,8 +135,8 @@ namespace FreeRDP
 		/* Recording */
 		public int dumpRfx;
 		public int playRfx;
-		public char* dumpRfxFile;
-		public char* playRfxFile;
+		public IntPtr dumpRfxFile;
+		public IntPtr playRfxFile;
 		public fixed UInt32 paddingN[312-300];
 	
 		/* RemoteApp */
@@ -166,10 +167,10 @@ namespace FreeRDP
 		public fixed UInt32 paddingR[352-347];
 	
 		/* Glyph Cache */
-		public int glyph_cache;
+		public int glyphCache;
 		public UInt32 glyphSupportLevel;
-		public IntPtr glyphCache;
-		public IntPtr fragCache;
+		public IntPtr glyphCacheInfo;
+		public IntPtr fragCacheInfo;
 		public fixed UInt32 paddingS[360-356];
 	
 		/* Draw Nine Grid */

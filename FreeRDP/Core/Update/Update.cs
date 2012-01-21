@@ -67,7 +67,7 @@ namespace FreeRDP
 	}
 	
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct SurfaceBitsCmd
+	public unsafe struct SurfaceBits
 	{
 		public UInt32 cmdType;
 		public UInt32 destLeft;
@@ -116,7 +116,7 @@ namespace FreeRDP
 		public IntPtr SuppressOutput;
 		public fixed UInt32 paddingD[64-50];
 		
-		public IntPtr SurfaceCommand;
+		public IntPtr Surface;
 		public IntPtr SurfaceBits;
 		public fixed UInt32 paddingE[80-66];
 	}
@@ -131,7 +131,7 @@ namespace FreeRDP
 		void BitmapUpdate(rdpContext* context, BitmapUpdate* bitmap);
 		void Palette(rdpContext* context, PaletteUpdate* palette);
 		void PlaySound(rdpContext* context, PlaySoundUpdate* playSound);
-		void SurfaceBits(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
+		void SurfaceBits(rdpContext* context, SurfaceBits* surfaceBits);
 	}
 	
 	public unsafe class Update
@@ -152,8 +152,7 @@ namespace FreeRDP
 		delegate void RefreshRectDelegate(rdpContext* context, byte count, IntPtr areas);
 		delegate void SuppressOutputDelegate(rdpContext* context, byte allow, IntPtr area);
 		
-		delegate void SurfaceCommandDelegate(rdpContext* context, IntPtr s);
-		delegate void SurfaceBitsDelegate(rdpContext* context, SurfaceBitsCmd* surfaceBitsCmd);
+		delegate void SurfaceBitsDelegate(rdpContext* context, SurfaceBits* surfaceBits);
 		
 		private BeginPaintDelegate BeginPaint;
 		private EndPaintDelegate EndPaint;
@@ -163,6 +162,7 @@ namespace FreeRDP
 		private BitmapUpdateDelegate BitmapUpdate;
 		private PaletteDelegate Palette;
 		private PlaySoundDelegate PlaySound;
+		
 		private SurfaceBitsDelegate SurfaceBits;
 		
 		public Update(rdpContext* context)

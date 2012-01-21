@@ -29,11 +29,10 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Collections;
 
-public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISessionResponseListener
+public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISource, ISessionResponseListener
 {	
 	private Gdk.GC gc;
 	private Config config;
-	private Thread thread;
 	private Session session;
 	private int width, height;
 	private Gdk.Window window;
@@ -45,6 +44,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 	private TransportClient transport;
 	private ArrayList participants;
 	private const int id = 1;
+	
+	private RdpSource rdpSource;
+	private PcapSource pcapSource;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
@@ -70,6 +72,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		OutOfSessionWindow();
 		
 		this.transport = null;		
+		
+		rdpSource = new RdpSource(this);
+		pcapSource = new PcapSource(this);
 		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
@@ -159,42 +164,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		
 		/* Open */
 		if (chooser.Run() == (int) ResponseType.Accept)
-		{
+		{			
 			/* Set the MainWindow Title to the filename. */
 			this.Title = "Screenary now showing: " + chooser.Filename.ToString();
 				
 			/* Set the filename */
 			String filename = chooser.Filename.ToString();
 			
+			/* Start playing asynchronously */
+			pcapSource.Play(filename);
+			
 			/* Destroy the fileChooserDialog, otherwise it stays open */
 			chooser.Destroy();
-			
-			/* PcapReader */
-			int count = 0;
-			SurfaceCommand cmd;
-			MemoryStream stream;
-			BinaryReader reader;
-			
-			PcapReader pcap = new PcapReader(File.OpenRead(filename));
-			TimeSpan previousTime = new TimeSpan(0, 0, 0, 0);
-			
-			foreach (PcapRecord record in pcap)
-			{
-				Console.WriteLine("record #{0},\ttime: {1}\tlength:{2}", count++, record.Time, record.Length);						
-				
-				Thread.Sleep(record.Time.Subtract(previousTime));						
-				previousTime = record.Time;
-				
-				stream = new MemoryStream(record.Buffer);
-				reader = new BinaryReader(stream);
-				
-				cmd = SurfaceCommand.Parse(reader);
-				cmd.Execute(receiver);
-				
-				window.ProcessUpdates(false); /* Force update */			
-			}
-			
-			pcap.Close();  
 		}
 		else
 		{
@@ -218,12 +199,24 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 		
 		receiver = new SurfaceReceiver(window, surface);
 	}
-		
+	
 	public void OnSurfaceCommand(BinaryReader s)
 	{		
 		Gtk.Application.Invoke(delegate {
 			
 			SurfaceCommand cmd = SurfaceCommand.Parse(s);
+			
+			if (cmd != null)
+			{
+				cmd.Execute(receiver);
+				window.ProcessUpdates(false);
+			}
+		});
+	}
+	
+	public void OnSurfaceCommand(SurfaceCommand cmd)
+	{		
+		Gtk.Application.Invoke(delegate {
 			
 			if (cmd != null)
 			{
@@ -282,22 +275,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISess
 
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
 	{
-		RDP rdp = new RDP();
-		
-		rdp.Connect(config.RdpServerHostname, config.RdpServerPort,
+		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
 			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
-		
-		thread = new Thread(() => ThreadProc(rdp));
-		thread.Start();
-	}
-	
-	static void ThreadProc(RDP rdp)
-	{
-		while (true)
-		{
-			rdp.CheckFileDescriptor();
-			Thread.Sleep(10);
-		}
 	}
 
 	protected void OnSenderActionActivated(object sender, System.EventArgs e)

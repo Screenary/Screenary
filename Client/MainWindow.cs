@@ -380,7 +380,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		DisplayParticipants();
 	
 		notificationBar.Pop(id);
-		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKey);
+		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 	}
 
 	public void OnSessionTerminationSuccess(char[] sessionKey)

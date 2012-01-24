@@ -31,26 +31,42 @@ using System.Collections;
 
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISource, ISessionResponseListener
 {	
-	private Gdk.GC gc;
-	private Config config;
-	private Session session;
-	private int width, height;
-	private Gdk.Window window;
-	private Gdk.Pixbuf surface;
-	private Gdk.Drawable drawable;
-	private SurfaceReceiver receiver;
-	private int mode;
-	private string sessionKey;
-	private TransportClient transport;
-	private ArrayList participants;
-	private const int id = 1;
+	internal Gdk.GC gc;
+	internal Config config;
+	internal Session session;
+	internal int width, height;
+	internal Gdk.Window window;
+	internal Gdk.Pixbuf surface;
+	internal Gdk.Drawable drawable;
+	internal SurfaceReceiver receiver;
+	internal int mode;
+	internal string sessionKey;
+	internal TransportClient transport;
+	internal ArrayList participants;
+	internal const int id = 1;
 	
-	private RdpSource rdpSource;
-	private PcapSource pcapSource;
+	internal RdpSource rdpSource;
+	internal PcapSource pcapSource;
+	
+	internal IClientState currentState;
+	internal IClientState[] clientStates;
+	internal static int STARTED_STATE = 0;
+	internal static int SENDER_CREATED_STATE = 1;
+	internal static int RECEIVER_JOINED_STATE = 2;
+	internal static int RECEIVER_AUTHENTICATED_STATE = 3;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
+		
+		/* Instantiate client states */
+		clientStates = new IClientState[4] {
+			new StartedState(this),
+			new SenderCreatedState(this),
+			new ReceiverJoinedState(this),
+			new ReceiverAuthenticatedState(this)
+		};
+		currentState = clientStates[STARTED_STATE];
 		
 		mode = m;
 		width = 1024;

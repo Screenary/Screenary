@@ -66,6 +66,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			new ReceiverJoinedState(this),
 			new ReceiverAuthenticatedState(this)
 		};
+		
+		/* Set current state to STARTED */
 		currentState = clientStates[STARTED_STATE];
 		
 		mode = m;
@@ -423,4 +425,94 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		session.SendLeaveReq();
 	}
 	
+	/**
+	 * State interface, to be realized by concrete states (State-Pattern)
+	 * Functionality is isolated that may differ in behavior based on the 
+	 * State of the client
+	 */ 
+	public abstract class IClientState
+	{
+		protected MainWindow mainWindow;
+		
+		/**
+		 * Class constructor, set main window
+		 */ 
+		public IClientState(MainWindow mainWindow)
+		{
+			this.mainWindow = mainWindow;
+		}
+		
+		/**
+		 * Refresh UI layout
+		 */ 
+		public abstract void refresh();
+	}
+	
+	/**
+	 * Class contains functionality specific to Started State
+	 */ 
+	public class StartedState : IClientState
+	{
+		public StartedState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		/**
+		 * Only show create or join triggers
+		 */ 		
+		public override void refresh()
+		{
+			
+		}
+	}	
+	
+	/**
+	 * Class contains functionality specific to Sender-Created State
+	 */ 	
+	public class SenderCreatedState : IClientState
+	{
+		public SenderCreatedState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		/**
+		 * Hide all triggers, show close trigger
+		 */ 		
+		public override void refresh()
+		{
+			
+		}
+	}	
+	
+	/**
+	 * Class contains functionality specific to Receiver-Joined State
+	 */ 	
+	public class ReceiverJoinedState : IClientState
+	{
+		public ReceiverJoinedState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		/**
+		 * Hide create and join triggers, show authenticate trigger
+		 */ 		
+		public override void refresh()
+		{
+			
+		}
+	}
+	
+	/**
+	 * Class contains functionality specific to Receiver-Authenticated State
+	 */ 
+	public class ReceiverAuthenticatedState : IClientState
+	{
+		public ReceiverAuthenticatedState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		/**
+		 * Hide create, join and authenticate triggers
+		 */ 
+		public override void refresh()
+		{
+			
+		}
+	}
 }

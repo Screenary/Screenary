@@ -77,11 +77,6 @@
     <Compile Include="RdpSource.cs" />
     <Compile Include="PcapSource.cs" />
     <Compile Include="ISource.cs" />
-    <Compile Include="ClientState\IClientState.cs" />
-    <Compile Include="ClientState\ReceiverAuthenticatedState.cs" />
-    <Compile Include="ClientState\ReceiverJoinedState.cs" />
-    <Compile Include="ClientState\SenderCreatedState.cs" />
-    <Compile Include="ClientState\StartedState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -108,7 +103,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="ClientState\" />
-  </ItemGroup>
 </Project>

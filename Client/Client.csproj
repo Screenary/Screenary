@@ -77,6 +77,8 @@
     <Compile Include="RdpSource.cs" />
     <Compile Include="PcapSource.cs" />
     <Compile Include="ISource.cs" />
+    <Compile Include="ExceptionDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.ExceptionDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -75,23 +75,6 @@
         <property name="ShortLabel" translatable="yes">FreeRDP</property>
         <signal name="Activated" handler="OnFreeRDPActionActivated" />
       </action>
-      <action id="ModeAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Mode</property>
-        <property name="ShortLabel" translatable="yes">Mode</property>
-      </action>
-      <action id="SenderAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Sender</property>
-        <property name="ShortLabel" translatable="yes">Sender</property>
-        <signal name="Activated" handler="OnSenderActionActivated" />
-      </action>
-      <action id="ReceiverAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Receiver</property>
-        <property name="ShortLabel" translatable="yes">Receiver</property>
-        <signal name="Activated" handler="OnReceiverActionActivated" />
-      </action>
       <action id="CreateSessionAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Create Session</property>
@@ -151,10 +134,6 @@
                   <node type="Menu" action="FileAction">
                     <node type="Menuitem" action="OpenFileAction" />
                     <node type="Menuitem" action="ConnectAction" />
-                    <node type="Menu" action="ModeAction">
-                      <node type="Menuitem" action="SenderAction" />
-                      <node type="Menuitem" action="ReceiverAction" />
-                    </node>
                     <node type="Menuitem" action="quitAction" />
                   </node>
                   <node type="Menu" action="ToolsAction">
@@ -750,6 +729,72 @@
           </widget>
           <packing>
             <property name="Position">1</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Dialog" id="Screenary.Client.ExceptionDialog" design-size="364 178">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">Exception</property>
+    <property name="Icon">stock:gtk-dialog-warning Menu</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="BorderWidth">3</property>
+    <property name="Buttons">1</property>
+    <property name="HelpButton">False</property>
+    <child internal-child="VBox">
+      <widget class="Gtk.VBox" id="dialog1_VBox">
+        <property name="MemberName" />
+        <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.TextView" id="txtMessage">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="Editable">False</property>
+                <property name="CursorVisible">False</property>
+                <property name="AcceptsTab">False</property>
+                <property name="Text" translatable="yes" />
+                <property name="PixelsAboveLines">5</property>
+                <property name="LeftMargin">15</property>
+                <property name="RightMargin">15</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+    <child internal-child="ActionArea">
+      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
+        <property name="MemberName" />
+        <property name="Spacing">10</property>
+        <property name="BorderWidth">5</property>
+        <property name="Size">1</property>
+        <property name="LayoutStyle">End</property>
+        <child>
+          <widget class="Gtk.Button" id="buttonOk">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="UseStock">True</property>
+            <property name="Type">StockItem</property>
+            <property name="StockId">gtk-ok</property>
+            <property name="ResponseId">-5</property>
+            <signal name="Clicked" handler="OnButtonOkClicked" />
+            <property name="label">gtk-ok</property>
+          </widget>
+          <packing>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>

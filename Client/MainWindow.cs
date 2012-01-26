@@ -39,8 +39,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal Gdk.Pixbuf surface;
 	internal Gdk.Drawable drawable;
 	internal SurfaceReceiver receiver;
-	internal int mode;
 	internal string sessionKey;
+	internal string username;
+	internal string password;
 	internal TransportClient transport;
 	internal ArrayList participants;
 	internal const int id = 1;
@@ -69,8 +70,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/* Set current state to STARTED */
 		currentState = clientStates[STARTED_STATE];
+		currentState.refresh();
 		
-		mode = m;
 		width = 1024;
 		height = 768;
 		
@@ -86,8 +87,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		window.InvalidateRect(new Gdk.Rectangle(0, 0, width, height), true);
 		
 		receiver = new SurfaceReceiver(window, surface);
-		
-		OutOfSessionWindow();
 		
 		this.transport = null;		
 		
@@ -118,18 +117,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		a.RetVal = true;
 	}
 	
-//Window Setups:
-	protected void InSessionWindow()
-	{
-		this.vbox3.Visible = true;
-	}
-	
-	protected void OutOfSessionWindow()
-	{
-		this.vbox3.Visible = false;
-	}
-	
-
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{		
 		if(this.transport != null)
@@ -246,7 +233,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
-		
+		OnSessionOperationFail("This method has not yet been implemented.");
 	}
 	
 	public void OnUserConnect(string address, int port)
@@ -281,40 +268,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		session.SendCreateReq(username, password);
 	}
 	
-	public void OnUserJoinSession(string sessionKey)
+	public void OnUserJoinSession(string sessionKey, string username, string password)
 	{
+		this.username = username;
+		this.password = password;
 		session.SendJoinReq(sessionKey.ToCharArray());
-	}
-	
-	public void OnUserAuthenticateSession(string sessionKey, string username, string password)
-	{		
-		session.SendAuthReq(username, password);
 	}
 
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
 	{
 		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
 			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
-	}
-
-	protected void OnSenderActionActivated(object sender, System.EventArgs e)
-	{
-		/* Switch to Sender mode */
-		JoinSessionAction.Visible = false;
-		CreateSessionAction.Visible = true;
-		recordAction.Visible = true;
-		LeaveSessionAction.Visible = false;
-		EndSessionAction.Visible = true;
-	}
-
-	protected void OnReceiverActionActivated(object sender, System.EventArgs e)
-	{
-		/* Switch to Receiver mode */
-		CreateSessionAction.Visible = false;
-		recordAction.Visible = false;
-		JoinSessionAction.Visible = true;
-		EndSessionAction.Visible = false;
-		LeaveSessionAction.Visible = true;
 	}
 
 	protected void OnConnectActionActivated(object sender, System.EventArgs e)
@@ -324,18 +288,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
+		session.SendAuthReq(username,password);
+		
 		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
 		string sessionKeyString = new string(sessionKey);
 		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
-		//AuthenticateDialog authentication = new AuthenticateDialog(this, sessionKeyString); //TODO this causes errors and I don't know why (TA)
-		session.SendAuthReq("terri", "anne");//temp code until statement above works.
-				
+		
+		this.sessionKey = sessionKeyString;
+		
+		currentState = clientStates[RECEIVER_JOINED_STATE];
+		currentState.refresh();		
+		
 		notificationBar.Pop (id);
 		notificationBar.Push (id,"You have successfully joined the session! SessionKey: " + sessionKeyString);
-		
-		InSessionWindow();
-		
-		DisplayParticipants();
 	}
 	
 	public void DisplayParticipants()
@@ -344,6 +309,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			Gtk.TextBuffer buffer;
 			buffer = txtParticipants.Buffer;
+			buffer.Clear();
 		
 			foreach(string username in participants)
 			{
@@ -356,7 +322,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		Console.WriteLine("MainWindow.OnSessionLeaveSuccess");
 		
-		OutOfSessionWindow();
+		currentState = clientStates[STARTED_STATE];
+		currentState.refresh();
 		
 		notificationBar.Pop (id);
 		notificationBar.Push (id, "You have succesfully left the session.");
@@ -366,7 +333,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
 		
-		InSessionWindow();
+		currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
+		currentState.refresh();
 	}
 
 	public void OnSessionCreationSuccess(char[] sessionKey)
@@ -377,9 +345,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		this.sessionKey = sessionKeyString;
 		
-		InSessionWindow();
-		
-		DisplayParticipants();
+		currentState = clientStates[SENDER_CREATED_STATE];
+		currentState.refresh();
 	
 		notificationBar.Pop(id);
 		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
@@ -391,7 +358,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		string sessionKeyString = new string(sessionKey);
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
-		OutOfSessionWindow();
+		currentState = clientStates[STARTED_STATE];
+		currentState.refresh();
 		
 		notificationBar.Pop(id);
 		notificationBar.Push (id, "You have succesfully terminated the session.");
@@ -400,6 +368,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void OnSessionOperationFail(String errorMessage)
 	{
 		Console.WriteLine("MainWindow.OnSessionOperationFail = " + errorMessage);
+		ExceptionDialog exception = new ExceptionDialog("Operation Fail", errorMessage);
 	}
 
 	public void OnSessionParticipantListUpdate(ArrayList participants)
@@ -461,7 +430,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		 */ 		
 		public override void refresh()
 		{
-			
+			mainWindow.vbox3.Visible = false;
+			mainWindow.JoinSessionAction.Visible = true;
+			mainWindow.CreateSessionAction.Visible = true;
+			mainWindow.recordAction.Visible = false;
+			mainWindow.LeaveSessionAction.Visible = false;
+			mainWindow.EndSessionAction.Visible = false;
 		}
 	}	
 	
@@ -474,11 +448,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{ }
 		
 		/**
-		 * Hide all triggers, show close trigger
+		 * Only show participants, recording, and end session triggers
 		 */ 		
 		public override void refresh()
 		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = true;
+			mainWindow.LeaveSessionAction.Visible = false;
+			mainWindow.EndSessionAction.Visible = true;
 			
+			mainWindow.DisplayParticipants();
 		}
 	}	
 	
@@ -491,11 +472,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{ }
 		
 		/**
-		 * Hide create and join triggers, show authenticate trigger
+		 * Only show participants, recording, and leave session triggers
 		 */ 		
 		public override void refresh()
 		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = true;
+			mainWindow.LeaveSessionAction.Visible = true;
+			mainWindow.EndSessionAction.Visible = false;
 			
+			mainWindow.DisplayParticipants();
 		}
 	}
 	
@@ -508,11 +496,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{ }
 		
 		/**
-		 * Hide create, join and authenticate triggers
+		 * Only show participants, recording, and leave session triggers
 		 */ 
 		public override void refresh()
 		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = true;
+			mainWindow.LeaveSessionAction.Visible = true;
+			mainWindow.EndSessionAction.Visible = false;
 			
+			mainWindow.DisplayParticipants();
 		}
 	}
 }

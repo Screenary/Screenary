@@ -305,6 +305,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	public void DisplayParticipants()
 	{
+		Console.WriteLine("MainWindow.DisplayParticipants()");
 		if(participants != null) 
 		{
 			Gtk.TextBuffer buffer;
@@ -346,10 +347,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		this.sessionKey = sessionKeyString;
 		
 		currentState = clientStates[SENDER_CREATED_STATE];
+		Console.WriteLine("MainWindow.Switch States");
+
+		
 		currentState.refresh();
+		Console.WriteLine("MainWindow.Refresh");
+
 	
 		notificationBar.Pop(id);
+		Console.WriteLine("mainwindow.pop");
+
 		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
+		Console.WriteLine("MainWindow.Push");
+
 	}
 
 	public void OnSessionTerminationSuccess(char[] sessionKey)
@@ -382,6 +392,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			Console.WriteLine("participant: " + username);
 		}
+		
+		DisplayParticipants();
 	}
 
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
@@ -424,7 +436,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		public StartedState(MainWindow mainWindow) : base(mainWindow)
 		{ }
-		
 		/**
 		 * Only show create or join triggers
 		 */ 		
@@ -458,8 +469,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
-			
-			mainWindow.DisplayParticipants();
 		}
 	}	
 	
@@ -482,8 +491,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
-			
-			mainWindow.DisplayParticipants();
 		}
 	}
 	
@@ -506,8 +513,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
-			
-			mainWindow.DisplayParticipants();
 		}
 	}
 }

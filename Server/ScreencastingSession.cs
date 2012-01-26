@@ -43,6 +43,15 @@ namespace Screenary.Server
 			user.receiverId = id;
 			user.receiverUsername = username;
 			authenticatedClients.Add(client, user);
+			UpdateAllParticipants();
+		}
+		
+		public void UpdateAllParticipants()
+		{
+			foreach(Client client in authenticatedClients.Keys)
+			{
+				client.OnSessionPartipantListUpdated(GetParticipantUsernames());
+			}
 		}
 
 		public void RemoveAuthenticatedUser(Client client)

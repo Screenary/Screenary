@@ -393,7 +393,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			Console.WriteLine("participant: " + username);
 		}
 		
-		DisplayParticipants();
+		//DisplayParticipants();
 	}
 
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
@@ -469,6 +469,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
+			
+			mainWindow.DisplayParticipants();
 		}
 	}	
 	

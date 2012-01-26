@@ -63,22 +63,22 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="IUserAction.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="CreateSessionDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.CreateSessionDialog.cs" />
-    <Compile Include="JoinDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.JoinDialog.cs" />
-    <Compile Include="AuthenticateDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />
-    <Compile Include="WelcomeDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.WelcomeDialog.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="RdpSource.cs" />
-    <Compile Include="PcapSource.cs" />
-    <Compile Include="ISource.cs" />
-    <Compile Include="ExceptionDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.ExceptionDialog.cs" />
+    <Compile Include="Widgets\JoinDialog.cs" />
+    <Compile Include="Widgets\AuthenticateDialog.cs" />
+    <Compile Include="Widgets\CreateSessionDialog.cs" />
+    <Compile Include="Widgets\ExceptionDialog.cs" />
+    <Compile Include="Widgets\WelcomeDialog.cs" />
+    <Compile Include="Widgets\IUserAction.cs" />
+    <Compile Include="Source\PcapSource.cs" />
+    <Compile Include="Source\RdpSource.cs" />
+    <Compile Include="Source\ISource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -105,4 +105,8 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Widgets\" />
+    <Folder Include="Source\" />
+  </ItemGroup>
 </Project>

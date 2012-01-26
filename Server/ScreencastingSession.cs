@@ -70,5 +70,11 @@ namespace Screenary.Server
 			}
 			return participantUsernames;
 		}
+		
+		public bool isPasswordProtected()
+		{
+			return (!sessionPassword.Equals(""));	
+		}
+		
 	}
 }

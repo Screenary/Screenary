@@ -14,6 +14,7 @@ namespace Screenary.Server
 		static readonly object padlock = new object();
 		private Dictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
+		private string username;
 		
 		public ScreenSessions ()
 		{
@@ -88,8 +89,8 @@ namespace Screenary.Server
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
 				if(screencastSession.authenticatedClients.ContainsKey(client))
 				{
-					screencastSession.RemoveAuthenticatedUser(client);
-					OnSessionPartipantListUpdated(screencastSession.sessionKey);
+					screencastSession.RemoveAuthenticatedUser(client, username);
+					OnSessionParticipantListUpdated(screencastSession.sessionKey);
 					sessionStatus = 0;
 					return;
 				}
@@ -104,13 +105,15 @@ namespace Screenary.Server
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 			
 			string sessionKeyString = new string(sessionKey);
+			this.username = username;
 			
 			if(isSessionAlive(sessionKeyString))
 			{	
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
 				if(screencastSession.Authenticate(client, sessionId, username, password))
 				{
-					OnSessionPartipantListUpdated(screencastSession.sessionKey);
+					OnSessionParticipantListUpdated(screencastSession.sessionKey);
+					screencastSession.UpdateNotifications("joined",username);
 					sessionStatus = 0;
 					return;
 				}
@@ -131,8 +134,7 @@ namespace Screenary.Server
 			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password);
 			
 			sessions.Add(sessionKeyString, screencastSession);
-			screencastSession.AddAuthenticatedUser(client, sessionId, username);
-
+			screencastSession.AddFirstUser(client, sessionId, username);
 		}
 		
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
@@ -157,9 +159,9 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}	
 		
-		private void OnSessionPartipantListUpdated(char[] sessionKey)
+		private void OnSessionParticipantListUpdated(char[] sessionKey)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionPartipantsListSuccess");
+			Console.WriteLine("ScreenSessions.OnSessionParticipantsListUpdated");
 			string sessionKeyString = new string(sessionKey);
 			if(isSessionAlive(sessionKeyString))
 			{
@@ -167,9 +169,8 @@ namespace Screenary.Server
 				ArrayList participantUsernames = session.GetParticipantUsernames();
 				foreach(Client client in session.authenticatedClients.Keys)
 				{
-					client.OnSessionPartipantListUpdated(participantUsernames);
+					client.OnSessionParticipantListUpdated(participantUsernames);				}
 				}
-			}
 		}	
 		
 		public void OnSessionOperationFail(string errorMessage)

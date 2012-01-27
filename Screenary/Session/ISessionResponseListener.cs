@@ -12,5 +12,6 @@ namespace Screenary
 		void OnSessionTerminationSuccess(char[] sessionKey);
 		void OnSessionOperationFail(string errorMessage);
 		void OnSessionParticipantListUpdate(ArrayList participants);
+		void OnSessionNotificationUpdate(string type, string username);
 	}
 }

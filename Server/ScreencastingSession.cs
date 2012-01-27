@@ -36,27 +36,56 @@ namespace Screenary.Server
 			joinedClients.Add(client, id);
 		}
 		
-		public void AddAuthenticatedUser(Client client, UInt32 id, string username)
+		public void AddFirstUser(Client client, UInt32 id, string username)
 		{
-			joinedClients.Remove(client);
+			//joinedClients.Remove(client);
+			
 			User user;
 			user.receiverId = id;
 			user.receiverUsername = username;
 			authenticatedClients.Add(client, user);
-			UpdateAllParticipants();
 		}
+		
+		public void AddAuthenticatedUser(Client client, UInt32 id, string username)
+		{
+			//joinedClients.Remove(client);
+			
+			Boolean done = false;
+			
+			while(!done)
+			{
+				User user;
+				user.receiverId = id;
+				user.receiverUsername = username;
+				authenticatedClients.Add(client, user);
+				done = true;
+			}
+			
+			UpdateNotifications("joined",username);
+		}
+		
+	
 		
 		public void UpdateAllParticipants()
 		{
 			foreach(Client client in authenticatedClients.Keys)
 			{
-				client.OnSessionPartipantListUpdated(GetParticipantUsernames());
+				client.OnSessionParticipantListUpdated(GetParticipantUsernames());
+			}
+		}
+		
+		public void UpdateNotifications(string type, string username)
+		{
+			foreach(Client client in authenticatedClients.Keys)
+			{
+				client.OnSessionNotificationUpdate(type,username);
 			}
 		}
 
-		public void RemoveAuthenticatedUser(Client client)
+		public void RemoveAuthenticatedUser(Client client, string username)
 		{
 			authenticatedClients.Remove(client);
+			UpdateNotifications("left", username);
 		}		
 		
 		public Boolean Authenticate(Client client, UInt32 sessionId, string username, string password)

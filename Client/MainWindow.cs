@@ -44,7 +44,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal string password;
 	internal TransportClient transport;
 	internal ArrayList participants;
+	internal string creator;
 	internal const int id = 1;
+	internal Gtk.TextBuffer buffer = new TextBuffer(new TextTagTable());
 	
 	internal RdpSource rdpSource;
 	internal PcapSource pcapSource;
@@ -265,6 +267,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	public void OnUserCreateSession(string username, string password)
 	{
+		this.creator = username;
 		session.SendCreateReq(username, password);
 	}
 	
@@ -305,18 +308,31 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	public void DisplayParticipants()
 	{
-		Console.WriteLine("MainWindow.DisplayParticipants()");
-		if(participants != null) 
-		{
-			Gtk.TextBuffer buffer;
+			Console.WriteLine("MainWindow.DisplayParticipants()");
+			
 			buffer = txtParticipants.Buffer;
 			buffer.Clear();
-		
-			foreach(string username in participants)
+				
+			if(participants != null) 
 			{
-				buffer.InsertAtCursor(username + "\r\n");
+				foreach(string username in participants)
+				{
+					buffer.InsertAtCursor(username + "\r\n");
+				}
 			}
-		}
+	}
+	
+	public void DisplayCreator()
+	{
+			Console.WriteLine("MainWindow.DisplayCreator()");
+			
+			buffer = txtParticipants.Buffer;
+			buffer.Clear();
+			
+			if(creator != null)
+			{
+				buffer.InsertAtCursor(creator + "\r\n");
+			}
 	}
 	
 	public void OnSessionLeaveSuccess()
@@ -359,7 +375,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 
 		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 		Console.WriteLine("MainWindow.Push");
-
 	}
 
 	public void OnSessionTerminationSuccess(char[] sessionKey)
@@ -393,7 +408,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			Console.WriteLine("participant: " + username);
 		}
 		
-		//DisplayParticipants();
+		DisplayParticipants();
+	}
+	
+	public void OnSessionNotificationUpdate(string type, string username)
+	{
+		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");	
+		
+		notificationBar.Pop(id);
+		notificationBar.Push(id, username + " has " + type + " the session.");
 	}
 
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
@@ -470,7 +493,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			
-			mainWindow.DisplayParticipants();
+			mainWindow.DisplayCreator();
 		}
 	}	
 	

@@ -98,9 +98,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_TERM_RSP);
 		}
 		
-		public void SendPartipantsListRsp(ArrayList participants)
+		public void SendParticipantsListRsp(ArrayList participants)
 		{
-			Console.WriteLine("SessionServer.SendPartipantsListRsp");
+			Console.WriteLine("SessionServer.SendParticipantsListRsp");
 			
 			/*Bytes for storing length*/
 			int length = 2;
@@ -125,6 +125,29 @@ namespace Screenary
 						
 			Send(buffer, PDU_SESSION_PARTICIPANTS_RSP);
 			
+		}
+		
+		public void SendNotificationRsp(string type, string username)
+		{
+			Console.WriteLine("SessionServer.SendNotificationRsp" + type + " " + username);
+			
+			int length = 2;
+			length += type.Length + 2;
+			length += username.Length +2;
+			
+			byte[] buffer = new byte[length];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+	
+			s.Write((UInt16) length);
+			
+			s.Write((UInt16) type.Length);
+			s.Write(type.ToCharArray());
+			
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+			
+						
+			Send(buffer, PDU_SESSION_NOTIFICATION_RSP);
 		}
 		
 		private void RecvJoinReq(BinaryReader s)

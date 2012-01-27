@@ -253,7 +253,41 @@ namespace Screenary
 			
 			listener.OnSessionParticipantListUpdate(participants);
 		}
-
+		
+		public void RecvNotificationUpdate(BinaryReader s)
+		{
+			Console.WriteLine("SessionClient.RecvNotificationUpdate");
+			
+			string type = "";
+			string username = "";
+			
+			int length = (int) s.ReadUInt16();
+			
+			/*subtract bytes stored for total length*/
+			length -= 2;
+			
+			while(length > 0)
+			{
+				UInt16 typeLength = s.ReadUInt16();
+				
+				if (typeLength > 0)
+					type = new string(s.ReadChars(typeLength));
+				
+				/*subtract bytes stored for length and string*/
+				length -= (type.Length + 2);
+				
+				UInt16 usernameLength = s.ReadUInt16();
+				
+				if (usernameLength > 0)
+					username = new string(s.ReadChars(usernameLength));
+				
+				/*subtract bytes stored for length and string*/
+				length -= (username.Length + 2);
+			}
+			
+			listener.OnSessionNotificationUpdate(type, username);
+		}
+		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			lock (channelLock)
@@ -303,6 +337,10 @@ namespace Screenary
 				
 				case PDU_SESSION_PARTICIPANTS_RSP:
 					RecvParticipantListRsp(s);
+					return;
+				
+			case PDU_SESSION_NOTIFICATION_RSP:
+					RecvNotificationUpdate(s);
 					return;
 					
 				default:

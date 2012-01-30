@@ -85,6 +85,7 @@ namespace Screenary.Server
 		public void RemoveAuthenticatedUser(Client client, string username)
 		{
 			authenticatedClients.Remove(client);
+			joinedClients.Remove(client);
 			UpdateNotifications("left", username);
 		}		
 		

@@ -9,6 +9,7 @@ namespace Screenary
 	{
 		private ISurfaceClient client;
 		private readonly object channelLock = new object();
+		static private bool stopthread = false;
 		
 		public SurfaceClient(ISurfaceClient client, TransportClient transport)
 		{
@@ -39,7 +40,12 @@ namespace Screenary
 		
 		public override void OnClose()
 		{
-			
+			lock (channelLock)
+			{
+				stopthread = true;
+				Console.WriteLine("closing channel: "+this.ToString());
+				Monitor.PulseAll(channelLock);
+			}
 		}
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
@@ -62,18 +68,21 @@ namespace Screenary
 		
 		public void ChannelThreadProc()
 		{			
-			while (true)
+			while (!stopthread)
 			{				
 				lock (channelLock)
 				{
-					while (queue.Count < 1)
+					while (queue.Count < 1 && !stopthread)
 					{
 						Monitor.Wait(channelLock);
 					}
-												
-					PDU pdu = (PDU) queue.Dequeue();
-					ProcessPDU(pdu.Buffer, pdu.Type);
-			
+								
+					if(queue.Count >= 1)
+					{
+						PDU pdu = (PDU) queue.Dequeue();
+						ProcessPDU(pdu.Buffer, pdu.Type);
+					}
+					
 					Monitor.Pulse(channelLock);
 				}
 			}

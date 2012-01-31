@@ -10,12 +10,13 @@ namespace Screenary
 		protected UInt32 sessionId;
 		private ISessionResponseListener listener;
 		private readonly object channelLock = new object();
+		static private bool stopthread = false;
 		
 		public SessionClient(TransportClient transport, ISessionResponseListener listener)
 		{
 			this.transport = transport;
 			this.listener = listener;
-			this.sessionId = 0;
+			this.sessionId = 0;			
 		}
 		
 		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
@@ -100,6 +101,7 @@ namespace Screenary
 			s.Write(sessionKey);
 			
 			Send(buffer, PDU_SESSION_TERM_REQ);
+			Console.WriteLine("SessionClient.SendTermReq done");
 		}
 				
 		public void RecvJoinRsp(BinaryReader s)
@@ -305,7 +307,12 @@ namespace Screenary
 		
 		public override void OnClose()
 		{
-			
+			lock (channelLock)
+			{
+				stopthread = true;
+				Console.WriteLine("closing channel: "+this.ToString());
+				Monitor.PulseAll(channelLock);
+			}
 		}
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
@@ -352,21 +359,26 @@ namespace Screenary
 		{
 			Console.WriteLine("SessionClient.ChannelThreadProc");
 			
-			while (true)
+			while (!stopthread)
 			{
 				lock (channelLock)
 				{
-					while (queue.Count < 1)
+					while (queue.Count < 1 && !stopthread)
 					{
 						Monitor.Wait(channelLock);
 					}
+
+					if(queue.Count >= 1)
+					{
+						PDU pdu = (PDU) queue.Dequeue();
+						ProcessPDU(pdu.Buffer, pdu.Type);
+					}
 					
-					PDU pdu = (PDU) queue.Dequeue();
-					ProcessPDU(pdu.Buffer, pdu.Type);
-	
 					Monitor.Pulse(channelLock);
 				}
 			}
+			
+			Console.WriteLine("SessionClient.ChannelThreadProc end");
 		}
 	}
 }

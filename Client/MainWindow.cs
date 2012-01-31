@@ -112,17 +112,22 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		if(this.transport != null)
-			this.transport.Disconnect();
+		session.SendLeaveReq();
 		
-		Application.Quit();
+		if(this.transport != null)		
+			this.transport.Disconnect();				
+			
+		Application.Quit();		
+
 		a.RetVal = true;
 	}
 	
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{		
-		if(this.transport != null)
-			this.transport.Disconnect();
+		session.SendLeaveReq();
+		
+		if(this.transport != null)				
+			this.transport.Disconnect();							
 		
 		Application.Quit();		
 	}
@@ -248,11 +253,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		SurfaceClient surface = new SurfaceClient(this, this.transport);
 		dispatcher.RegisterChannel(surface);
-
-		this.transport.Connect(address, port);
 		
-		Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
-		notificationBar.Push (id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
+		try
+		{		
+			this.transport.Connect(address, port);
+			Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
+			notificationBar.Push (id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
+		}
+		catch(Exception e)
+		{
+			notificationBar.Push (id, "Could not connect to Screenary server at " + address + " : " + port);
+			Console.WriteLine("could not connect: "+e.ToString());
+		}		
+	
 	}
 	
 	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)

@@ -67,6 +67,14 @@ namespace Screenary
 
 		}
 		
+		public bool isThreadAlive()
+		{
+			if(thread != null)
+				return thread.IsAlive;	
+			else
+				return false;
+		}
+		
 		public bool Connect(string hostname, Int32 port)
 		{
 			this.hostname = hostname;
@@ -86,10 +94,10 @@ namespace Screenary
 		
 		public bool Disconnect()
 		{
-			if(tcpClient != null)
-				tcpClient.Close();
-			
 			dispatcher.OnDisconnect();
+			
+			if(tcpClient != null)
+				tcpClient.Close();						
 			
 			return true;
 		}
@@ -238,7 +246,7 @@ namespace Screenary
 			
 			byte[] header = new byte[PDU_HEADER_SIZE];
 			
-			if (tcpClient.GetStream().DataAvailable)
+			if (tcpClient.Connected && tcpClient.GetStream().DataAvailable)
 			{
 				socket = tcpClient.Client;
 				
@@ -305,10 +313,17 @@ namespace Screenary
 		
 		static void ThreadProc(TransportClient client)
 		{
-			while (true)
+			try
 			{
-				client.RecvPDU();
-				Thread.Sleep(10);
+				while (client.isConnected())
+				{				
+					client.RecvPDU();					
+					Thread.Sleep(10);
+				}
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine(e.ToString());	
 			}
 		}
 	}

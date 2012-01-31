@@ -194,10 +194,10 @@ namespace Screenary.Server
 		
 		private char[] GenerateUniqueKey()
 		{
-			string attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,12);			
+			string attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,13).Replace("-","").ToUpper();			
 			while(sessions.ContainsKey(attemptSessionKey))
 			{
-				attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,12);
+				attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,13).Replace("-","").ToUpper();
 			}
 			
 			char[] sessionKey = attemptSessionKey.ToCharArray();

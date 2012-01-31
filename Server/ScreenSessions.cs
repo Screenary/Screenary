@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Screenary.Server
 {
@@ -12,13 +14,13 @@ namespace Screenary.Server
 		
    	    private static ScreenSessions instance;
 		static readonly object padlock = new object();
-		private Dictionary<string, ScreencastingSession> sessions; 
+		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
 		private string username;
 		
 		public ScreenSessions ()
 		{
-			this.sessions = new Dictionary<string, ScreencastingSession>();
+			this.sessions = new ConcurrentDictionary<string, ScreencastingSession>();
 		}
 		
 		public static ScreenSessions Instance
@@ -50,12 +52,12 @@ namespace Screenary.Server
 			}
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionJoinRequested(Client client, char[] sessionKey, ref UInt32 sessionId, ref UInt32 sessionStatus, ref byte sessionFlags)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionJoinRequested");
 			
 			string sessionKeyString = new string(sessionKey);
-			Console.WriteLine("SessionKey:{0}", sessionKeyString);
 			
 			if(isSessionAlive(sessionKeyString))
 			{
@@ -69,6 +71,8 @@ namespace Screenary.Server
 				else
 					sessionFlags = SESSION_FLAGS_NON_PASSWORD_PROTECTED;
 				
+				Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
+						sessionKeyString, sessionId, sessionStatus);
 				
 				return;
 			}
@@ -77,12 +81,12 @@ namespace Screenary.Server
 			
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionLeaveRequested");
 			
 			string sessionKeyString = new string(sessionKey);
-			Console.WriteLine("sessionId:{0} sessionKey:{1} ", sessionId, sessionKeyString);
 			
 			if(isSessionAlive(sessionKeyString))
 			{
@@ -92,6 +96,10 @@ namespace Screenary.Server
 					screencastSession.RemoveAuthenticatedUser(client, username);
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
 					sessionStatus = 0;
+
+					Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
+						sessionKeyString, sessionId, sessionStatus);
+
 					return;
 				}
 			}
@@ -99,6 +107,7 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}
 
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionAuthenticationRequested");
@@ -122,21 +131,24 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionCreateRequested");
-			Console.WriteLine("username:{0} password:{1}", username, password);
 			
 			sessionId = GenerateUniqueId();
 			sessionKey = GenerateUniqueKey();
 			string sessionKeyString = new string(sessionKey);
 
+			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
+
 			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password);
 			
-			sessions.Add(sessionKeyString, screencastSession);
+			sessions.TryAdd(sessionKeyString, screencastSession);
 			screencastSession.AddFirstUser(client, sessionId, username);
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionTerminationRequested");
@@ -149,8 +161,8 @@ namespace Screenary.Server
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
 				if(screencastSession.senderId == sessionId)
 				{
-					sessions.Remove(sessionKeyString);
 					screencastSession.authenticatedClients.Clear();
+					sessions.TryRemove(sessionKeyString, out screencastSession);
 					sessionStatus = 0;
 					return;
 				}
@@ -159,6 +171,7 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}	
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		private void OnSessionParticipantListUpdated(char[] sessionKey)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionParticipantsListUpdated");
@@ -173,6 +186,7 @@ namespace Screenary.Server
 				}
 		}	
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionOperationFail(string errorMessage)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionOperationFail");

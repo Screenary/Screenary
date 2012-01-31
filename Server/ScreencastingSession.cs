@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace Screenary.Server
 {
@@ -12,8 +14,8 @@ namespace Screenary.Server
 		private string sessionPassword;
 		
 		/* Lists of TCP Clients */
-		public Dictionary<Client, UInt32> joinedClients {get; set;}
-		public Dictionary<Client, User> authenticatedClients {get; set;}
+		public ConcurrentDictionary<Client, UInt32> joinedClients {get; set;}
+		public ConcurrentDictionary<Client, User> authenticatedClients {get; set;}
 		
 		public struct User
 		{
@@ -27,15 +29,17 @@ namespace Screenary.Server
 			this.senderId = senderId;
 			this.senderUsername = senderUsername;
 			this.sessionPassword = sessionPassword;
-			joinedClients = new Dictionary<Client, UInt32>();
-			authenticatedClients = new Dictionary<Client, User>();
-		}
+			this.joinedClients = new ConcurrentDictionary<Client, UInt32>();
+			this.authenticatedClients = new ConcurrentDictionary<Client, User>();
+	}
 
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddJoinedUser(Client client, UInt32 id)
 		{
-			joinedClients.Add(client, id);
+			joinedClients.TryAdd(client, id);
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddFirstUser(Client client, UInt32 id, string username)
 		{
 			//joinedClients.Remove(client);
@@ -43,9 +47,10 @@ namespace Screenary.Server
 			User user;
 			user.receiverId = id;
 			user.receiverUsername = username;
-			authenticatedClients.Add(client, user);
+			authenticatedClients.TryAdd(client, user);
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddAuthenticatedUser(Client client, UInt32 id, string username)
 		{
 			//joinedClients.Remove(client);
@@ -57,15 +62,14 @@ namespace Screenary.Server
 				User user;
 				user.receiverId = id;
 				user.receiverUsername = username;
-				authenticatedClients.Add(client, user);
+				authenticatedClients.TryAdd(client, user);
 				done = true;
 			}
 			
 			UpdateNotifications("joined",username);
 		}
-		
-	
-		
+				
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateAllParticipants()
 		{
 			foreach(Client client in authenticatedClients.Keys)
@@ -74,6 +78,7 @@ namespace Screenary.Server
 			}
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateNotifications(string type, string username)
 		{
 			foreach(Client client in authenticatedClients.Keys)
@@ -82,13 +87,16 @@ namespace Screenary.Server
 			}
 		}
 
-		public void RemoveAuthenticatedUser(Client client, string username)
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void RemoveAuthenticatedUser(Client client, string username, UInt32 sessionId)
 		{
-			authenticatedClients.Remove(client);
-			joinedClients.Remove(client);
+			User user;
+			authenticatedClients.TryRemove(client, out user);
+			joinedClients.TryRemove(client, out sessionId);
 			UpdateNotifications("left", username);
 		}		
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public Boolean Authenticate(Client client, UInt32 sessionId, string username, string password)
 		{
 			Boolean isAuthenticated = (this.sessionPassword == password);
@@ -110,6 +118,7 @@ namespace Screenary.Server
 			return participantUsernames;
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public bool isPasswordProtected()
 		{
 			return (!sessionPassword.Equals(""));	

@@ -111,8 +111,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-	{
-		session.SendLeaveReq();
+	{				
+		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		{
+			session.SendLeaveReq();
+		}
+		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		{			
+			session.SendTermReq(sessionKey.ToCharArray());
+		}
 		
 		if(this.transport != null)		
 			this.transport.Disconnect();				
@@ -123,8 +130,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
-	{		
-		session.SendLeaveReq();
+	{				
+		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		{
+			session.SendLeaveReq();
+		}
+		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		{			
+			session.SendTermReq(sessionKey.ToCharArray());
+		}
 		
 		if(this.transport != null)				
 			this.transport.Disconnect();							

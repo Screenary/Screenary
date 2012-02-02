@@ -4,6 +4,9 @@ namespace Screenary.Client
 {
 	public partial class ExceptionDialog : Gtk.Dialog
 	{
+		/**
+		 * The dialog takes two strings, one is the title that will be on the box, the other is the message that will be displayed
+		 **/
 		public ExceptionDialog (string title, string message)
 		{
 			this.Build ();

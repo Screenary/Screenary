@@ -45,13 +45,16 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_JOIN_REQ);
 		}
 		
-		public void SendLeaveReq()
+		public void SendLeaveReq(string username)
 		{
 			Console.WriteLine("SessionClient.SendLeaveReq");
 						
 			byte[] buffer = null;
-			int length = 0;
+			int length = username.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
+			
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
 									
 			Send(buffer, PDU_SESSION_LEAVE_REQ);
 		}

@@ -131,14 +131,14 @@ namespace Screenary.Server
 			session.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
 		}
 		
-		public void OnSessionLeaveRequested(UInt32 sessionId)
+		public void OnSessionLeaveRequested(UInt32 sessionId, string username)
 		{
 			Console.WriteLine("Client.OnSessionLeaveRequested");
 			Console.WriteLine("sessionId: {0}", sessionId);
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			listener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus);
+			listener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus, username);
 			session.SendLeaveRsp(sessionId, sessionStatus);		
 		}
 

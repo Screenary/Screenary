@@ -17,7 +17,10 @@ namespace Screenary.Client
 			this.Build();
 			this.observer = observer;
 		}
-
+		
+		/**
+		 * Send user information to OnUserCreateSession 
+		 **/
 		protected void OnButtonCreateClicked(object sender, System.EventArgs e)
 		{
 			string username;

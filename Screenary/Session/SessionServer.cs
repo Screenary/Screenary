@@ -165,10 +165,18 @@ namespace Screenary
 		private void RecvLeaveReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvLeaveReq");
+			
+			UInt32 sessionId;
+			UInt16 usernameLength;
+			string username = "";
+			
+			sessionId = s.ReadUInt32();
+			usernameLength = s.ReadUInt16();
+			
+			if(usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
 
-			UInt32 sessionId = s.ReadUInt32();
-
-			listener.OnSessionLeaveRequested(sessionId);
+			listener.OnSessionLeaveRequested(sessionId, username);
 		}
 		
 		private void RecvAuthReq(BinaryReader s)

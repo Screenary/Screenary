@@ -31,7 +31,7 @@ namespace Screenary.Server
 			this.sessionPassword = sessionPassword;
 			this.joinedClients = new ConcurrentDictionary<Client, UInt32>();
 			this.authenticatedClients = new ConcurrentDictionary<Client, User>();
-	}
+		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddJoinedUser(Client client, UInt32 id)
@@ -66,7 +66,7 @@ namespace Screenary.Server
 				done = true;
 			}
 			
-			UpdateNotifications("joined",username);
+			UpdateNotifications(client, "joined",username);
 		}
 				
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -79,11 +79,11 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void UpdateNotifications(string type, string username)
+		public void UpdateNotifications(Client client, string type, string username)
 		{
-			foreach(Client client in authenticatedClients.Keys)
+			foreach(Client clients in authenticatedClients.Keys)
 			{
-				client.OnSessionNotificationUpdate(type,username);
+				clients.OnSessionNotificationUpdate(type,username);
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace Screenary.Server
 			User user;
 			authenticatedClients.TryRemove(client, out user);
 			joinedClients.TryRemove(client, out sessionId);
-			UpdateNotifications("left", username);
+			UpdateNotifications(client, "left", username);
 		}		
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -104,7 +104,7 @@ namespace Screenary.Server
 			{
 				this.AddAuthenticatedUser(client, sessionId, username);				
 			}
-			
+	
 			return isAuthenticated;
 		}
 		

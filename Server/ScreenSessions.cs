@@ -16,7 +16,6 @@ namespace Screenary.Server
 		static readonly object padlock = new object();
 		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
-		private string username;
 		
 		public ScreenSessions ()
 		{
@@ -82,7 +81,7 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
+		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, string username)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionLeaveRequested");
 			
@@ -114,7 +113,6 @@ namespace Screenary.Server
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 			
 			string sessionKeyString = new string(sessionKey);
-			this.username = username;
 			
 			if(isSessionAlive(sessionKeyString))
 			{	
@@ -122,7 +120,7 @@ namespace Screenary.Server
 				if(screencastSession.Authenticate(client, sessionId, username, password))
 				{
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
-					screencastSession.UpdateNotifications("joined",username);
+					screencastSession.UpdateNotifications(client, "joined",username);
 					sessionStatus = 0;
 					return;
 				}

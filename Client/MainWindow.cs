@@ -99,6 +99,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 	
+	/**
+	 * Configure the drawing area when the application launches
+	 **/
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
 		Gdk.Rectangle[] rects = args.Event.Region.GetRectangles();
@@ -110,11 +113,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 	}
 	
+	/**
+	 * When application is closed notify the sender/receiver and disconnect from server
+	 **/
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{				
 		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
-			session.SendLeaveReq();
+			session.SendLeaveReq(username);
 		}
 		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
@@ -129,11 +135,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		a.RetVal = true;
 	}
 	
+	/**
+	 * When application is exited notify the sender/receiver and disconnect from server 
+	 **/
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{				
 		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
-			session.SendLeaveReq();
+			session.SendLeaveReq(username);
 		}
 		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
@@ -145,7 +154,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		Application.Quit();		
 	}
-
+	
+	/**
+	 * About Dialog opens to display information about the application 
+	 **/
 	protected void OnAboutActionActivated(object sender, System.EventArgs e)
 	{
 		AboutDialog about = new AboutDialog();
@@ -163,7 +175,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		/* Destroy the dialog */
 		about.Destroy();
 	}
-
+	
+	/**
+	 * Menu item currently being used as a fill in. Opens a single frame? 
+	 **/
 	protected void OnRemoteFXActionActivated(object sender, System.EventArgs e)
 	{
 		BinaryReader fp;
@@ -178,7 +193,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		fp.Close();
 	}
-
+	
+	/**
+	 * Open a file for playback. A file chooser dialog opens and allows the user to select the file they want to open. 
+	 **/
 	protected void OnOpenActionActivated (object sender, System.EventArgs e)
 	{
 		/* Create and display a fileChooserDialog */
@@ -210,7 +228,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 	} 
 	
-	/* Resets the Drawing Area to blank */
+	/**
+	 * Resets the Drawing Area to blank 
+	 **/
 	protected void OnCloseActionActivated (object sender, System.EventArgs e)
 	{
 		this.Title = "Screenary";
@@ -252,11 +272,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		});
 	}
 	
+	/**
+	 * Set the application into Record State [NOT IMPLEMENTED YET]
+	 **/
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
 		OnSessionOperationFail("This method has not yet been implemented.");
 	}
 	
+	/**
+	 * Is invoked when application launches. Connects the Client to the Server
+	 **/
 	public void OnUserConnect(string address, int port)
 	{
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
@@ -282,40 +308,61 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	}
 	
+	/**
+	 * When Create Session is activated launch the Create Session Dialog
+	 **/
 	protected void OnCreateSessionActionActivated(object sender, System.EventArgs e)
 	{
 		CreateSessionDialog connect = new CreateSessionDialog(this);
 	}
 	
+	/**
+	 * When Join Session is activated launch the Join Dialog
+	 **/
 	protected void OnJoinSessionActionActivated(object sender, System.EventArgs e)
 	{
 		JoinDialog join = new JoinDialog(this);
 	}
 	
+	/**
+	 * Called from the Create Session Dialog, sends the create request
+	 **/
 	public void OnUserCreateSession(string username, string password)
 	{
 		this.creator = username;
 		session.SendCreateReq(username, password);
 	}
 	
+	/**
+	 * Called from the Join Dialog, sends the join request
+	 **/
 	public void OnUserJoinSession(string sessionKey, string username, string password)
 	{
 		this.username = username;
 		this.password = password;
 		session.SendJoinReq(sessionKey.ToCharArray());
 	}
-
+	
+	/**
+	 * Will be used once freeRDP is functioning [NOT IMPLEMENTED YET] 
+	 **/
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
 	{
 		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
 			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
 	}
-
+	
+	/**
+	 * When Connect is activated, try OnUserConnect
+	 **/
 	protected void OnConnectActionActivated(object sender, System.EventArgs e)
 	{
 		OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
-
+	
+	/**
+	 * When a session is joined succesfully, change to the receiver state, refresh, and update notification bar 
+	 **/
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
 		session.SendAuthReq(username,password);
@@ -333,6 +380,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		notificationBar.Push (id,"You have successfully joined the session! SessionKey: " + sessionKeyString);
 	}
 	
+	/**
+	 * Display/update the participants list
+	 **/
 	public void DisplayParticipants()
 	{
 			Console.WriteLine("MainWindow.DisplayParticipants()");
@@ -349,6 +399,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			}
 	}
 	
+	/** 
+	 * Display/update the participants list for the sender 
+	 **/
 	public void DisplayCreator()
 	{
 			Console.WriteLine("MainWindow.DisplayCreator()");
@@ -362,6 +415,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			}
 	}
 	
+	/**
+	 * When a session is left succesfully, change to the starter state, refresh, and update notification bar
+	 **/
 	public void OnSessionLeaveSuccess()
 	{
 		Console.WriteLine("MainWindow.OnSessionLeaveSuccess");
@@ -372,7 +428,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		notificationBar.Pop (id);
 		notificationBar.Push (id, "You have succesfully left the session.");
 	}
-
+	
+	/**
+	 * When a users has succesfully authenticated into a session, change to the authenticated state, refresh, and update notification bar 
+	 **/
 	public void OnSessionAuthenticationSuccess()
 	{
 		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
@@ -380,7 +439,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
 		currentState.refresh();
 	}
-
+	
+	/**
+	 * When a session is created succesfully, change to the sender state, refresh, and update notification bar
+	 **/
 	public void OnSessionCreationSuccess(char[] sessionKey)
 	{
 		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
@@ -403,7 +465,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 		Console.WriteLine("MainWindow.Push");
 	}
-
+	
+	/**
+	 * When a session is terminated succesfully, change to the starter state, refresh, and update notification bar
+	 **/
 	public void OnSessionTerminationSuccess(char[] sessionKey)
 	{
 		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
@@ -417,12 +482,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		notificationBar.Push (id, "You have succesfully terminated the session.");
 	}
 	
+	/**
+	 * Default Exception [FOR NOW]
+	 **/
 	public void OnSessionOperationFail(String errorMessage)
 	{
 		Console.WriteLine("MainWindow.OnSessionOperationFail = " + errorMessage);
 		ExceptionDialog exception = new ExceptionDialog("Operation Fail", errorMessage);
 	}
-
+	
+	/**
+	 * Updates the participants lists
+	 **/
 	public void OnSessionParticipantListUpdate(ArrayList participants)
 	{
 		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");		
@@ -438,22 +509,39 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		DisplayParticipants();
 	}
 	
+	/**
+	 * Notifies when a user has joined/left a session
+	 **/
 	public void OnSessionNotificationUpdate(string type, string username)
 	{
-		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");	
+		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");
 		
-		notificationBar.Pop(id);
-		notificationBar.Push(id, username + " has " + type + " the session.");
+		if(this.username == username && type == "joined")
+		{
+			notificationBar.Pop(id);
+			notificationBar.Push(id, "You have successfully joined the session.");
+		}
+		else
+		{
+			notificationBar.Pop(id);
+			notificationBar.Push(id, username + " has " + type + " the session.");
+		}
 	}
-
+	
+	/**
+	 * When end session is activated it sends the termination request
+	 **/
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
 	{
 		session.SendTermReq(sessionKey.ToCharArray());
 	}
-
+	
+	/** 
+	 * When leave session is activated it sends the leave request 
+	 **/
 	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
 	{
-		session.SendLeaveReq();
+		session.SendLeaveReq(username);
 	}
 	
 	/**
@@ -510,7 +598,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and end session triggers
-		 */ 		
+		 **/ 		
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;
@@ -534,7 +622,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and leave session triggers
-		 */ 		
+		 **/ 		
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;
@@ -556,7 +644,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and leave session triggers
-		 */ 
+		 **/ 
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;

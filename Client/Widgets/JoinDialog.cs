@@ -11,7 +11,10 @@ namespace Screenary.Client
 			this.Build ();
 			this.observer = observer;
 		}
-
+		
+		/**
+		 * Initial Join Session procedure. Forwards the session key information to the Authenticate Dialog
+		 **/
 		protected void OnButtonJoinClicked (object sender, System.EventArgs e)
 		{
 			string sessionKey;

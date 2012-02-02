@@ -17,11 +17,17 @@ namespace Screenary.Server
 		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
 		
+		/**
+	 	* Initialize the dictionary that will contain the list of all the screen sessions (represented by ScreencastingSession)
+	 	**/
 		public ScreenSessions ()
 		{
 			this.sessions = new ConcurrentDictionary<string, ScreencastingSession>();
 		}
 		
+		/**
+	 	* Singleton implementation
+	 	**/
 		public static ScreenSessions Instance
 	    {
 	    	get 
@@ -51,6 +57,11 @@ namespace Screenary.Server
 			}
 		}
 		
+		/**
+	 	* Processes a join request by a receiver
+	 	* called by SessionServer
+	 	* Verifies the state of the session and adds the client to the list
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionJoinRequested(Client client, char[] sessionKey, ref UInt32 sessionId, ref UInt32 sessionStatus, ref byte sessionFlags)
 		{
@@ -80,6 +91,9 @@ namespace Screenary.Server
 			
 		}
 		
+		/**
+	 	* Processes a leave request by a receiver	 	
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, string username)
 		{
@@ -105,7 +119,10 @@ namespace Screenary.Server
 
 			sessionStatus = 1;
 		}
-
+		
+		/**
+	 	* Processes an authentication request	 	
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus)
 		{
@@ -129,6 +146,9 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}
 		
+		/**
+	 	* Processes a create request by a sender	 	
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey)
 		{
@@ -146,6 +166,9 @@ namespace Screenary.Server
 			screencastSession.AddFirstUser(client, sessionId, username);
 		}
 		
+		/**
+	 	* Processes a terminate request by a sender	 	
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
@@ -169,6 +192,9 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}	
 		
+		/**
+	 	* Processes a modification in the participant list
+	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		private void OnSessionParticipantListUpdated(char[] sessionKey)
 		{
@@ -190,6 +216,9 @@ namespace Screenary.Server
 			Console.WriteLine("ScreenSessions.OnSessionOperationFail");
 		}	
 		
+		/**
+	 	* Generates a unique key for sessionKey
+	 	**/
 		private char[] GenerateUniqueKey()
 		{
 			string attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,12);			
@@ -203,6 +232,9 @@ namespace Screenary.Server
 			return sessionKey;
 		}
 		
+		/**
+	 	* Generates a unique sessionId
+	 	**/
 		private UInt32 GenerateUniqueId()
 		{
 			return (UInt32) rnd.Next();

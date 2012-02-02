@@ -29,7 +29,12 @@ namespace Screenary
 			s.Write((UInt32) sessionId);
 			return s;
 		}
-
+		
+		
+		/**
+	 	* Sends a join request to the server. A sessionKey identifies the session to join.
+	 	* Used by receiver
+	 	**/
 		public void SendJoinReq(char[] sessionKey)
 		{
 			Console.WriteLine("SessionClient.SendJoinReq");
@@ -45,6 +50,10 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_JOIN_REQ);
 		}
 		
+		/**
+	 	* Sends a leave request to the server. The sessionId returned after a successful join request 
+	 	* should be passed with the username. User by receiver.
+	 	**/
 		public void SendLeaveReq(string username)
 		{
 			Console.WriteLine("SessionClient.SendLeaveReq");
@@ -59,6 +68,10 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_LEAVE_REQ);
 		}
 		
+		/**
+	 	* Sends an authentication request to the server. The username, password and sessionId should be sent 
+	 	* with the request.
+	 	**/
 		public void SendAuthReq(string username, string password)
 		{
 			Console.WriteLine("SessionClient.SendAuthReq");
@@ -75,6 +88,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_AUTH_REQ);
 		}
 		
+		/**
+	 	* Sends a create request to the server. Should be used by senders.
+	 	**/
 		public void SendCreateReq(string username, string password)
 		{
 			Console.WriteLine("SessionClient.SendCreateReq");
@@ -93,6 +109,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_CREATE_REQ);
 		}
 		
+		/**
+	 	* Allows a sender to send a terminate request.
+	 	**/
 		public void SendTermReq(char[] sessionKey)
 		{
 			Console.WriteLine("SessionClient.SendTermReq");
@@ -107,6 +126,9 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendTermReq done");
 		}
 				
+		/**
+	 	* Processes a join response
+	 	**/
 		public void RecvJoinRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvJoinRsp");
@@ -137,6 +159,9 @@ namespace Screenary
 			listener.OnSessionJoinSuccess(sessionKey, isPasswordProtected);
 		}
 		
+		/**
+	 	* Processes a leave response
+	 	**/
 		public void RecvLeaveRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvLeaveRsp");
@@ -157,6 +182,9 @@ namespace Screenary
 			listener.OnSessionLeaveSuccess();
 		}
 		
+		/**
+	 	* Processes an authentication response
+	 	**/
 		public void RecvAuthRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvAuthRsp");
@@ -184,6 +212,9 @@ namespace Screenary
 
 		}
 		
+		/**
+	 	* Processes a create session response
+	 	**/
 		public void RecvCreateRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvCreateRsp");
@@ -207,6 +238,9 @@ namespace Screenary
 
 		}
 		
+		/**
+	 	* Processes a terminate session response
+	 	**/
 		public void RecvTermRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvTermRsp");
@@ -230,6 +264,9 @@ namespace Screenary
 			listener.OnSessionTerminationSuccess(sessionKey);
 		}
 		
+		/**
+	 	* Processes the received list of participants
+	 	**/
 		public void RecvParticipantListRsp(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvPartipantsListRsp");
@@ -259,6 +296,9 @@ namespace Screenary
 			listener.OnSessionParticipantListUpdate(participants);
 		}
 		
+		/**
+	 	* Processes notification update
+	 	**/
 		public void RecvNotificationUpdate(BinaryReader s)
 		{
 			Console.WriteLine("SessionClient.RecvNotificationUpdate");
@@ -302,12 +342,17 @@ namespace Screenary
 			}
 		}
 		
+		
 		public override void OnOpen()
 		{
 			thread = new Thread(ChannelThreadProc);
 			thread.Start();
 		}
 		
+		/**
+	 	* Called by the dispatcher when the application is disconneting
+	 	* The thread should be stopped.
+	 	**/
 		public override void OnClose()
 		{
 			lock (channelLock)
@@ -318,6 +363,9 @@ namespace Screenary
 			}
 		}
 		
+		/**
+	 	* Processes a received PDU and calls the appropriate handler
+	 	**/
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
 			MemoryStream stream = new MemoryStream(buffer);
@@ -358,6 +406,9 @@ namespace Screenary
 			}
 		}
 		
+		/**
+	 	* Code executed by the thread. Listening and processing received packets
+	 	**/
 		public void ChannelThreadProc()
 		{
 			Console.WriteLine("SessionClient.ChannelThreadProc");

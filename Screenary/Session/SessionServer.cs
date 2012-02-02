@@ -30,6 +30,9 @@ namespace Screenary
 			return s;
 		}
 		
+		/**
+	 	* Sends a join response to a receiver.
+	 	**/
 		public void SendJoinRsp(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus, byte sessionFlags)
 		{
 			Console.WriteLine("SessionServer.SendJoinRsp");
@@ -46,6 +49,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_JOIN_RSP);
 		}
 		
+		/**
+	 	* Sends a join leave response to a receiver.
+	 	**/
 		public void SendLeaveRsp(UInt32 sessionId, UInt32 sessionStatus)
 		{
 			Console.WriteLine("SessionServer.SendLeaveRsp");
@@ -57,6 +63,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_LEAVE_RSP);
 		}
 		
+		/**
+	 	* Sends an authentication response.
+	 	**/
 		public void SendAuthRsp(UInt32 sessionId, UInt32 sessionStatus)
 		{
 			Console.WriteLine("SessionServer.SendAuthRsp");
@@ -68,6 +77,10 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_AUTH_RSP);			
 		}
 		
+		
+		/**
+	 	* Sends a create response to a sender.
+	 	**/
 		public void SendCreateRsp(UInt32 sessionId, char[] sessionKey)
 		{			
 			Console.WriteLine("SessionServer.SendCreateRsp");
@@ -85,6 +98,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_CREATE_RSP);
 		}
 		
+		/**
+	 	* Sends a terminate response to a sender.
+	 	**/
 		public void SendTermRsp(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
 		{
 			Console.WriteLine("SessionServer.SendTermRsp");
@@ -97,7 +113,10 @@ namespace Screenary
 			
 			Send(buffer, PDU_SESSION_TERM_RSP);
 		}
-		
+				
+		/**
+	 	* Sends the participant list
+	 	**/
 		public void SendParticipantsListRsp(ArrayList participants)
 		{
 			Console.WriteLine("SessionServer.SendParticipantsListRsp");
@@ -127,6 +146,9 @@ namespace Screenary
 			
 		}
 		
+		/**
+	 	* Sends a notification response
+	 	**/
 		public void SendNotificationRsp(string type, string username)
 		{
 			Console.WriteLine("SessionServer.SendNotificationRsp" + type + " " + username);
@@ -150,6 +172,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_NOTIFICATION_RSP);
 		}
 		
+		/**
+	 	* Processes a join request by a receiver
+	 	**/
 		private void RecvJoinReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvJoinReq");
@@ -162,6 +187,9 @@ namespace Screenary
 			listener.OnSessionJoinRequested(sessionKey);
 		}
 		
+		/**
+	 	* Processes a leave request by a receiver
+	 	**/
 		private void RecvLeaveReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvLeaveReq");
@@ -179,6 +207,9 @@ namespace Screenary
 			listener.OnSessionLeaveRequested(sessionId, username);
 		}
 		
+		/**
+	 	* Processes an authentication request
+	 	**/
 		private void RecvAuthReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvAuthReq");
@@ -202,6 +233,9 @@ namespace Screenary
 			listener.OnSessionAuthenticationRequested(sessionId, username, password);
 		}
 		
+		/**
+	 	* Processes a create request by a sender
+	 	**/
 		private void RecvCreateReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvCreateReq");
@@ -225,6 +259,9 @@ namespace Screenary
 			listener.OnSessionCreateRequested(username, password);
 		}
 		
+		/**
+	 	* Processes a terminate request by a sender
+	 	**/
 		private void RecvTermReq(BinaryReader s)
 		{
 			Console.WriteLine("SessionServer.RecvTermReq");
@@ -268,6 +305,9 @@ namespace Screenary
 			
 		}
 		
+		/**
+	 	* Processes a received PDU and calls the appropriate handler
+	 	**/
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
 			MemoryStream stream = new MemoryStream(buffer);

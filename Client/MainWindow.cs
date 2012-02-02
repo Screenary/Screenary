@@ -329,8 +329,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnUserCreateSession(string username, string password)
 	{
-		this.creator = username;
-		session.SendCreateReq(username, password);
+		if(this.transport.isConnected())
+		{
+			this.creator = username;
+			session.SendCreateReq(username, password);
+		}
+		else
+		{
+			notificationBar.Push (id, "Please connect to the server first");
+		}
 	}
 	
 	/**
@@ -338,9 +345,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnUserJoinSession(string sessionKey, string username, string password)
 	{
-		this.username = username;
-		this.password = password;
-		session.SendJoinReq(sessionKey.ToCharArray());
+		if(this.transport.isConnected())
+		{
+			this.username = username;
+			this.password = password;
+			session.SendJoinReq(sessionKey.ToCharArray());
+		}
+		else
+		{
+			notificationBar.Push (id, "Please connect to the server first");
+		}
 	}
 	
 	/**

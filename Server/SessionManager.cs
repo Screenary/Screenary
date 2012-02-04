@@ -7,12 +7,12 @@ using System.Runtime.CompilerServices;
 
 namespace Screenary.Server
 {
-	public class ScreenSessions: IClientRequestListener
+	public class SessionManager: IClientRequestListener
 	{
 		public const byte SESSION_FLAGS_PASSWORD_PROTECTED = 0x01;
 		public const byte SESSION_FLAGS_NON_PASSWORD_PROTECTED = 0x02;
 		
-   	    private static ScreenSessions instance;
+   	    private static SessionManager instance;
 		static readonly object padlock = new object();
 		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
@@ -20,7 +20,7 @@ namespace Screenary.Server
 		/**
 	 	* Initialize the dictionary that will contain the list of all the screen sessions (represented by ScreencastingSession)
 	 	**/
-		public ScreenSessions ()
+		public SessionManager ()
 		{
 			this.sessions = new ConcurrentDictionary<string, ScreencastingSession>();
 		}
@@ -28,7 +28,7 @@ namespace Screenary.Server
 		/**
 	 	* Singleton implementation
 	 	**/
-		public static ScreenSessions Instance
+		public static SessionManager Instance
 	    {
 	    	get 
 	      	{
@@ -37,22 +37,27 @@ namespace Screenary.Server
             	{
 		        	if (instance == null)
 		         	{
-		            	instance = new ScreenSessions();
+		            	instance = new SessionManager();
 		         	}
 		         	return instance;
 				}
 	      	}
 	   	}
 		
+		//TA: TEST if when a receiver joins after the start of the session, he will also get updates
 		public void addPDU(PDU pdu, char[] sessionKey)
 		{
 			string sessionKeyString = new string(sessionKey);
 			if(isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession session = sessions[sessionKeyString];
+				
+				UInt32 senderSessionId = session.senderId;
+				
 				foreach (Client client in session.authenticatedClients.Keys)
 				{
-					client.addPDU(pdu);
+					if (session.authenticatedClients[client].sessionId != senderSessionId)
+						client.addPDU(pdu);
 				}
 			}
 		}
@@ -206,8 +211,9 @@ namespace Screenary.Server
 				ArrayList participantUsernames = session.GetParticipantUsernames();
 				foreach(Client client in session.authenticatedClients.Keys)
 				{
-					client.OnSessionParticipantListUpdated(participantUsernames);				}
+					client.OnSessionParticipantListUpdated(participantUsernames);				
 				}
+			}
 		}	
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]

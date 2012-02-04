@@ -12,8 +12,11 @@ namespace Screenary
 		protected TransportClient transport;
 		
 		public const UInt16 PDU_CHANNEL_SURFACE = 0x0001;
-		
-		public const byte PDU_SURFACE_COMMAND = 0x01;
+				
+		/* From Sender */
+		public const byte PDU_SURFACE_COMMAND_SENDER = 0x01;
+		/* To Receivers */
+		public const byte PDU_SURFACE_COMMAND_RECEIVER = 0x02;
 		
 		public SurfaceChannel()
 		{

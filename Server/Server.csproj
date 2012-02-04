@@ -42,8 +42,8 @@
     <Compile Include="Client.cs" />
     <Compile Include="Surface.cs" />
     <Compile Include="ScreencastingSession.cs" />
-    <Compile Include="ScreenSessions.cs" />
     <Compile Include="IClientRequestListener.cs" />
+    <Compile Include="SessionManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -13,7 +13,7 @@ namespace Screenary.Server
 	 * Broadcaster server, current implementation listens for TCP clients 
 	 * and broadcasts contents of data/rfx_sample.pcap within 20 seconds
 	 */ 
-	public class Broadcaster : ITransportListener
+	public class Broadcaster : ITransportListener, ISurfaceServer
 	{		
 		
 		/* Server socket */
@@ -34,8 +34,8 @@ namespace Screenary.Server
 		
 		public void OnAcceptClient(TransportClient transportClient)
 		{
-			Console.WriteLine("OnAcceptClient");
-			new Client(transportClient, ScreenSessions.Instance);
+			Console.WriteLine("Broadcaster.OnAcceptClient");
+			new Client(transportClient, SessionManager.Instance, this);
 		}
 		
 		/**
@@ -45,7 +45,14 @@ namespace Screenary.Server
 		 */
 		public void addPDU(PDU pdu, char[] sessionKey)
 		{
-			ScreenSessions.Instance.addPDU(pdu, sessionKey);
+			SessionManager.Instance.addPDU(pdu, sessionKey);
+		}
+				
+		public void OnSurfaceCommand(char[] sessionKey, byte[] buffer)
+		{
+			Console.WriteLine("Broadcaster.OnSurfaceCommand");
+			PDU pdu = new PDU(buffer, 0, 1);
+			this.addPDU(pdu, sessionKey);
 		}
 		
 	}

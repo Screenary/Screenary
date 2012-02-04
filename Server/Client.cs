@@ -4,16 +4,18 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Screenary;
 
 namespace Screenary.Server
 {
-	public class Client : SurfaceServer, ISessionRequestListener
+	public class Client : SurfaceServer, ISessionRequestListener, ISurfaceServer
 	{
-		private IClientRequestListener listener;
 		private Session session;
 		private SurfaceServer surface;
 		private ChannelDispatcher dispatcher;
+		private IClientRequestListener clientReqListener;
+		private ISurfaceServer surfaceServerListener;//TA
 		
 		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
 		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
@@ -23,18 +25,21 @@ namespace Screenary.Server
 		/**
 		 * Class constructor
 		 */ 
-		public Client(TransportClient transport, IClientRequestListener listener) : base(transport)
+		public Client(TransportClient transport, IClientRequestListener clientReqListener, ISurfaceServer surfaceServerListener)
+			: base(surfaceServerListener, transport)
 		{
 			this.thread = new Thread(ReceiverThreadProc);
 			thread.Start();
 			
-			this.listener = listener;
 			this.transport = transport;
+			this.clientReqListener = clientReqListener;
+			this.surfaceServerListener = surfaceServerListener;//TA
+			
 			dispatcher = new ChannelDispatcher();
 			
 			transport.SetChannelDispatcher(dispatcher);
 			
-			surface = new Surface(this.transport);
+			surface = new Surface(this, this.transport);
 			dispatcher.RegisterChannel(surface);
 			
 			session = new Session(this.transport, this);
@@ -127,7 +132,7 @@ namespace Screenary.Server
 			UInt32 sessionStatus = UInt32.MaxValue;
 			byte sessionFlags = 0x00;
 			
-			listener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
+			clientReqListener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
 			session.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
 		}
 		
@@ -138,7 +143,7 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			listener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus, username);
+			clientReqListener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus, username);
 			session.SendLeaveRsp(sessionId, sessionStatus);		
 		}
 
@@ -149,7 +154,7 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			listener.OnSessionAuthenticationRequested(this, sessionId, session.sessionKey, username, password, ref sessionStatus);
+			clientReqListener.OnSessionAuthenticationRequested(this, sessionId, session.sessionKey, username, password, ref sessionStatus);
 			session.SendAuthRsp(sessionId, sessionStatus);
 		}
 		
@@ -161,7 +166,7 @@ namespace Screenary.Server
 			UInt32 sessionId = UInt32.MaxValue;
 			char[] sessionKey = "000000000000".ToCharArray();
 			
-			listener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
+			clientReqListener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
 			session.SendCreateRsp(sessionId, sessionKey);
 		}
 		
@@ -171,7 +176,7 @@ namespace Screenary.Server
 			string sessionKeyString = new string(sessionKey);
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
 
-			listener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
+			clientReqListener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
 			session.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
@@ -191,6 +196,12 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("Client.OnSessionNotificationUpdate");
 			session.SendNotificationRsp(type, username);
+		}
+		
+		public void OnSurfaceCommand(char[] sessionKey, byte[] buffer)
+		{
+			Console.WriteLine("Client.OnSurfaceCommand");
+			surfaceServerListener.OnSurfaceCommand(sessionKey, buffer);	
 		}
 	}
 }

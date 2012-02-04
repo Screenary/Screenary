@@ -19,8 +19,8 @@ namespace Screenary.Server
 		
 		public struct User
 		{
-			public UInt32 receiverId;
-			public string receiverUsername;
+			public UInt32 sessionId;
+			public string username;
 		}
 		
 		public ScreencastingSession(char[] sessionKey, UInt32 senderId, string senderUsername, string sessionPassword)
@@ -45,8 +45,8 @@ namespace Screenary.Server
 			//joinedClients.Remove(client);
 			
 			User user;
-			user.receiverId = id;
-			user.receiverUsername = username;
+			user.sessionId = id;
+			user.username = username;
 			authenticatedClients.TryAdd(client, user);
 		}
 		
@@ -60,8 +60,8 @@ namespace Screenary.Server
 			while(!done)
 			{
 				User user;
-				user.receiverId = id;
-				user.receiverUsername = username;
+				user.sessionId = id;
+				user.username = username;
 				authenticatedClients.TryAdd(client, user);
 				done = true;
 			}
@@ -113,7 +113,7 @@ namespace Screenary.Server
 			ArrayList participantUsernames = new ArrayList();
 			foreach(User user in authenticatedClients.Values)
 			{
-				participantUsernames.Add(user.receiverUsername);
+				participantUsernames.Add(user.username);
 			}
 			return participantUsernames;
 		}

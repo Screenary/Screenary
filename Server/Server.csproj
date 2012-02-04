@@ -37,10 +37,8 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Session.cs" />
     <Compile Include="Broadcaster.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Surface.cs" />
     <Compile Include="ScreencastingSession.cs" />
     <Compile Include="IClientRequestListener.cs" />
     <Compile Include="SessionManager.cs" />

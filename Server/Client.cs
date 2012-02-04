@@ -11,8 +11,8 @@ namespace Screenary.Server
 {
 	public class Client : SurfaceServer, ISessionRequestListener, ISurfaceServer
 	{
-		private Session session;
-		private SurfaceServer surface;
+		private SessionServer sessionServer;
+		private SurfaceServer surfaceServer;
 		private ChannelDispatcher dispatcher;
 		private IClientRequestListener clientReqListener;
 		private ISurfaceServer surfaceServerListener;//TA
@@ -39,11 +39,11 @@ namespace Screenary.Server
 			
 			transport.SetChannelDispatcher(dispatcher);
 			
-			surface = new Surface(this, this.transport);
-			dispatcher.RegisterChannel(surface);
+			surfaceServer = new SurfaceServer(this, this.transport);
+			dispatcher.RegisterChannel(surfaceServer);
 			
-			session = new Session(this.transport, this);
-			dispatcher.RegisterChannel(session);
+			sessionServer = new SessionServer(this.transport, this);
+			dispatcher.RegisterChannel(sessionServer);
 			
 			dispatcher.OnConnect();
 			
@@ -71,7 +71,7 @@ namespace Screenary.Server
 				while (pduQ.Count > 0)
 				{
 					pdu = dequeue();
-					surface.SendSurfaceCommand(pdu.Buffer);
+					surfaceServer.SendSurfaceCommand(pdu.Buffer);
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace Screenary.Server
 			byte sessionFlags = 0x00;
 			
 			clientReqListener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
-			session.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
+			sessionServer.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
 		}
 		
 		public void OnSessionLeaveRequested(UInt32 sessionId, string username)
@@ -143,8 +143,8 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			clientReqListener.OnSessionLeaveRequested(this, sessionId, session.sessionKey, ref sessionStatus, username);
-			session.SendLeaveRsp(sessionId, sessionStatus);		
+			clientReqListener.OnSessionLeaveRequested(this, sessionId, sessionServer.sessionKey, ref sessionStatus, username);
+			sessionServer.SendLeaveRsp(sessionId, sessionStatus);		
 		}
 
 		public void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password)
@@ -154,8 +154,8 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			clientReqListener.OnSessionAuthenticationRequested(this, sessionId, session.sessionKey, username, password, ref sessionStatus);
-			session.SendAuthRsp(sessionId, sessionStatus);
+			clientReqListener.OnSessionAuthenticationRequested(this, sessionId, sessionServer.sessionKey, username, password, ref sessionStatus);
+			sessionServer.SendAuthRsp(sessionId, sessionStatus);
 		}
 		
 		public void OnSessionCreateRequested(string username, string password)
@@ -167,7 +167,7 @@ namespace Screenary.Server
 			char[] sessionKey = "000000000000".ToCharArray();
 			
 			clientReqListener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
-			session.SendCreateRsp(sessionId, sessionKey);
+			sessionServer.SendCreateRsp(sessionId, sessionKey);
 		}
 		
 		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
@@ -177,7 +177,7 @@ namespace Screenary.Server
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
 
 			clientReqListener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
-			session.SendTermRsp(sessionId, sessionKey, sessionStatus);
+			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
 		public void OnSessionOperationFail(string errorMessage)
@@ -189,13 +189,13 @@ namespace Screenary.Server
 		public void OnSessionParticipantListUpdated(ArrayList participants)
 		{
 			Console.WriteLine("Client.OnSessionParticipantsListUpdated");
-			session.SendParticipantsListRsp(participants);
+			sessionServer.SendParticipantsListRsp(participants);
 		}	
 		
 		public void OnSessionNotificationUpdate(string type, string username)
 		{
 			Console.WriteLine("Client.OnSessionNotificationUpdate");
-			session.SendNotificationRsp(type, username);
+			sessionServer.SendNotificationRsp(type, username);
 		}
 		
 		public void OnSurfaceCommand(char[] sessionKey, byte[] buffer)

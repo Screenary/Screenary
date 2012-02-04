@@ -33,7 +33,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 {	
 	internal Gdk.GC gc;
 	internal Config config;
-	internal Session session;
+	internal SessionClient sessionClient;
 	internal int width, height;
 	internal Gdk.Window window;
 	internal Gdk.Pixbuf surface;
@@ -120,11 +120,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{				
 		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
-			session.SendLeaveReq(username);
+			sessionClient.SendLeaveReq(username);
 		}
 		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
-			session.SendTermReq(sessionKey.ToCharArray());
+			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
 		
 		if(this.transport != null)		
@@ -142,11 +142,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{				
 		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
-			session.SendLeaveReq(username);
+			sessionClient.SendLeaveReq(username);
 		}
 		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
-			session.SendTermReq(sessionKey.ToCharArray());
+			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
 		
 		if(this.transport != null)				
@@ -288,8 +288,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		this.transport = new TransportClient(dispatcher);
 		
-		session = new Session(this.transport, this);
-		dispatcher.RegisterChannel(session);
+		sessionClient = new SessionClient(this.transport, this);
+		dispatcher.RegisterChannel(sessionClient);
 		
 		SurfaceClient surface = new SurfaceClient(this, this.transport);
 		dispatcher.RegisterChannel(surface);
@@ -332,7 +332,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		if(this.transport.isConnected())
 		{
 			this.creator = username;
-			session.SendCreateReq(username, password);
+			sessionClient.SendCreateReq(username, password);
 		}
 		else
 		{
@@ -349,7 +349,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			this.username = username;
 			this.password = password;
-			session.SendJoinReq(sessionKey.ToCharArray());
+			sessionClient.SendJoinReq(sessionKey.ToCharArray());
 		}
 		else
 		{
@@ -379,7 +379,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
-		session.SendAuthReq(username,password);
+		sessionClient.SendAuthReq(username,password);
 		
 		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
 		string sessionKeyString = new string(sessionKey);
@@ -547,7 +547,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
 	{
-		session.SendTermReq(sessionKey.ToCharArray());
+		sessionClient.SendTermReq(sessionKey.ToCharArray());
 	}
 	
 	/** 
@@ -555,7 +555,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
 	{
-		session.SendLeaveReq(username);
+		sessionClient.SendLeaveReq(username);
 	}
 	
 	/**

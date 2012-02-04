@@ -27,6 +27,9 @@ namespace Screenary.Client
 	{
 		public static string WorkingDirectory;
 		
+		/**
+		 * Entry point function, creates main window and starts application
+		 */ 
 		public static void Main (string[] args)
 		{
 			//MainWindow window;

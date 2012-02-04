@@ -63,7 +63,6 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="Session.cs" />
     <Compile Include="gtk-gui\Screenary.Client.CreateSessionDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.JoinDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />

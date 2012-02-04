@@ -17,8 +17,36 @@ namespace Screenary
 			this.transport = transport;
 		}
 		
+		/*
+		 * Send surface commands to broadcaster
+		 * 
+		 * @param pduBuffer
+		 * @param sessionKey
+		 */
+		public void SendSurfaceCommand(byte[] pduBuffer, char[] sessionKey)
+		{
+			Console.WriteLine("SurfaceClient.SendSurfaceCommand");
+
+			int length = sessionKey.Length + 2 + pduBuffer.Length;
+			byte[] buffer = new byte[length];
+
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write(sessionKey);
+			s.Write((UInt16)buffer.Length);
+			s.Write(pduBuffer);
+			
+			Send(buffer, PDU_SURFACE_COMMAND_SENDER);
+		}
+		
+		/*
+		 * Receive surface updates from broadcaster
+		 * 
+		 * @param s
+		 */
 		private bool RecvSurfaceCommand(BinaryReader s)
 		{
+			Console.WriteLine("SurfaceClient.RecvSurfaceCommand");
 			client.OnSurfaceCommand(s);
 			return true;
 		}
@@ -53,11 +81,11 @@ namespace Screenary
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
-			pduType = PDU_SURFACE_COMMAND;
+			pduType = PDU_SURFACE_COMMAND_SENDER;
 			
 			switch (pduType)
 			{
-				case PDU_SURFACE_COMMAND:
+				case PDU_SURFACE_COMMAND_SENDER:
 					RecvSurfaceCommand(s);
 					return;
 				

@@ -4,7 +4,7 @@ namespace Screenary.Server
 {
 	public class Surface : SurfaceServer
 	{
-		public Surface(TransportClient transport) : base(transport)
+		public Surface(ISurfaceServer listener, TransportClient transport) : base(listener, transport)
 		{
 
 		}

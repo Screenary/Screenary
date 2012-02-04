@@ -128,6 +128,7 @@ namespace Screenary.Server
 		/**
 	 	* Processes an authentication request	 	
 	 	**/
+
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus)
 		{

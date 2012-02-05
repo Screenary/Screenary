@@ -47,7 +47,6 @@ namespace Screenary.Client
 		
 		public void SurfaceBits(rdpContext* context, SurfaceBits* surfaceBits)
 		{
-			Console.WriteLine("SurfaceBits");
 			SurfaceBitsCommand cmd = new SurfaceBitsCommand();
 			cmd.Read(surfaceBits);
 			iSource.OnSurfaceCommand(cmd);
@@ -56,12 +55,7 @@ namespace Screenary.Client
 		public void DstBlt(rdpContext* context, DstBltOrder* dstblt) { }
 		public void PatBlt(rdpContext* context, PatBltOrder* patblt) { }
 		public void ScrBlt(rdpContext* context, ScrBltOrder* scrblt) { }
-	
-		public void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect)
-		{
-			Console.WriteLine("OpaqueRect");
-		}
-		
+		public void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect) { }
 		public void DrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid) { }	
 		public void MultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt) { }
 		public void MultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt) { }		

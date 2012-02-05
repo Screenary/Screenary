@@ -249,8 +249,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	public void OnSurfaceCommand(BinaryReader s)
 	{
-		Console.WriteLine("processing surface command");
-		
 		Gtk.Application.Invoke(delegate {
 			
 			SurfaceCommand cmd = SurfaceCommand.Parse(s);
@@ -339,7 +337,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 		else
 		{
-			notificationBar.Push (id, "Please connect to the server first");
+			notificationBar.Push(id, "Please connect to the server first");
 		}
 	}
 	
@@ -348,7 +346,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnUserJoinSession(string sessionKey, string username, string password)
 	{
-		if(this.transport.isConnected())
+		if (this.transport.isConnected())
 		{
 			this.username = username;
 			this.password = password;
@@ -356,7 +354,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 		else
 		{
-			notificationBar.Push (id, "Please connect to the server first");
+			notificationBar.Push(id, "Please connect to the server first");
 		}
 	}
 	
@@ -426,7 +424,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			buffer = txtParticipants.Buffer;
 			buffer.Clear();
 			
-			if(creator != null)
+			if (creator != null)
 			{
 				buffer.InsertAtCursor(creator + "\r\n");
 			}
@@ -479,6 +477,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 
 		notificationBar.Push(id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 		Console.WriteLine("MainWindow.Push");
+		
+		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
+			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
 	}
 	
 	/**

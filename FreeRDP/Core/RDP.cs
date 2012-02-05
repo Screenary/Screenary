@@ -135,7 +135,6 @@ namespace FreeRDP
 			settings->frameAcknowledge = 0;
 			settings->performanceFlags = 0;
 			settings->largePointer = 1;
-			
 			settings->glyphCache = 0;
 			settings->bitmapCache = 0;
 			settings->offscreenBitmapCache = 0;
@@ -150,9 +149,11 @@ namespace FreeRDP
 		}
 		
 		public bool Connect(string hostname, int port, string username, string domain, string password)
-		{			
-			Console.WriteLine("width:{0} height:{1} port:{2}",
-				settings->width, settings->height, settings->port);
+		{
+			settings->port = (uint) port;
+			
+			Console.WriteLine("hostname:{0} username:{1} width:{2} height:{3} port:{4}",
+				hostname, username, settings->width, settings->height, settings->port);
 			
 			settings->hostname = GetNativeAnsiString(hostname);
 			settings->username = GetNativeAnsiString(username);

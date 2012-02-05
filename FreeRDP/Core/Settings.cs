@@ -24,7 +24,8 @@ namespace FreeRDP
 		public UInt32 encryptionMethod;
 		public UInt32 encryptionLevel;
 		public int authentication;
-		public fixed UInt32 paddingB[48-30];
+		public UInt32 negotiationFlags;
+		public fixed UInt32 paddingB[48-31];
 		
 		/* Connection Settings */
 		public UInt32 port;
@@ -40,7 +41,8 @@ namespace FreeRDP
 		public int autologon;
 		public int compression;
 		public UInt32 performanceFlags;
-		public fixed UInt32 paddingC[80-61];
+		public IntPtr passwordCookie;
+		public fixed UInt32 paddingC[80-62];
 		
 		/* User Interface Parameters */
 		public int softwareGdi;
@@ -60,7 +62,11 @@ namespace FreeRDP
 		public UInt32 pduSource;
 		public IntPtr uniconv;
 		public int serverMode;
-		public fixed UInt32 paddingE[144-117];
+		public IntPtr configPath;
+		public IntPtr currentPath;
+		public IntPtr developmentPath;
+		public int developmentMode;
+		public fixed UInt32 paddingE[144-121];
 		
 		/* Security */
 		public int encryption;
@@ -68,7 +74,8 @@ namespace FreeRDP
 		public int nlaSecurity;
 		public int rdpSecurity;
 		public UInt32 ntlmVersion;
-		public fixed UInt32 paddingF[160-149];
+		public int secureChecksum;
+		public fixed UInt32 paddingF[160-150];
 		
 		/* Session */
 		public int consoleAudio;
@@ -121,7 +128,10 @@ namespace FreeRDP
 		public IntPtr serverCertificate;
 		public int ignoreCertificate;
 		public IntPtr serverCert;
-		public fixed UInt32 paddingL[280-270];
+		public IntPtr rdpKeyFile;
+		public IntPtr serverKey;
+		public IntPtr certificateName;
+		public fixed UInt32 paddingL[280-273];
 	
 		/* Codecs */
 		public int rfxCodec;

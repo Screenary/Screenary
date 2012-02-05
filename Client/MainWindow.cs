@@ -63,7 +63,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		Build();
 		
 		/* Instantiate client states */
-		clientStates = new IClientState[4] {
+		clientStates = new IClientState[4]
+		{
 			new StartedState(this),
 			new SenderCreatedState(this),
 			new ReceiverJoinedState(this),
@@ -118,16 +119,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{				
-		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		if (currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
 			sessionClient.SendLeaveReq(username);
 		}
-		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		else if (currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
 			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
 		
-		if(this.transport != null)		
+		if (this.transport != null)		
 			this.transport.Disconnect();				
 			
 		Application.Quit();		
@@ -140,16 +141,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{				
-		if(currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		if (currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
 		{
 			sessionClient.SendLeaveReq(username);
 		}
-		else if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		else if (currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
 		{			
 			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
 		
-		if(this.transport != null)				
+		if (this.transport != null)				
 			this.transport.Disconnect();							
 		
 		Application.Quit();		
@@ -247,7 +248,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	public void OnSurfaceCommand(BinaryReader s)
-	{		
+	{
+		Console.WriteLine("processing surface command");
+		
 		Gtk.Application.Invoke(delegate {
 			
 			SurfaceCommand cmd = SurfaceCommand.Parse(s);
@@ -404,7 +407,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			buffer = txtParticipants.Buffer;
 			buffer.Clear();
 				
-			if(participants != null) 
+			if (participants != null) 
 			{
 				foreach(string username in participants)
 				{
@@ -439,8 +442,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
-		notificationBar.Pop (id);
-		notificationBar.Push (id, "You have succesfully left the session.");
+		notificationBar.Pop(id);
+		notificationBar.Push(id, "You have succesfully left the session.");
 	}
 	
 	/**
@@ -468,15 +471,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[SENDER_CREATED_STATE];
 		Console.WriteLine("MainWindow.Switch States");
 
-		
 		currentState.refresh();
 		Console.WriteLine("MainWindow.Refresh");
 
-	
 		notificationBar.Pop(id);
 		Console.WriteLine("mainwindow.pop");
 
-		notificationBar.Push (id, "You have succesfully created a session. The session key is: " + sessionKeyString);
+		notificationBar.Push(id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 		Console.WriteLine("MainWindow.Push");
 	}
 	
@@ -493,7 +494,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState.refresh();
 		
 		notificationBar.Pop(id);
-		notificationBar.Push (id, "You have succesfully terminated the session.");
+		notificationBar.Push(id, "You have succesfully terminated the session.");
 	}
 	
 	/**
@@ -515,7 +516,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		Console.WriteLine("participants.Count " + participants.Count);
 		
-		foreach(string username in participants)
+		foreach (string username in participants)
 		{
 			Console.WriteLine("participant: " + username);
 		}
@@ -530,7 +531,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");
 		
-		if(this.username == username && type == "joined")
+		if (this.username == username && type == "joined")
 		{
 			notificationBar.Pop(id);
 			notificationBar.Push(id, "You have successfully joined the session.");

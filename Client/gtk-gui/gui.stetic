@@ -171,7 +171,15 @@
                         <property name="MemberName" />
                         <property name="WidthRequest">1024</property>
                         <property name="HeightRequest">768</property>
+                        <property name="CanFocus">True</property>
                         <signal name="ExposeEvent" handler="OnMainDrawingAreaExposeEvent" />
+                        <signal name="ButtonReleaseEvent" handler="OnMainDrawingAreaButtonReleaseEvent" />
+                        <signal name="ButtonPressEvent" handler="OnMainDrawingAreaButtonPressEvent" />
+                        <signal name="MotionNotifyEvent" handler="OnMainDrawingAreaMotionNotifyEvent" />
+                        <signal name="KeyPressEvent" handler="OnMainDrawingAreaKeyPressEvent" />
+                        <signal name="KeyReleaseEvent" handler="OnMainDrawingAreaKeyReleaseEvent" />
+                        <signal name="FocusInEvent" handler="OnMainDrawingAreaFocusInEvent" />
+                        <signal name="FocusOutEvent" handler="OnMainDrawingAreaFocusOutEvent" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>

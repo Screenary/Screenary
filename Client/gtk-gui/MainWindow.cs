@@ -124,6 +124,7 @@ public partial class MainWindow
 		this.mainDrawingArea = new global::Gtk.DrawingArea ();
 		this.mainDrawingArea.WidthRequest = 1024;
 		this.mainDrawingArea.HeightRequest = 768;
+		this.mainDrawingArea.CanFocus = true;
 		this.mainDrawingArea.Name = "mainDrawingArea";
 		this.hbox2.Add (this.mainDrawingArea);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.mainDrawingArea]));
@@ -202,5 +203,12 @@ public partial class MainWindow
 		this.EndSessionAction.Activated += new global::System.EventHandler (this.OnEndSessionActionActivated);
 		this.LeaveSessionAction.Activated += new global::System.EventHandler (this.OnLeaveSessionActionActivated);
 		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
+		this.mainDrawingArea.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnMainDrawingAreaButtonReleaseEvent);
+		this.mainDrawingArea.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnMainDrawingAreaButtonPressEvent);
+		this.mainDrawingArea.MotionNotifyEvent += new global::Gtk.MotionNotifyEventHandler (this.OnMainDrawingAreaMotionNotifyEvent);
+		this.mainDrawingArea.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnMainDrawingAreaKeyPressEvent);
+		this.mainDrawingArea.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler (this.OnMainDrawingAreaKeyReleaseEvent);
+		this.mainDrawingArea.FocusInEvent += new global::Gtk.FocusInEventHandler (this.OnMainDrawingAreaFocusInEvent);
+		this.mainDrawingArea.FocusOutEvent += new global::Gtk.FocusOutEventHandler (this.OnMainDrawingAreaFocusOutEvent);
 	}
 }

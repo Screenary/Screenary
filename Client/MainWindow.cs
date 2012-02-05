@@ -91,12 +91,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			(int) Gdk.EventMask.KeyPressMask |
 			(int) Gdk.EventMask.KeyReleaseMask);
 		
-		mainDrawingArea.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(OnMainDrawingAreaButtonPressEvent);
-		mainDrawingArea.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler(OnMainDrawingAreaButtonReleaseEvent);
-		mainDrawingArea.MotionNotifyEvent += new global::Gtk.MotionNotifyEventHandler(OnMainDrawingAreaMotionNotifyEvent);
-		mainDrawingArea.KeyPressEvent += new global::Gtk.KeyPressEventHandler(OnMainDrawingAreaKeyPressEvent);
-		mainDrawingArea.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler(OnMainDrawingAreaKeyReleaseEvent);
-		
 		gc = new Gdk.GC(drawable);
 		gc.ClipRectangle = new Gdk.Rectangle(0, 0, width, height);
 		
@@ -140,12 +134,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
 	{
-		Console.WriteLine("KeyPressEvent key:{0}", args.Event.Key);
+		Gdk.EventKey e = args.Event;
+
+		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
+			e.Key, e.KeyValue, e.HardwareKeycode);
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
 	{
-		Console.WriteLine("KeyReleaseEvent key:{0}", args.Event.Key);
+		Gdk.EventKey e = args.Event;
+
+		Console.WriteLine("KeyReleaseEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
+			e.Key, e.KeyValue, e.HardwareKeycode);
+	}
+
+	protected void OnMainDrawingAreaFocusInEvent(object o, Gtk.FocusInEventArgs args)
+	{
+
+	}
+
+	protected void OnMainDrawingAreaFocusOutEvent(object o, Gtk.FocusOutEventArgs args)
+	{
+		
 	}
 	
 	/**

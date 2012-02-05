@@ -59,6 +59,25 @@ namespace FreeRDP
 				bitmapData, 0, (int) bitmapDataLength); /* bitmapData */
 		}
 		
+		public override byte[] Write()
+		{
+			byte[] buffer = new byte[18 + bitmapDataLength];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write(destLeft);
+			s.Write(destTop);
+			s.Write(destRight);
+			s.Write(destBottom);
+			s.Write(bpp);
+			s.Write(codecID);
+			s.Write(width);
+			s.Write(height);
+			s.Write(bitmapDataLength);
+			s.Write(bitmapData);
+			
+			return buffer;
+		}
+		
 		public override void Execute(SurfaceReceiver receiver)
 		{
 			int x, y;

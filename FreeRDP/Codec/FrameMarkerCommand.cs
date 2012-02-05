@@ -18,6 +18,17 @@ namespace FreeRDP
 			frameId = fp.ReadUInt32(); /* frameId */
 		}
 		
+		public override byte[] Write()
+		{
+			byte[] buffer = new byte[6];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write(frameAction);
+			s.Write(frameId);
+			
+			return buffer;
+		}
+		
 		public override void Execute(SurfaceReceiver receiver)
 		{
 			receiver.window.ProcessUpdates(false);	

@@ -33,7 +33,7 @@ namespace Screenary
 			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
 			
 			s.Write(sessionKey);
-			s.Write((UInt16)buffer.Length);
+			s.Write((UInt16) buffer.Length);
 			s.Write(pduBuffer);
 			
 			Send(buffer, PDU_SURFACE_COMMAND_SENDER);

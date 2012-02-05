@@ -264,6 +264,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	public void OnSurfaceCommand(SurfaceCommand cmd)
 	{
+		byte[] pduBuffer = cmd.Write();
+		
+		//surfaceClient.SendSurfaceCommand(pduBuffer, sessionKey);
+		
 		Gtk.Application.Invoke(delegate {
 			
 			if (cmd != null)
@@ -361,7 +365,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	/**
-	 * Will be used once freeRDP is functioning [NOT IMPLEMENTED YET] 
+	 * Will be used once FreeRDP is functioning [NOT IMPLEMENTED YET] 
 	 **/
 	protected void OnFreeRDPActionActivated(object sender, System.EventArgs e)
 	{

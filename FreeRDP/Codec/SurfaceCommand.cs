@@ -18,6 +18,7 @@ namespace FreeRDP
 		}
 		
 		public virtual void Read(BinaryReader fp) {}
+		public abstract byte[] Write();
 		public virtual void Execute(SurfaceReceiver receiver) {}
 		
 		public static SurfaceCommand Parse(BinaryReader fp)

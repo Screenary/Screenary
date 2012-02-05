@@ -48,7 +48,7 @@ namespace Screenary.Client
 		public void SurfaceBits(rdpContext* context, SurfaceBits* surfaceBits)
 		{
 			SurfaceBitsCommand cmd = new SurfaceBitsCommand();
-			cmd.Read(surfaceBits);
+			cmd.Read(surfaceBits);	
 			iSource.OnSurfaceCommand(cmd);
 		}
 		

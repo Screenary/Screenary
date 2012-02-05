@@ -62,7 +62,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
-		
+
 		/* Instantiate client states */
 		clientStates = new IClientState[4]
 		{
@@ -84,6 +84,19 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		window = mainDrawingArea.GdkWindow;
 		drawable = (Gdk.Drawable) window;
 		
+		mainDrawingArea.AddEvents(
+			(int) Gdk.EventMask.ButtonPressMask |
+			(int) Gdk.EventMask.ButtonReleaseMask |
+			(int) Gdk.EventMask.PointerMotionMask |
+			(int) Gdk.EventMask.KeyPressMask |
+			(int) Gdk.EventMask.KeyReleaseMask);
+		
+		mainDrawingArea.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(OnMainDrawingAreaButtonPressEvent);
+		mainDrawingArea.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler(OnMainDrawingAreaButtonReleaseEvent);
+		mainDrawingArea.MotionNotifyEvent += new global::Gtk.MotionNotifyEventHandler(OnMainDrawingAreaMotionNotifyEvent);
+		mainDrawingArea.KeyPressEvent += new global::Gtk.KeyPressEventHandler(OnMainDrawingAreaKeyPressEvent);
+		mainDrawingArea.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler(OnMainDrawingAreaKeyReleaseEvent);
+		
 		gc = new Gdk.GC(drawable);
 		gc.ClipRectangle = new Gdk.Rectangle(0, 0, width, height);
 		
@@ -99,6 +112,40 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
+	}
+	
+	protected void OnMainDrawingAreaButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
+	{
+		Gdk.EventButton e = args.Event;
+		
+		Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
+			e.Button, e.X, e.Y, e.XRoot, e.YRoot);
+	}
+	
+	protected void OnMainDrawingAreaButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
+	{
+		Gdk.EventButton e = args.Event;
+		
+		Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
+			e.Button, e.X, e.Y, e.XRoot, e.YRoot);
+	}
+	
+	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
+	{
+		Gdk.EventMotion e = args.Event;
+		
+		Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
+			e.X, e.Y, e.XRoot, e.YRoot);
+	}
+	
+	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
+	{
+		Console.WriteLine("KeyPressEvent key:{0}", args.Event.Key);
+	}
+	
+	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
+	{
+		Console.WriteLine("KeyReleaseEvent key:{0}", args.Event.Key);
 	}
 	
 	/**

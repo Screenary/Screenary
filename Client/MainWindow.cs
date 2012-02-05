@@ -323,7 +323,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		byte[] pduBuffer = cmd.Write();
 		
-		//surfaceClient.SendSurfaceCommand(pduBuffer, sessionKey);
+		surfaceClient.SendSurfaceCommand(pduBuffer, sessionClient.GetSessionId());
 		
 		Gtk.Application.Invoke(delegate {
 			
@@ -396,6 +396,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		if (this.transport.isConnected())
 		{
 			this.creator = username;
+			this.username = username;
 			sessionClient.SendCreateReq(username, password);
 		}
 		else
@@ -591,7 +592,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");
 		
-		if (this.username == username && type == "joined")
+		if (this.username.Equals(username) && type.Equals("joined"))
 		{
 			notificationBar.Pop(id);
 			notificationBar.Push(id, "You have successfully joined the session.");

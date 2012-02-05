@@ -19,6 +19,11 @@ namespace Screenary
 			this.sessionId = 0;			
 		}
 		
+		public UInt32 GetSessionId()
+		{
+			return sessionId;
+		}
+		
 		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
 		{
 			BinaryWriter s;
@@ -29,7 +34,6 @@ namespace Screenary
 			s.Write((UInt32) sessionId);
 			return s;
 		}
-		
 		
 		/**
 	 	* Sends a join request to the server. A sessionKey identifies the session to join.

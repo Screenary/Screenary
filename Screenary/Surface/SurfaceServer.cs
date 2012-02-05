@@ -26,7 +26,7 @@ namespace Screenary
 		{
 			Console.WriteLine("SurfaceServer.SendSurfaceCommand");
 
-			Send(buffer, PDU_SURFACE_COMMAND_RECEIVER);
+			Send(buffer, PDU_SURFACE_COMMAND);
 		}
 		
 		/*
@@ -75,11 +75,11 @@ namespace Screenary
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
-			pduType = PDU_SURFACE_COMMAND_RECEIVER;
+			pduType = PDU_SURFACE_COMMAND;
 			
 			switch (pduType)
 			{
-				case PDU_SURFACE_COMMAND_RECEIVER:
+				case PDU_SURFACE_COMMAND:
 					RecvSurfaceCommand(s);
 					return;
 				

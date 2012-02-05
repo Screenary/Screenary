@@ -9,15 +9,15 @@ namespace Screenary
 	{
 		private Int32 port;
 		private Thread thread;
-		private string hostname;
+		private string address;
 		private TcpListener tcpListener;
 		private ITransportListener listener;
 		
-		public TransportListener(ITransportListener listener, string hostname, Int32 port)
+		public TransportListener(ITransportListener listener, string address, Int32 port)
 		{
 			this.tcpListener = null;
 			this.listener = listener;
-			this.hostname = hostname;
+			this.address = address;
 			this.port = port;
 		}
 		
@@ -36,8 +36,7 @@ namespace Screenary
 		{
 			if (tcpListener == null)
 			{
-				IPAddress ipaddr = IPAddress.Parse(hostname);
-				tcpListener = new TcpListener(ipaddr, port);
+				tcpListener = new TcpListener(IPAddress.Any, 4489);
 				thread = new Thread(ListenerThreadProc);
 			}
 			

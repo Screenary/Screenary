@@ -69,7 +69,7 @@ namespace Screenary
 		
 		public bool isThreadAlive()
 		{
-			if(thread != null)
+			if (thread != null)
 				return thread.IsAlive;	
 			else
 				return false;
@@ -96,7 +96,7 @@ namespace Screenary
 		{
 			dispatcher.OnDisconnect();
 			
-			if(tcpClient != null)
+			if (tcpClient != null)
 				tcpClient.Close();						
 			
 			return true;
@@ -104,7 +104,7 @@ namespace Screenary
 		
 		public bool isConnected()
 		{
-			if(tcpClient == null)
+			if (tcpClient == null)
 				return false;
 			else 
 				return tcpClient.Connected;	

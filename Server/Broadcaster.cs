@@ -14,8 +14,7 @@ namespace Screenary.Server
 	 * and broadcasts contents of data/rfx_sample.pcap within 20 seconds
 	 */ 
 	public class Broadcaster : ITransportListener, ISurfaceServer
-	{		
-		
+	{
 		/* Server socket */
 		private TransportListener listener;
 		
@@ -27,7 +26,7 @@ namespace Screenary.Server
 		 * @param port
 		 */
 		public Broadcaster(string address, int port)
-		{						
+		{
 			listener = new TransportListener(this, address, port);
 			listener.Start();
 		}

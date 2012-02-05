@@ -28,7 +28,6 @@ namespace Screenary.Server
 			
 			Broadcaster server = new Broadcaster("127.0.0.1", 4489);
 			
-
 			System.Threading.Thread.Sleep(50000);
 			Console.WriteLine("50 sec passed");
 			

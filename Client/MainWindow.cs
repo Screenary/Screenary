@@ -298,15 +298,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		dispatcher.RegisterChannel(surface);
 		
 		try
-		{		
+		{
 			this.transport.Connect(address, port);
 			Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
-			notificationBar.Push (id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
+			notificationBar.Push(id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
 		}
 		catch(Exception e)
 		{
-			notificationBar.Push (id, "Could not connect to Screenary server at " + address + " : " + port);
-			Console.WriteLine("could not connect: "+e.ToString());
+			notificationBar.Push(id, "Could not connect to Screenary server at " + address + " : " + port);
+			Console.WriteLine("could not connect: " + e.ToString());
 		}		
 	
 	}
@@ -332,7 +332,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnUserCreateSession(string username, string password)
 	{
-		if(this.transport.isConnected())
+		if (this.transport.isConnected())
 		{
 			this.creator = username;
 			sessionClient.SendCreateReq(username, password);

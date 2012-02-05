@@ -155,7 +155,7 @@ namespace Screenary
 			sessionKey = s.ReadChars(12);
 			sessionFlags = s.ReadByte();
 			
-			if(sessionFlags == SESSION_FLAGS_PASSWORD_PROTECTED)
+			if (sessionFlags == SESSION_FLAGS_PASSWORD_PROTECTED)
 			{
 				isPasswordProtected = true;
 			}
@@ -213,7 +213,6 @@ namespace Screenary
 			}
 			
 			listener.OnSessionAuthenticationSuccess();
-
 		}
 		
 		/**
@@ -239,7 +238,6 @@ namespace Screenary
 			sessionKey = s.ReadChars(12);
 							
 			listener.OnSessionCreationSuccess(sessionKey);
-
 		}
 		
 		/**
@@ -279,7 +277,7 @@ namespace Screenary
 			
 			int length = (int) s.ReadUInt16();
 			
-			/*subtract bytes stored for total length*/
+			/* subtract bytes stored for total length */
 			length -= 2;
 			
 			while(length > 0)
@@ -293,7 +291,7 @@ namespace Screenary
 								
 				participants.Add(username);
 				
-				/*subtract bytes stored for length and string*/
+				/* subtract bytes stored for length and string */
 				length -= (username.Length + 2);
 			}
 			
@@ -312,7 +310,7 @@ namespace Screenary
 			
 			int length = (int) s.ReadUInt16();
 			
-			/*subtract bytes stored for total length*/
+			/* subtract bytes stored for total length */
 			length -= 2;
 			
 			while(length > 0)
@@ -322,7 +320,7 @@ namespace Screenary
 				if (typeLength > 0)
 					type = new string(s.ReadChars(typeLength));
 				
-				/*subtract bytes stored for length and string*/
+				/* subtract bytes stored for length and string */
 				length -= (type.Length + 2);
 				
 				UInt16 usernameLength = s.ReadUInt16();
@@ -330,7 +328,7 @@ namespace Screenary
 				if (usernameLength > 0)
 					username = new string(s.ReadChars(usernameLength));
 				
-				/*subtract bytes stored for length and string*/
+				/* subtract bytes stored for length and string */
 				length -= (username.Length + 2);
 			}
 			
@@ -345,7 +343,6 @@ namespace Screenary
 				Monitor.Pulse(channelLock);
 			}
 		}
-		
 		
 		public override void OnOpen()
 		{
@@ -362,7 +359,7 @@ namespace Screenary
 			lock (channelLock)
 			{
 				stopthread = true;
-				Console.WriteLine("closing channel: "+this.ToString());
+				Console.WriteLine("closing channel: " + this.ToString());
 				Monitor.PulseAll(channelLock);
 			}
 		}
@@ -426,7 +423,7 @@ namespace Screenary
 						Monitor.Wait(channelLock);
 					}
 
-					if(queue.Count >= 1)
+					if (queue.Count >= 1)
 					{
 						PDU pdu = (PDU) queue.Dequeue();
 						ProcessPDU(pdu.Buffer, pdu.Type);

@@ -7,7 +7,7 @@ namespace Screenary
 {	
 	public class SessionServer : SessionChannel
 	{
-		public char[] sessionKey {get;set;} //TODO TA privacy issue?
+		public char[] sessionKey { get; set; } /* TODO: TA privacy issue? */
 		private ISessionRequestListener listener;
 		private readonly object channelLock = new object();
 				

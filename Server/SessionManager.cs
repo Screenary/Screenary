@@ -17,12 +17,21 @@ namespace Screenary.Server
 		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
 		private static Random rnd = new Random();
 		
+		private char[] sessionKeyChars;
+		private const int SESSION_KEY_LENGTH = 12;
+		
 		/**
 	 	* Initialize the dictionary that will contain the list of all the screen sessions (represented by ScreencastingSession)
 	 	**/
 		public SessionManager ()
 		{
 			this.sessions = new ConcurrentDictionary<string, ScreencastingSession>();
+			
+	 		sessionKeyChars = new char[] {
+				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+				'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+			};
 		}
 		
 		/**
@@ -77,7 +86,7 @@ namespace Screenary.Server
 			if(isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
-				sessionId = GenerateUniqueId();
+				sessionId = GenerateUniqueSessionId();
 				screencastSession.AddJoinedUser(client, sessionId);
 				sessionStatus = 0;
 
@@ -160,8 +169,8 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("ScreenSessions.OnSessionCreateRequested");
 			
-			sessionId = GenerateUniqueId();
-			sessionKey = GenerateUniqueKey();
+			sessionId = GenerateUniqueSessionId();
+			sessionKey = GenerateUniqueSessionKey();
 			string sessionKeyString = new string(sessionKey);
 
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
@@ -226,15 +235,18 @@ namespace Screenary.Server
 		/**
 	 	* Generates a unique key for sessionKey
 	 	**/
-		private char[] GenerateUniqueKey()
+		private char[] GenerateUniqueSessionKey()
 		{
-			string attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,12);			
-			while(sessions.ContainsKey(attemptSessionKey))
-			{
-				attemptSessionKey = System.Guid.NewGuid().ToString().Substring(0,12);
-			}
+			char[] sessionKey = new char[SESSION_KEY_LENGTH];
 			
-			char[] sessionKey = attemptSessionKey.ToCharArray();
+			do
+			{
+				for (int i = 0; i < SESSION_KEY_LENGTH; i++)
+				{
+					sessionKey[i] = sessionKeyChars[rnd.Next(0, sessionKeyChars.Length - 1)];
+				}
+			}
+			while (sessions.ContainsKey(sessionKey.ToString()));
 			
 			return sessionKey;
 		}
@@ -242,9 +254,15 @@ namespace Screenary.Server
 		/**
 	 	* Generates a unique sessionId
 	 	**/
-		private UInt32 GenerateUniqueId()
+		private UInt32 GenerateUniqueSessionId()
 		{
-			return (UInt32) rnd.Next();
+			UInt32 sessionId;
+			
+			/* TODO: ensure uniqueness of SessionId! */
+			
+			sessionId = (UInt32) rnd.Next();
+			
+			return sessionId;
 		}
 		
 		private ScreencastingSession GetBySenderSessionId(UInt32 sessionId)

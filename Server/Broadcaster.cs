@@ -53,7 +53,6 @@ namespace Screenary.Server
 			PDU pdu = new PDU(buffer, 0, 1);
 			this.addPDU(pdu, sessionKey);
 		}
-		
 	}
 }
 

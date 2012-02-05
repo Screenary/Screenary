@@ -114,7 +114,7 @@ namespace Screenary
 						Monitor.Wait(channelLock);
 					}
 								
-					if(queue.Count >= 1)
+					if (queue.Count >= 1)
 					{
 						PDU pdu = (PDU) queue.Dequeue();
 						ProcessPDU(pdu.Buffer, pdu.Type);

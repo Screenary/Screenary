@@ -34,6 +34,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal Gdk.GC gc;
 	internal Config config;
 	internal SessionClient sessionClient;
+	internal SurfaceClient surfaceClient;
 	internal int width, height;
 	internal Gdk.Window window;
 	internal Gdk.Pixbuf surface;
@@ -91,7 +92,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		receiver = new SurfaceReceiver(window, surface);
 		
-		this.transport = null;		
+		this.transport = null;
 		
 		rdpSource = new RdpSource(this);
 		pcapSource = new PcapSource(this);
@@ -262,7 +263,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	public void OnSurfaceCommand(SurfaceCommand cmd)
-	{		
+	{
 		Gtk.Application.Invoke(delegate {
 			
 			if (cmd != null)
@@ -278,7 +279,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
-		OnSessionOperationFail("This method has not yet been implemented.");
+		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
+			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
 	}
 	
 	/**
@@ -292,8 +294,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		sessionClient = new SessionClient(this.transport, this);
 		dispatcher.RegisterChannel(sessionClient);
 		
-		SurfaceClient surface = new SurfaceClient(this, this.transport);
-		dispatcher.RegisterChannel(surface);
+		surfaceClient = new SurfaceClient(this, this.transport);
+		dispatcher.RegisterChannel(surfaceClient);
 		
 		try
 		{
@@ -477,9 +479,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 
 		notificationBar.Push(id, "You have succesfully created a session. The session key is: " + sessionKeyString);
 		Console.WriteLine("MainWindow.Push");
-		
-		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
-			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
 	}
 	
 	/**
@@ -493,8 +492,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
-		
-		notificationBar.Pop(id);
+				notificationBar.Pop(id);
 		notificationBar.Push(id, "You have succesfully terminated the session.");
 	}
 	
@@ -547,7 +545,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	/**
 	 * When end session is activated it sends the termination request
 	 **/
-	protected void OnEndSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
 	{
 		sessionClient.SendTermReq(sessionKey.ToCharArray());
 	}
@@ -555,7 +553,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	/** 
 	 * When leave session is activated it sends the leave request 
 	 **/
-	protected void OnLeaveSessionActionActivated (object sender, System.EventArgs e)
+	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
 	{
 		sessionClient.SendLeaveReq(username);
 	}

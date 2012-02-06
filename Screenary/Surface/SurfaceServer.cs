@@ -10,22 +10,40 @@ namespace Screenary
 		private readonly object channelLock = new object();
 		private ISurfaceServer listener;
 		
-		public SurfaceServer(ISurfaceServer listener, TransportClient transport)
+		public SurfaceServer(TransportClient transport, ISurfaceServer listener)
 		{
-			this.listener = listener;
 			this.transport = transport;
+			this.listener = listener;
+		}
+		
+		private BinaryWriter InitMsgPDU(ref byte[] buffer, int length, UInt32 sessionId)
+		{
+			BinaryWriter s;
+			
+			buffer = new byte[length + 4];
+			s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write((UInt32) sessionId);
+			return s;
 		}
 		
 		/*
 		 * Send surface commands to client
 		 * 
-		 * @param pduBuffer
-		 * @param sessionKey
-		 */
-		public void SendSurfaceCommand(byte[] buffer)
+		 * @param surfaceCommand
+		 * @param sessionId
+		 */		
+		public void SendSurfaceCommand(byte[] surfaceCommand, UInt32 sessionId)
 		{
-			Console.WriteLine("SurfaceServer.SendSurfaceCommand");
+			Console.WriteLine("SurfaceClient.SendSurfaceCommand");
 
+			byte[] buffer = null;
+			int length = surfaceCommand.Length;
+
+			BinaryWriter s = InitMsgPDU(ref buffer, length, sessionId);
+			
+			s.Write(surfaceCommand);
+			
 			Send(buffer, PDU_SURFACE_COMMAND);
 		}
 		
@@ -34,20 +52,10 @@ namespace Screenary
 		 * 
 		 * @param s
 		 */
-		private void RecvSurfaceCommand(BinaryReader s)
+		private void RecvSurfaceCommand(byte[] buffer)
 		{
 			Console.WriteLine("SurfaceServer.RecvSurfaceCommand");
-			
-			char[] sessionKey = s.ReadChars(12);
-			int bufferLength = s.ReadInt16();
-
-			Console.WriteLine("SessionKey: {0}, ByteLength: {1}", new string(sessionKey), bufferLength);
-
-			if (bufferLength > 0) 
-			{
-				byte[] buffer = s.ReadBytes(bufferLength);
-				listener.OnSurfaceCommand(sessionKey, buffer);
-			}
+			listener.OnSurfaceCommand(buffer);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
@@ -80,18 +88,17 @@ namespace Screenary
 			switch (pduType)
 			{
 				case PDU_SURFACE_COMMAND:
-					RecvSurfaceCommand(s);
+					RecvSurfaceCommand(buffer);
 					return;
 				
 				default:
 					return;
 			}
-
 		}
 		
 		public void ChannelThreadProc()
-		{
-			while(true)
+		{			
+			while (true)
 			{
 				lock (channelLock)
 				{

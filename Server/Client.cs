@@ -9,116 +9,33 @@ using Screenary;
 
 namespace Screenary.Server
 {
-	public class Client : SurfaceServer, ISessionRequestListener, ISurfaceServer
+	public class Client : ISessionRequestListener, ISurfaceServer
 	{
 		private SessionServer sessionServer;
 		private SurfaceServer surfaceServer;
 		private ChannelDispatcher dispatcher;
-		private IClientRequestListener clientReqListener;
-		private ISurfaceServer surfaceServerListener;
-		
-		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
-		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
-		private readonly object lockQ = new object();
-		private bool usingQ = false;
+		private IClientListener clientListener;
 		
 		/**
 		 * Class constructor
 		 */ 
-		public Client(TransportClient transport, IClientRequestListener clientReqListener, ISurfaceServer surfaceServerListener)
-			: base(surfaceServerListener, transport)
-		{
-			this.thread = new Thread(ReceiverThreadProc);
-			thread.Start();
-			
-			this.transport = transport;
-			this.clientReqListener = clientReqListener;
-			this.surfaceServerListener = surfaceServerListener;//TA
+		public Client(TransportClient transport, IClientListener clientListener)
+		{			
+			this.clientListener = clientListener;
 			
 			dispatcher = new ChannelDispatcher();
 			
 			transport.SetChannelDispatcher(dispatcher);
-			
-			surfaceServer = new SurfaceServer(this, this.transport);
+
+			surfaceServer = new SurfaceServer(transport, this);
 			dispatcher.RegisterChannel(surfaceServer);
 			
-			sessionServer = new SessionServer(this.transport, this);
+			sessionServer = new SessionServer(transport, this);
 			dispatcher.RegisterChannel(sessionServer);
 			
-			dispatcher.OnConnect();
-			
 			transport.StartThread();
-		}
-		
-		/**
-		 * Enqueue a PDU
-		 */
-		public void addPDU(PDU pdu)
-		{
-			enqueue(pdu);
-		}
-		
-		/**
-		 * Thread function continuously dequeues PDU queue and sends to client
-		 */ 
-		private void ReceiverThreadProc()
-		{
-			PDU pdu = null;
 			
-			while (true)
-			{
-				while (pduQ.Count > 0)
-				{
-					pdu = dequeue();
-					surfaceServer.SendSurfaceCommand(pdu.Buffer);
-				}
-			}
-		}
-		
-		/**
-		 * Enqueue a PDU
-		 */ 
-		private void enqueue(PDU pdu)
-		{
-			wait();
-			pduQ.AddLast(pdu);
-			signal();
-		}
-		
-		/**
-		 * Dequeue a PDU and return the object
-		 */ 
-		private PDU dequeue()
-		{
-			wait();
-			PDU pdu = pduQ.First.Value;
-			pduQ.RemoveFirst();
-			signal();
-			return pdu;
-		}
-		
-		/**
-		 * Block on lock until it's released
-		 */ 
-		public void wait()
-		{
-			lock (lockQ)
-			{
-				while (usingQ == true) Monitor.Wait(lockQ);
-				usingQ = true;
-			}
-		}
-		
-		/**
-		 * Release lock
-		 */ 
-		public void signal()
-		{
-			lock (lockQ)
-			{
-				usingQ = false;
-				Monitor.Pulse(lockQ);
-			}
+			dispatcher.OnConnect();
 		}
 		
 		public void OnSessionJoinRequested(char[] sessionKey)
@@ -131,7 +48,7 @@ namespace Screenary.Server
 			UInt32 sessionStatus = UInt32.MaxValue;
 			byte sessionFlags = 0x00;
 			
-			clientReqListener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
+			clientListener.OnSessionJoinRequested(this, sessionKey, ref sessionId, ref sessionStatus, ref sessionFlags);
 			sessionServer.SendJoinRsp(sessionId, sessionKey, sessionStatus, sessionFlags);
 		}
 		
@@ -142,7 +59,7 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			clientReqListener.OnSessionLeaveRequested(this, sessionId, sessionServer.sessionKey, ref sessionStatus, username);
+			clientListener.OnSessionLeaveRequested(this, sessionId, sessionServer.sessionKey, ref sessionStatus, username);
 			sessionServer.SendLeaveRsp(sessionId, sessionStatus);		
 		}
 
@@ -153,7 +70,7 @@ namespace Screenary.Server
 			
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			clientReqListener.OnSessionAuthenticationRequested(this, sessionId, sessionServer.sessionKey, username, password, ref sessionStatus);
+			clientListener.OnSessionAuthenticationRequested(this, sessionId, sessionServer.sessionKey, username, password, ref sessionStatus);
 			sessionServer.SendAuthRsp(sessionId, sessionStatus);
 		}
 		
@@ -165,7 +82,7 @@ namespace Screenary.Server
 			UInt32 sessionId = UInt32.MaxValue;
 			char[] sessionKey = "000000000000".ToCharArray();
 			
-			clientReqListener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
+			clientListener.OnSessionCreateRequested(this, username, password, ref sessionId, ref sessionKey);
 			sessionServer.SendCreateRsp(sessionId, sessionKey);
 		}
 		
@@ -175,7 +92,7 @@ namespace Screenary.Server
 			string sessionKeyString = new string(sessionKey);
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
 
-			clientReqListener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
+			clientListener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
 			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
@@ -197,10 +114,9 @@ namespace Screenary.Server
 			sessionServer.SendNotificationRsp(type, username);
 		}
 		
-		public void OnSurfaceCommand(char[] sessionKey, byte[] buffer)
+		public void OnSurfaceCommand(byte[] buffer)
 		{
 			Console.WriteLine("Client.OnSurfaceCommand");
-			surfaceServerListener.OnSurfaceCommand(sessionKey, buffer);	
 		}
 	}
 }

@@ -146,8 +146,6 @@ namespace Screenary
 			int offset = 0;
 			UInt16 fragSize;
 			int totalSize = 0;
-
-			//Monitor.Enter(this);
 			
 			socket = tcpClient.Client;
 			totalSize = (int) buffer.Length;
@@ -226,8 +224,6 @@ namespace Screenary
 				}
 			}
 			
-			//Monitor.Exit(this);
-			
 			return;
 		}
 		
@@ -241,8 +237,6 @@ namespace Screenary
 			UInt16 channelId = 0;
 			UInt16 fragSize = 0;
 			byte[] buffer = null;
-			
-			//Monitor.Enter(this);
 			
 			byte[] header = new byte[PDU_HEADER_SIZE];
 			
@@ -306,17 +300,17 @@ namespace Screenary
 				}
 			}
 			
-			//Monitor.Exit(this);
-			
 			return;
 		}
 		
 		static void ThreadProc(TransportClient client)
 		{
+			Console.WriteLine("TransportClient.ThreadProc");
+			
 			try
 			{
 				while (client.isConnected())
-				{				
+				{
 					client.RecvPDU();					
 					Thread.Sleep(10);
 				}
@@ -325,6 +319,8 @@ namespace Screenary
 			{
 				Console.WriteLine(e.ToString());	
 			}
+			
+			Console.WriteLine("TransportClient.ThreadProc end");
 		}
 	}
 }

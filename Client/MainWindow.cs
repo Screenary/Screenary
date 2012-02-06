@@ -113,42 +113,42 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnMainDrawingAreaButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
 	{
-		Gdk.EventButton e = args.Event;
+		/*Gdk.EventButton e = args.Event;
 		
 		Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
-			e.Button, e.X, e.Y, e.XRoot, e.YRoot);
+			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 	}
 	
 	protected void OnMainDrawingAreaButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
 	{
-		Gdk.EventButton e = args.Event;
+		/*Gdk.EventButton e = args.Event;
 		
 		Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
-			e.Button, e.X, e.Y, e.XRoot, e.YRoot);
+			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 	}
 	
 	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
 	{
-		Gdk.EventMotion e = args.Event;
+		/*Gdk.EventMotion e = args.Event;
 		
 		Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
-			e.X, e.Y, e.XRoot, e.YRoot);
+			e.X, e.Y, e.XRoot, e.YRoot);*/
 	}
 	
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
 	{
-		Gdk.EventKey e = args.Event;
+		/*Gdk.EventKey e = args.Event;
 
 		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
-			e.Key, e.KeyValue, e.HardwareKeycode);
+			e.Key, e.KeyValue, e.HardwareKeycode);*/
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
 	{
-		Gdk.EventKey e = args.Event;
+		/*Gdk.EventKey e = args.Event;
 
 		Console.WriteLine("KeyReleaseEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
-			e.Key, e.KeyValue, e.HardwareKeycode);
+			e.Key, e.KeyValue, e.HardwareKeycode);*/
 	}
 
 	protected void OnMainDrawingAreaFocusInEvent(object o, Gtk.FocusInEventArgs args)

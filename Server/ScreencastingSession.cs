@@ -123,6 +123,5 @@ namespace Screenary.Server
 		{
 			return (!sessionPassword.Equals(""));	
 		}
-		
 	}
 }

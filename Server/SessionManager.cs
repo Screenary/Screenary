@@ -7,14 +7,14 @@ using System.Runtime.CompilerServices;
 
 namespace Screenary.Server
 {
-	public class SessionManager: IClientRequestListener
+	public class SessionManager: IClientListener
 	{
 		public const byte SESSION_FLAGS_PASSWORD_PROTECTED = 0x01;
 		public const byte SESSION_FLAGS_NON_PASSWORD_PROTECTED = 0x02;
 		
    	    private static SessionManager instance;
 		static readonly object padlock = new object();
-		private ConcurrentDictionary<string, ScreencastingSession> sessions; 
+		private ConcurrentDictionary<string, ScreencastingSession> sessions;
 		private static Random rnd = new Random();
 		
 		private char[] sessionKeyChars;
@@ -23,7 +23,7 @@ namespace Screenary.Server
 		/**
 	 	* Initialize the dictionary that will contain the list of all the screen sessions (represented by ScreencastingSession)
 	 	**/
-		public SessionManager ()
+		public SessionManager()
 		{
 			this.sessions = new ConcurrentDictionary<string, ScreencastingSession>();
 			
@@ -53,6 +53,7 @@ namespace Screenary.Server
 	      	}
 	   	}
 		
+		/*
 		//TA: TEST if when a receiver joins after the start of the session, he will also get updates
 		public void addPDU(PDU pdu, char[] sessionKey)
 		{
@@ -66,11 +67,11 @@ namespace Screenary.Server
 				
 				foreach (Client client in session.authenticatedClients.Keys)
 				{
-					if (session.authenticatedClients[client].sessionId != senderSessionId)
-						client.addPDU(pdu);
+					//if (session.authenticatedClients[client].sessionId != senderSessionId)
+						//client.addPDU(pdu);
 				}
 			}
-		}
+		}*/
 		
 		/**
 	 	* Processes a join request by a receiver
@@ -285,6 +286,11 @@ namespace Screenary.Server
 		private Boolean isSessionAlive(string sessionKeyString)
 		{
 			return sessions.ContainsKey(sessionKeyString);
+		}
+		
+		public void OnSurfaceCommand(Client client, char[] sessionKey, byte[] buffer)
+		{
+			Console.WriteLine("SessionManager.OnSurfaceCommand");
 		}
 	}
 }

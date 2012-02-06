@@ -40,8 +40,8 @@
     <Compile Include="Broadcaster.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ScreencastingSession.cs" />
-    <Compile Include="IClientRequestListener.cs" />
     <Compile Include="SessionManager.cs" />
+    <Compile Include="IClientListener.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

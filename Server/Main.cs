@@ -26,11 +26,9 @@ namespace Screenary.Server
 				replayMode = true;
 			}
 			
-			Broadcaster server = new Broadcaster("127.0.0.1", 4489);
+			Broadcaster broadcaster = new Broadcaster("127.0.0.1", 4489);
 			
-			System.Threading.Thread.Sleep(50000);
-			Console.WriteLine("50 sec passed");
-			
+			/*
 			if (replayMode)
 			{
 				PcapReader pcap = new PcapReader(File.OpenRead(replayFile));
@@ -40,12 +38,9 @@ namespace Screenary.Server
 					PDU pdu = new PDU(record.Buffer, 0, 1);
 					server.addPDU(pdu, "ABCDEF123456".ToCharArray());
 				}
-			}
+			}*/
 			
-			while (true)
-			{
-				Thread.Sleep(10);
-			}
+			broadcaster.MainLoop();
 		}
 	}
 }

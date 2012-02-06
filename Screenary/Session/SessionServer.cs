@@ -7,7 +7,7 @@ namespace Screenary
 {	
 	public class SessionServer : SessionChannel
 	{
-		public char[] sessionKey { get; set; } /* TODO: TA privacy issue? */
+		public char[] sessionKey { get; set; }
 		private ISessionRequestListener listener;
 		private readonly object channelLock = new object();
 				
@@ -340,8 +340,6 @@ namespace Screenary
 		
 		public void ChannelThreadProc()
 		{			
-			Console.WriteLine("SessionServer.ChannelThreadProc");
-			
 			while (true)
 			{
 				lock (channelLock)

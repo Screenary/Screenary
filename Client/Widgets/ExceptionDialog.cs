@@ -9,13 +9,15 @@ namespace Screenary.Client
 		 **/
 		public ExceptionDialog (string title, string message)
 		{
-			this.Build ();
-			this.Title = title;
-			
-			Gtk.TextBuffer buffer;
-			buffer = txtMessage.Buffer;
-			buffer.Clear();
-			buffer.InsertAtCursor(message);
+			Gtk.Application.Invoke(delegate {
+				this.Build ();
+				this.Title = title;
+				
+				Gtk.TextBuffer buffer;
+				buffer = txtMessage.Buffer;
+				buffer.Clear();
+				buffer.InsertAtCursor(message);
+			});
 		}
 
 		protected void OnButtonOkClicked (object sender, System.EventArgs e)

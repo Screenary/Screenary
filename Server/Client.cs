@@ -106,7 +106,7 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("Client.OnSessionParticipantsListUpdated");
 			sessionServer.SendParticipantsListRsp(participants);
-		}	
+		}
 		
 		public void OnSessionNotificationUpdate(string type, string username)
 		{
@@ -114,9 +114,10 @@ namespace Screenary.Server
 			sessionServer.SendNotificationRsp(type, username);
 		}
 		
-		public void OnSurfaceCommand(byte[] buffer)
+		public void OnSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
 		{
 			Console.WriteLine("Client.OnSurfaceCommand");
+			//clientListener.SendSurfaceCommand(sessionId, surfaceCommand);
 		}
 	}
 }

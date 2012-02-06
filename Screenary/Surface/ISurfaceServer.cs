@@ -5,7 +5,7 @@ namespace Screenary
 {
 	public interface ISurfaceServer
 	{
-		void OnSurfaceCommand(byte[] surfaceCommand);
+		void OnSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand);
 	}
 }
 

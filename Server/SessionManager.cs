@@ -53,26 +53,6 @@ namespace Screenary.Server
 	      	}
 	   	}
 		
-		/*
-		//TA: TEST if when a receiver joins after the start of the session, he will also get updates
-		public void addPDU(PDU pdu, char[] sessionKey)
-		{
-			string sessionKeyString = new string(sessionKey);
-			
-			if (isSessionAlive(sessionKeyString))
-			{
-				ScreencastingSession session = sessions[sessionKeyString];
-				
-				UInt32 senderSessionId = session.senderId;
-				
-				foreach (Client client in session.authenticatedClients.Keys)
-				{
-					//if (session.authenticatedClients[client].sessionId != senderSessionId)
-						//client.addPDU(pdu);
-				}
-			}
-		}*/
-		
 		/**
 	 	* Processes a join request by a receiver
 	 	* called by SessionServer
@@ -83,11 +63,9 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("ScreenSessions.OnSessionJoinRequested");
 			
-			string sessionKeyString = new string(sessionKey);
-			
-			if (isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKey))
 			{
-				ScreencastingSession screencastSession = sessions[sessionKeyString];
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 				sessionId = GenerateUniqueSessionId();
 				screencastSession.AddJoinedUser(client, sessionId);
 				sessionStatus = 0;
@@ -98,7 +76,7 @@ namespace Screenary.Server
 					sessionFlags = SESSION_FLAGS_NON_PASSWORD_PROTECTED;
 				
 				Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
-						sessionKeyString, sessionId, sessionStatus);
+						new string(sessionKey), sessionId, sessionStatus);
 				
 				return;
 			}
@@ -114,11 +92,9 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("ScreenSessions.OnSessionLeaveRequested");
 			
-			string sessionKeyString = new string(sessionKey);
-			
-			if (isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKey))
 			{
-				ScreencastingSession screencastSession = sessions[sessionKeyString];
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 				
 				if (screencastSession.authenticatedClients.ContainsKey(client))
 				{
@@ -127,7 +103,7 @@ namespace Screenary.Server
 					sessionStatus = 0;
 
 					Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
-						sessionKeyString, sessionId, sessionStatus);
+						new string(sessionKey), sessionId, sessionStatus);
 
 					return;
 				}
@@ -146,11 +122,9 @@ namespace Screenary.Server
 			Console.WriteLine("ScreenSessions.OnSessionAuthenticationRequested");
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 			
-			string sessionKeyString = new string(sessionKey);
-			
-			if (isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKey))
 			{	
-				ScreencastingSession screencastSession = sessions[sessionKeyString];
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 				
 				if (screencastSession.Authenticate(client, sessionId, username, password))
 				{
@@ -174,13 +148,12 @@ namespace Screenary.Server
 			
 			sessionId = GenerateUniqueSessionId();
 			sessionKey = GenerateUniqueSessionKey();
-			string sessionKeyString = new string(sessionKey);
 
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 
 			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password);
 			
-			sessions.TryAdd(sessionKeyString, screencastSession);
+			sessions.TryAdd(new string(sessionKey), screencastSession);
 			screencastSession.AddFirstUser(client, sessionId, username);
 		}
 		
@@ -191,18 +164,17 @@ namespace Screenary.Server
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionTerminationRequested");
-			string sessionKeyString = new string(sessionKey);
-			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
+			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKey);
 			
-			if (isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKey))
 			{
 				/* Only the sender can terminate a session */
-				ScreencastingSession screencastSession = sessions[sessionKeyString];
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 				
 				if (screencastSession.senderId == sessionId)
 				{
 					screencastSession.authenticatedClients.Clear();
-					sessions.TryRemove(sessionKeyString, out screencastSession);
+					sessions.TryRemove(new string(sessionKey), out screencastSession);
 					sessionStatus = 0;
 					return;
 				}
@@ -218,11 +190,10 @@ namespace Screenary.Server
 		private void OnSessionParticipantListUpdated(char[] sessionKey)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionParticipantsListUpdated");
-			string sessionKeyString = new string(sessionKey);
 			
-			if (isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKey))
 			{
-				ScreencastingSession session = sessions[sessionKeyString];
+				ScreencastingSession session = getSessionByKey(sessionKey);
 				ArrayList participantUsernames = session.GetParticipantUsernames();
 				
 				foreach (Client client in session.authenticatedClients.Keys)
@@ -236,7 +207,28 @@ namespace Screenary.Server
 		public void OnSessionOperationFail(string errorMessage)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionOperationFail");
-		}	
+		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnSurfaceCommand(Client client, char[] sessionKey, byte[] buffer)
+		{
+			Console.WriteLine("SessionManager.OnSurfaceCommand");
+			
+			if (isSessionAlive(sessionKey))
+			{
+				ScreencastingSession session = getSessionByKey(sessionKey);
+				
+				UInt32 senderSessionId = session.senderId;
+				
+				foreach (Client receiver in session.authenticatedClients.Keys)
+				{
+					if (session.authenticatedClients[client].sessionId != senderSessionId)
+					{
+
+					}
+				}
+			}	
+		}
 		
 		/**
 	 	* Generates a unique key for sessionKey
@@ -252,7 +244,7 @@ namespace Screenary.Server
 					sessionKey[i] = sessionKeyChars[rnd.Next(0, sessionKeyChars.Length - 1)];
 				}
 			}
-			while (sessions.ContainsKey(sessionKey.ToString()));
+			while (sessions.ContainsKey(new string(sessionKey)));
 			
 			return sessionKey;
 		}
@@ -283,14 +275,14 @@ namespace Screenary.Server
 			return null;
 		}
 		
-		private Boolean isSessionAlive(string sessionKeyString)
+		private bool isSessionAlive(char[] sessionKey)
 		{
-			return sessions.ContainsKey(sessionKeyString);
+			return sessions.ContainsKey(new string(sessionKey));
 		}
 		
-		public void OnSurfaceCommand(Client client, char[] sessionKey, byte[] buffer)
+		private ScreencastingSession getSessionByKey(char[] sessionKey)
 		{
-			Console.WriteLine("SessionManager.OnSurfaceCommand");
+			return sessions[new string(sessionKey)];
 		}
 	}
 }

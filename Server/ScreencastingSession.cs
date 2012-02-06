@@ -68,7 +68,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateAllParticipants()
 		{
-			foreach(Client client in authenticatedClients.Keys)
+			foreach (Client client in authenticatedClients.Keys)
 			{
 				client.OnSessionParticipantListUpdated(GetParticipantUsernames());
 			}

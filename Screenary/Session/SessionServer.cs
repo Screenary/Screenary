@@ -267,7 +267,7 @@ namespace Screenary
 			UInt32 sessionId;
 			char[] sessionKey;
 			UInt32 sessionStatus;
-						
+
 			sessionId = s.ReadUInt32();
 			sessionKey = s.ReadChars(12);
 			sessionStatus = s.ReadUInt32();

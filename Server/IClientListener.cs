@@ -10,6 +10,6 @@ namespace Screenary.Server
 		void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey);
 		void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus);
 		void OnSessionOperationFail(string errorMessage);
-		void OnSurfaceCommand(Client client, char[] sessionKey, byte[] surfaceCommand);
+		void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand);
 	}
 }

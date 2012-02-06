@@ -117,7 +117,13 @@ namespace Screenary.Server
 		public void OnSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
 		{
 			Console.WriteLine("Client.OnSurfaceCommand");
-			//clientListener.SendSurfaceCommand(sessionId, surfaceCommand);
+			clientListener.OnSurfaceCommand(this, sessionId, surfaceCommand);
+		}
+		
+		public void OnSendSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
+		{
+			Console.WriteLine("Client.OnSendSurfaceCommand");
+			surfaceServer.SendSurfaceCommand(sessionId, surfaceCommand);
 		}
 	}
 }

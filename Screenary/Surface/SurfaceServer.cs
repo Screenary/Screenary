@@ -35,7 +35,7 @@ namespace Screenary
 		 */		
 		public void SendSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
 		{
-			Console.WriteLine("SurfaceClient.SendSurfaceCommand");
+			Console.WriteLine("SurfaceServer.SendSurfaceCommand");
 
 			byte[] buffer = null;
 			int length = surfaceCommand.Length;

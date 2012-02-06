@@ -210,21 +210,24 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSurfaceCommand(Client client, char[] sessionKey, byte[] buffer)
+		public void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand)
 		{
 			Console.WriteLine("SessionManager.OnSurfaceCommand");
 			
-			if (isSessionAlive(sessionKey))
-			{
-				ScreencastingSession session = getSessionByKey(sessionKey);
-				
-				UInt32 senderSessionId = session.senderId;
-				
+			ScreencastingSession session = GetSessionBySenderId(sessionId);
+			
+			if (session == null)
+				return;
+			
+			if (isSessionAlive(session.sessionKey))
+			{				
 				foreach (Client receiver in session.authenticatedClients.Keys)
 				{
-					if (session.authenticatedClients[client].sessionId != senderSessionId)
+					UInt32 receiverSessionId = session.authenticatedClients[receiver].sessionId;
+					
+					if (receiverSessionId != sessionId)
 					{
-
+						receiver.OnSendSurfaceCommand(receiverSessionId, surfaceCommand);
 					}
 				}
 			}	
@@ -263,7 +266,7 @@ namespace Screenary.Server
 			return sessionId;
 		}
 		
-		private ScreencastingSession GetBySenderSessionId(UInt32 sessionId)
+		private ScreencastingSession GetSessionBySenderId(UInt32 sessionId)
 		{
 			foreach (ScreencastingSession screencastSession in sessions.Values)
 			{

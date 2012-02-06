@@ -51,7 +51,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	private uint messageId = 0;
 	private uint contextId = 1;
 	private readonly object mainLock = new object();
-	internal Gtk.TextBuffer buffer = new TextBuffer(new TextTagTable());
 	
 	internal RdpSource rdpSource;
 	internal PcapSource pcapSource;
@@ -467,17 +466,20 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void DisplayParticipants()
 	{
 		Console.WriteLine("MainWindow.DisplayParticipants()");
-			
-		buffer = txtParticipants.Buffer;
-		buffer.Clear();
-
-		if (participants != null)
-		{
-			foreach (string username in participants)
+		
+		Gtk.Application.Invoke(delegate {
+		
+			txtParticipants.Buffer.Clear();
+	
+			if (participants != null)
 			{
-				buffer.InsertAtCursor(username + "\r\n");
+				foreach (string username in participants)
+				{
+					txtParticipants.Buffer.InsertAtCursor(username + "\r\n");
+				}
 			}
-		}
+			
+		});
 	}
 	
 	/** 
@@ -486,22 +488,27 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void DisplayCreator()
 	{
 		Console.WriteLine("MainWindow.DisplayCreator()");
+		
+		Gtk.Application.Invoke(delegate {
+
+			txtParticipants.Buffer.Clear();
 			
-		buffer = txtParticipants.Buffer;
-		buffer.Clear();
-			
-		if (creator != null)
-		{
-			buffer.InsertAtCursor(creator + "\r\n");
-		}
+			if (creator != null)
+			{
+				txtParticipants.Buffer.InsertAtCursor(creator + "\r\n");
+			}
+		});
 	}
 	
 	public void DisplayStatusText(string text)
 	{
-		if (messageId != 0)
-			notificationBar.Remove(contextId, messageId);
+		Gtk.Application.Invoke(delegate {
 			
-		messageId = notificationBar.Push(contextId, text);
+			if (messageId != 0)
+				notificationBar.Remove(contextId, messageId);
+				
+			messageId = notificationBar.Push(contextId, text);
+		});
 	}
 	
 	/**

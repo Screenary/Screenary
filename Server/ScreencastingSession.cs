@@ -8,14 +8,14 @@ namespace Screenary.Server
 {
 	public class ScreencastingSession
 	{
-		public char[] sessionKey {get; set;}
-		public UInt32 senderId {get; set;}
-		public string senderUsername {get; set;}
+		public char[] sessionKey { get; set; }
+		public UInt32 senderId { get; set; }
+		public string senderUsername { get; set; }
 		private string sessionPassword;
 		
 		/* Lists of TCP Clients */
-		public ConcurrentDictionary<Client, UInt32> joinedClients {get; set;}
-		public ConcurrentDictionary<Client, User> authenticatedClients {get; set;}
+		public ConcurrentDictionary<Client, UInt32> joinedClients { get; set; }
+		public ConcurrentDictionary<Client, User> authenticatedClients { get; set; }
 		
 		public struct User
 		{
@@ -41,9 +41,7 @@ namespace Screenary.Server
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddFirstUser(Client client, UInt32 id, string username)
-		{
-			//joinedClients.Remove(client);
-			
+		{			
 			User user;
 			user.sessionId = id;
 			user.username = username;
@@ -52,12 +50,10 @@ namespace Screenary.Server
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddAuthenticatedUser(Client client, UInt32 id, string username)
-		{
-			//joinedClients.Remove(client);
-			
+		{			
 			Boolean done = false;
 			
-			while(!done)
+			while (!done)
 			{
 				User user;
 				user.sessionId = id;
@@ -68,7 +64,7 @@ namespace Screenary.Server
 			
 			UpdateNotifications(client, "joined",username);
 		}
-				
+
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateAllParticipants()
 		{
@@ -81,9 +77,10 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateNotifications(Client client, string type, string username)
 		{
-			foreach(Client clients in authenticatedClients.Keys)
+			foreach (Client clients in authenticatedClients.Keys)
 			{
-				clients.OnSessionNotificationUpdate(type,username);
+				Console.WriteLine("UpdateNotifications: {0}", username);
+				clients.OnSessionNotificationUpdate(type, username);
 			}
 		}
 
@@ -94,13 +91,14 @@ namespace Screenary.Server
 			authenticatedClients.TryRemove(client, out user);
 			joinedClients.TryRemove(client, out sessionId);
 			UpdateNotifications(client, "left", username);
-		}		
+		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public Boolean Authenticate(Client client, UInt32 sessionId, string username, string password)
-		{
-			Boolean isAuthenticated = (this.sessionPassword == password);
-			if(isAuthenticated)
+		public bool Authenticate(Client client, UInt32 sessionId, string username, string password)
+		{			
+			bool isAuthenticated = (this.sessionPassword.Equals(password));
+			
+			if (isAuthenticated)
 			{
 				this.AddAuthenticatedUser(client, sessionId, username);				
 			}
@@ -111,10 +109,12 @@ namespace Screenary.Server
 		public ArrayList GetParticipantUsernames()
 		{
 			ArrayList participantUsernames = new ArrayList();
-			foreach(User user in authenticatedClients.Values)
+			
+			foreach (User user in authenticatedClients.Values)
 			{
 				participantUsernames.Add(user.username);
 			}
+			
 			return participantUsernames;
 		}
 		

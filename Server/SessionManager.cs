@@ -41,7 +41,7 @@ namespace Screenary.Server
 	    {
 	    	get 
 	      	{
-				//lock for multithreading support
+				/* lock for multithreading support */
 				lock (padlock)
             	{
 		        	if (instance == null)
@@ -57,7 +57,8 @@ namespace Screenary.Server
 		public void addPDU(PDU pdu, char[] sessionKey)
 		{
 			string sessionKeyString = new string(sessionKey);
-			if(isSessionAlive(sessionKeyString))
+			
+			if (isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession session = sessions[sessionKeyString];
 				
@@ -83,14 +84,14 @@ namespace Screenary.Server
 			
 			string sessionKeyString = new string(sessionKey);
 			
-			if(isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
 				sessionId = GenerateUniqueSessionId();
 				screencastSession.AddJoinedUser(client, sessionId);
 				sessionStatus = 0;
 
-				if(screencastSession.isPasswordProtected())
+				if (screencastSession.isPasswordProtected())
 					sessionFlags = SESSION_FLAGS_PASSWORD_PROTECTED;
 				else
 					sessionFlags = SESSION_FLAGS_NON_PASSWORD_PROTECTED;
@@ -102,7 +103,6 @@ namespace Screenary.Server
 			}
 						
 			sessionStatus = 1;
-			
 		}
 		
 		/**
@@ -115,10 +115,11 @@ namespace Screenary.Server
 			
 			string sessionKeyString = new string(sessionKey);
 			
-			if(isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
-				if(screencastSession.authenticatedClients.ContainsKey(client))
+				
+				if (screencastSession.authenticatedClients.ContainsKey(client))
 				{
 					screencastSession.RemoveAuthenticatedUser(client, username, sessionId);
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
@@ -146,10 +147,11 @@ namespace Screenary.Server
 			
 			string sessionKeyString = new string(sessionKey);
 			
-			if(isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKeyString))
 			{	
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
-				if(screencastSession.Authenticate(client, sessionId, username, password))
+				
+				if (screencastSession.Authenticate(client, sessionId, username, password))
 				{
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
 					screencastSession.UpdateNotifications(client, "joined",username);
@@ -191,11 +193,12 @@ namespace Screenary.Server
 			string sessionKeyString = new string(sessionKey);
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKeyString);
 			
-			if(isSessionAlive(sessionKeyString))
+			if (isSessionAlive(sessionKeyString))
 			{
-				/*Only the sender can terminate a session*/
+				/* Only the sender can terminate a session */
 				ScreencastingSession screencastSession = sessions[sessionKeyString];
-				if(screencastSession.senderId == sessionId)
+				
+				if (screencastSession.senderId == sessionId)
 				{
 					screencastSession.authenticatedClients.Clear();
 					sessions.TryRemove(sessionKeyString, out screencastSession);
@@ -215,13 +218,15 @@ namespace Screenary.Server
 		{
 			Console.WriteLine("ScreenSessions.OnSessionParticipantsListUpdated");
 			string sessionKeyString = new string(sessionKey);
-			if(isSessionAlive(sessionKeyString))
+			
+			if (isSessionAlive(sessionKeyString))
 			{
 				ScreencastingSession session = sessions[sessionKeyString];
 				ArrayList participantUsernames = session.GetParticipantUsernames();
-				foreach(Client client in session.authenticatedClients.Keys)
+				
+				foreach (Client client in session.authenticatedClients.Keys)
 				{
-					client.OnSessionParticipantListUpdated(participantUsernames);				
+					client.OnSessionParticipantListUpdated(participantUsernames);
 				}
 			}
 		}	
@@ -267,9 +272,9 @@ namespace Screenary.Server
 		
 		private ScreencastingSession GetBySenderSessionId(UInt32 sessionId)
 		{
-			foreach(ScreencastingSession screencastSession in sessions.Values)
+			foreach (ScreencastingSession screencastSession in sessions.Values)
 			{
-				if(screencastSession.senderId == sessionId)
+				if (screencastSession.senderId == sessionId)
 				{
 					return screencastSession;
 				}
@@ -281,6 +286,5 @@ namespace Screenary.Server
 		{
 			return sessions.ContainsKey(sessionKeyString);
 		}
-		
 	}
 }

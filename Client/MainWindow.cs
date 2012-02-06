@@ -26,8 +26,10 @@ using Screenary;
 using FreeRDP;
 using System.Net;
 using System.Net.Sockets;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISource, ISessionResponseListener
 {	
@@ -46,7 +48,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal TransportClient transport;
 	internal ArrayList participants;
 	internal string creator;
-	internal const int id = 1;
+	private uint messageId = 0;
+	private uint contextId = 1;
+	private readonly object mainLock = new object();
 	internal Gtk.TextBuffer buffer = new TextBuffer(new TextTagTable());
 	
 	internal RdpSource rdpSource;
@@ -362,14 +366,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			this.transport.Connect(address, port);
 			Console.WriteLine("connected to screenary server at {0}:{1}", address, port);
-			notificationBar.Push(id, "Welcome! You are connected to Screenary server at " + address + " : " + port);
+			DisplayStatusText("Welcome! You are connected to Screenary server at " + address + " : " + port);
 		}
 		catch(Exception e)
 		{
-			notificationBar.Push(id, "Could not connect to Screenary server at " + address + " : " + port);
+			DisplayStatusText("Could not connect to Screenary server at " + address + " : " + port);
 			Console.WriteLine("could not connect: " + e.ToString());
-		}		
-	
+		}
 	}
 	
 	/**
@@ -401,7 +404,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 		else
 		{
-			notificationBar.Push(id, "Please connect to the server first");
+			DisplayStatusText("Please connect to the server first");
 		}
 	}
 	
@@ -418,7 +421,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 		else
 		{
-			notificationBar.Push(id, "Please connect to the server first");
+			DisplayStatusText("Please connect to the server first");
 		}
 	}
 	
@@ -453,10 +456,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		this.sessionKey = sessionKeyString;
 		
 		currentState = clientStates[RECEIVER_JOINED_STATE];
-		currentState.refresh();		
+		currentState.refresh();
 		
-		notificationBar.Pop (id);
-		notificationBar.Push (id,"You have successfully joined the session! SessionKey: " + sessionKeyString);
+		DisplayStatusText("You have successfully joined the session! SessionKey: " + sessionKeyString);
 	}
 	
 	/**
@@ -464,18 +466,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void DisplayParticipants()
 	{
-			Console.WriteLine("MainWindow.DisplayParticipants()");
+		Console.WriteLine("MainWindow.DisplayParticipants()");
 			
-			buffer = txtParticipants.Buffer;
-			buffer.Clear();
-				
-			if (participants != null) 
+		buffer = txtParticipants.Buffer;
+		buffer.Clear();
+
+		if (participants != null)
+		{
+			foreach (string username in participants)
 			{
-				foreach(string username in participants)
-				{
-					buffer.InsertAtCursor(username + "\r\n");
-				}
+				buffer.InsertAtCursor(username + "\r\n");
 			}
+		}
 	}
 	
 	/** 
@@ -483,15 +485,23 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void DisplayCreator()
 	{
-			Console.WriteLine("MainWindow.DisplayCreator()");
+		Console.WriteLine("MainWindow.DisplayCreator()");
 			
-			buffer = txtParticipants.Buffer;
-			buffer.Clear();
+		buffer = txtParticipants.Buffer;
+		buffer.Clear();
 			
-			if (creator != null)
-			{
-				buffer.InsertAtCursor(creator + "\r\n");
-			}
+		if (creator != null)
+		{
+			buffer.InsertAtCursor(creator + "\r\n");
+		}
+	}
+	
+	public void DisplayStatusText(string text)
+	{
+		if (messageId != 0)
+			notificationBar.Remove(contextId, messageId);
+			
+		messageId = notificationBar.Push(contextId, text);
 	}
 	
 	/**
@@ -504,8 +514,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
-		notificationBar.Pop(id);
-		notificationBar.Push(id, "You have succesfully left the session.");
+		DisplayStatusText("You have succesfully left the session.");
 	}
 	
 	/**
@@ -536,11 +545,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState.refresh();
 		Console.WriteLine("MainWindow.Refresh");
 
-		notificationBar.Pop(id);
-		Console.WriteLine("mainwindow.pop");
-
-		notificationBar.Push(id, "You have succesfully created a session. The session key is: " + sessionKeyString);
-		Console.WriteLine("MainWindow.Push");
+		DisplayStatusText("You have succesfully created a session. The session key is: " + sessionKeyString);
 	}
 	
 	/**
@@ -554,8 +559,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
-				notificationBar.Pop(id);
-		notificationBar.Push(id, "You have succesfully terminated the session.");
+		
+		DisplayStatusText("You have succesfully terminated the session.");
 	}
 	
 	/**
@@ -572,16 +577,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionParticipantListUpdate(ArrayList participants)
 	{
-		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");		
+		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");
 		this.participants = participants;
-		
-		Console.WriteLine("participants.Count " + participants.Count);
-		
-		foreach (string username in participants)
-		{
-			Console.WriteLine("participant: " + username);
-		}
-		
+			
 		DisplayParticipants();
 	}
 	
@@ -594,13 +592,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		if (this.username.Equals(username) && type.Equals("joined"))
 		{
-			notificationBar.Pop(id);
-			notificationBar.Push(id, "You have successfully joined the session.");
+			DisplayStatusText("You have successfully joined the session.");
 		}
 		else
 		{
-			notificationBar.Pop(id);
-			notificationBar.Push(id, username + " has " + type + " the session.");
+			DisplayStatusText(username + " has " + type + " the session.");
 		}
 	}
 	

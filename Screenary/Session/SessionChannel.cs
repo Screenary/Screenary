@@ -46,8 +46,7 @@ namespace Screenary
 		public override void Send(byte[] buffer, byte pduType)
 		{
 			transport.SendPDU(buffer, PDU_CHANNEL_SESSION, pduType);
-		}
-								
+		}						
 	}
 }
 

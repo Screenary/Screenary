@@ -83,7 +83,7 @@ namespace Screenary
 	 	**/
 		public void SendCreateRsp(UInt32 sessionId, char[] sessionKey)
 		{			
-			Console.WriteLine("SessionServer.SendCreateRsp");
+			Console.WriteLine("SessionServer.SendCreateRsp: {0}", new string(sessionKey));
 						
 			this.sessionKey = sessionKey;
 			
@@ -121,11 +121,11 @@ namespace Screenary
 		{
 			Console.WriteLine("SessionServer.SendParticipantsListRsp");
 			
-			/*Bytes for storing length*/
+			/* Bytes for storing length */
 			int length = 2;
 			
-			/*Determine length of buffer*/
-			foreach(string username in participants)
+			/* Determine length of buffer */
+			foreach (string username in participants)
 			{
 				length += username.Length + 2;
 			}
@@ -135,15 +135,14 @@ namespace Screenary
 	
 			s.Write((UInt16) length);
 			
-			/*Write to buffer*/
-			foreach(string username in participants)
+			/* Write to buffer */
+			foreach (string username in participants)
 			{
 				s.Write((UInt16) username.Length);
 				s.Write(username.ToCharArray());
 			}
 						
 			Send(buffer, PDU_SESSION_PARTICIPANTS_RSP);
-			
 		}
 		
 		/**
@@ -151,7 +150,7 @@ namespace Screenary
 	 	**/
 		public void SendNotificationRsp(string type, string username)
 		{
-			Console.WriteLine("SessionServer.SendNotificationRsp" + type + " " + username);
+			Console.WriteLine("SessionServer.SendNotificationRsp " + type + " " + username);
 			
 			int length = 2;
 			length += type.Length + 2;
@@ -167,7 +166,6 @@ namespace Screenary
 			
 			s.Write((UInt16) username.Length);
 			s.Write(username.ToCharArray());
-			
 						
 			Send(buffer, PDU_SESSION_NOTIFICATION_RSP);
 		}
@@ -201,7 +199,7 @@ namespace Screenary
 			sessionId = s.ReadUInt32();
 			usernameLength = s.ReadUInt16();
 			
-			if(usernameLength > 0)
+			if (usernameLength > 0)
 				username = new string(s.ReadChars(usernameLength));
 
 			listener.OnSessionLeaveRequested(sessionId, username);

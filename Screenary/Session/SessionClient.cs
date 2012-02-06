@@ -313,7 +313,7 @@ namespace Screenary
 			/* subtract bytes stored for total length */
 			length -= 2;
 			
-			while(length > 0)
+			while (length > 0)
 			{
 				UInt16 typeLength = s.ReadUInt16();
 				
@@ -331,6 +331,8 @@ namespace Screenary
 				/* subtract bytes stored for length and string */
 				length -= (username.Length + 2);
 			}
+			
+			Console.WriteLine("RecvNotificationUpdate type:{0} username:{1}", type, username);
 			
 			listener.OnSessionNotificationUpdate(type, username);
 		}

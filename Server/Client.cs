@@ -15,7 +15,7 @@ namespace Screenary.Server
 		private SurfaceServer surfaceServer;
 		private ChannelDispatcher dispatcher;
 		private IClientRequestListener clientReqListener;
-		private ISurfaceServer surfaceServerListener;//TA
+		private ISurfaceServer surfaceServerListener;
 		
 		/* Linked list implementation of FIFO queue, should replace with real queue... LoL */
 		private LinkedList<PDU> pduQ = new LinkedList<PDU>();
@@ -48,7 +48,6 @@ namespace Screenary.Server
 			dispatcher.OnConnect();
 			
 			transport.StartThread();
-		
 		}
 		
 		/**

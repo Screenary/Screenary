@@ -9,6 +9,11 @@ namespace FreeRDP
 		{
 			
 		}
+		
+		public override UInt16 GetCmdType()
+		{
+			return CMDTYPE_STREAM_SURFACE_BITS;
+		}
 	}
 }
 

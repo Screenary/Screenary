@@ -20,13 +20,20 @@ namespace FreeRDP
 		
 		public override byte[] Write()
 		{
-			byte[] buffer = new byte[6];
+			byte[] buffer = new byte[2 + 6];
 			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write(CmdType);
 			
 			s.Write(frameAction);
 			s.Write(frameId);
 			
 			return buffer;
+		}
+		
+		public override UInt16 GetCmdType()
+		{
+			return CMDTYPE_FRAME_MARKER;
 		}
 		
 		public override void Execute(SurfaceReceiver receiver)

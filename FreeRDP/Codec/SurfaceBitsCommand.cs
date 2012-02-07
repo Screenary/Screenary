@@ -13,6 +13,8 @@ namespace FreeRDP
 		protected UInt16 destRight;
 		protected UInt16 destBottom;
 		protected Byte bpp;
+		protected Byte reserved1;
+		protected Byte reserved2;
 		protected Byte codecID;
 		protected UInt16 width;
 		protected UInt16 height;
@@ -21,6 +23,8 @@ namespace FreeRDP
 		
 		public SurfaceBitsCommand()
 		{
+			reserved1 = 0;
+			reserved2 = 0;
 			buffer = new byte[4096 * 4];
 		}
 		
@@ -31,8 +35,8 @@ namespace FreeRDP
 			destRight = fp.ReadUInt16(); /* destRight */
 			destBottom = fp.ReadUInt16(); /* destBottom */
 			bpp = fp.ReadByte(); /* bpp */
-			fp.ReadByte(); /* Reserved1 */
-			fp.ReadByte(); /* Reserved2 */
+			reserved1 = fp.ReadByte(); /* Reserved1 */
+			reserved2 = fp.ReadByte(); /* Reserved2 */
 			codecID = fp.ReadByte(); /* codecID */
 			width = fp.ReadUInt16(); /* width */
 			height = fp.ReadUInt16(); /* height */
@@ -61,14 +65,18 @@ namespace FreeRDP
 		
 		public override byte[] Write()
 		{
-			byte[] buffer = new byte[18 + bitmapDataLength];
+			byte[] buffer = new byte[2 + 20 + bitmapDataLength];
 			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write(GetCmdType());
 			
 			s.Write(destLeft);
 			s.Write(destTop);
 			s.Write(destRight);
 			s.Write(destBottom);
 			s.Write(bpp);
+			s.Write(reserved1);
+			s.Write(reserved2);
 			s.Write(codecID);
 			s.Write(width);
 			s.Write(height);
@@ -76,6 +84,11 @@ namespace FreeRDP
 			s.Write(bitmapData);
 			
 			return buffer;
+		}
+		
+		public override UInt16 GetCmdType()
+		{
+			return CMDTYPE_STREAM_SURFACE_BITS;
 		}
 		
 		public override void Execute(SurfaceReceiver receiver)

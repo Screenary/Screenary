@@ -164,7 +164,7 @@ namespace Screenary.Server
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
 			Console.WriteLine("ScreenSessions.OnSessionTerminationRequested");
-			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, sessionKey);
+			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, new string(sessionKey));
 			
 			if (isSessionAlive(sessionKey))
 			{

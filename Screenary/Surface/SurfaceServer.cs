@@ -35,11 +35,9 @@ namespace Screenary
 		 */		
 		public void SendSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
 		{
-			Console.WriteLine("SurfaceServer.SendSurfaceCommand");
-
 			byte[] buffer = null;
 			int length = surfaceCommand.Length;
-
+			
 			BinaryWriter s = InitMsgPDU(ref buffer, length, sessionId);
 			
 			s.Write(surfaceCommand);
@@ -52,12 +50,10 @@ namespace Screenary
 		 * 
 		 * @param s
 		 */
-		private void RecvSurfaceCommand(BinaryReader s)
-		{
-			Console.WriteLine("SurfaceServer.RecvSurfaceCommand");
-			
+		private void RecvSurfaceCommand(BinaryReader s, int length)
+		{			
 			UInt32 sessionId = s.ReadUInt32();
-			byte[] surfaceCommand = s.ReadBytes((int) s.BaseStream.Length);
+			byte[] surfaceCommand = s.ReadBytes(length - 4);
 			
 			listener.OnSurfaceCommand(sessionId, surfaceCommand);
 		}
@@ -84,6 +80,7 @@ namespace Screenary
 		
 		private void ProcessPDU(byte[] buffer, byte pduType)
 		{
+			int length = buffer.Length;
 			MemoryStream stream = new MemoryStream(buffer);
 			BinaryReader s = new BinaryReader(stream);
 			
@@ -92,7 +89,7 @@ namespace Screenary
 			switch (pduType)
 			{
 				case PDU_SURFACE_COMMAND:
-					RecvSurfaceCommand(s);
+					RecvSurfaceCommand(s, length);
 					return;
 				
 				default:

@@ -5,9 +5,11 @@ namespace FreeRDP
 {	
 	public abstract class SurfaceCommand
 	{
-		private const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
-		private const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
-		private const UInt16 CMDTYPE_FRAME_MARKER = 4;
+		public UInt16 CmdType = 0;
+		
+		protected const UInt16 CMDTYPE_SET_SURFACE_BITS = 1;
+		protected const UInt16 CMDTYPE_STREAM_SURFACE_BITS = 6;
+		protected const UInt16 CMDTYPE_FRAME_MARKER = 4;
 		
 		protected const byte CODEC_ID_NONE = 0x00;
 		protected const byte CODEC_ID_NSCODEC = 0x01;
@@ -20,6 +22,8 @@ namespace FreeRDP
 		public virtual void Read(BinaryReader fp) {}
 		public abstract byte[] Write();
 		public virtual void Execute(SurfaceReceiver receiver) {}
+		
+		public abstract UInt16 GetCmdType();
 		
 		public static SurfaceCommand Parse(BinaryReader fp)
 		{

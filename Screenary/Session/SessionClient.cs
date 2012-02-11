@@ -129,6 +129,20 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_TERM_REQ);
 			Console.WriteLine("SessionClient.SendTermReq done");
 		}
+		
+		public void SendScreenControlReq(string username)
+		{
+			Console.WriteLine("SessionClient.SendScreenControlReq");
+			
+			byte[] buffer = null;
+			int length = username.Length + 2;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
+			
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+				
+			Send(buffer, PDU_SESSION_SCREEN_CONTROL_REQ);			
+		}
 				
 		/**
 	 	* Processes a join response

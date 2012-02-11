@@ -9,6 +9,7 @@ namespace Screenary.Server
 		void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus);
 		void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey);
 		void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus);
+		void OnSessionScreenControlRequested(Client client, string username);
 		void OnSessionOperationFail(string errorMessage);
 		void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand);
 	}

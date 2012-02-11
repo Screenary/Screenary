@@ -110,6 +110,12 @@
         <property name="ShortLabel" translatable="yes">Leave Session</property>
         <signal name="Activated" handler="OnLeaveSessionActionActivated" />
       </action>
+      <action id="RequestScreenControlAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Request Screen Control</property>
+        <property name="ShortLabel" translatable="yes">Request Screen Control</property>
+        <signal name="Activated" handler="OnRequestScreenControlActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -144,6 +150,7 @@
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
+                    <node type="Menuitem" action="RequestScreenControlAction" />
                   </node>
                   <node type="Menu" action="HelpAction">
                     <node type="Menuitem" action="aboutAction" />

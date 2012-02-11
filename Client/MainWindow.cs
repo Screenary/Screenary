@@ -308,6 +308,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		receiver = new SurfaceReceiver(window, surface);
 	}
 	
+	//TA's code
+	protected void OnRequestScreenControlActivated (object sender, System.EventArgs e)
+	{
+		sessionClient.SendScreenControlReq(this.username);
+	}
+	
 	public void OnSurfaceCommand(BinaryReader s)
 	{
 		Gtk.Application.Invoke(delegate {
@@ -664,6 +670,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = false;
+			mainWindow.RequestScreenControlAction.Visible = false;
 		}
 	}	
 	
@@ -686,6 +693,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
+			mainWindow.RequestScreenControlAction.Visible = false;
 			
 			mainWindow.DisplayCreator();
 		}
@@ -710,6 +718,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
+			mainWindow.RequestScreenControlAction.Visible = false;
 		}
 	}
 	
@@ -732,6 +741,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
+			mainWindow.RequestScreenControlAction.Visible = true;
 		}
 	}
+
 }

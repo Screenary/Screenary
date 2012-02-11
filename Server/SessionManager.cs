@@ -61,7 +61,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionJoinRequested(Client client, char[] sessionKey, ref UInt32 sessionId, ref UInt32 sessionStatus, ref byte sessionFlags)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionJoinRequested");
+			Console.WriteLine("SessionManager.OnSessionJoinRequested");
 			
 			if (isSessionAlive(sessionKey))
 			{
@@ -90,7 +90,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, string username)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionLeaveRequested");
+			Console.WriteLine("SessionManager.OnSessionLeaveRequested");
 			
 			if (isSessionAlive(sessionKey))
 			{
@@ -119,7 +119,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionAuthenticationRequested");
+			Console.WriteLine("SessionManager.OnSessionAuthenticationRequested");
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 			
 			if (isSessionAlive(sessionKey))
@@ -144,7 +144,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionCreateRequested");
+			Console.WriteLine("SessionManager.OnSessionCreateRequested");
 			
 			sessionId = GenerateUniqueSessionId();
 			sessionKey = GenerateUniqueSessionKey();
@@ -163,7 +163,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionTerminationRequested");
+			Console.WriteLine("SessionManager.OnSessionTerminationRequested");
 			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, new string(sessionKey));
 			
 			if (isSessionAlive(sessionKey))
@@ -183,13 +183,21 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}	
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnSessionScreenControlRequested(Client client, string username)
+		{
+			Console.WriteLine("SessionManager.OnSessionScreenControlRequested");
+			Console.WriteLine("Username: {0}", username);
+			//sessionServer.SendScreenControlRsp(...);			
+		}
+
 		/**
 	 	* Processes a modification in the participant list
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		private void OnSessionParticipantListUpdated(char[] sessionKey)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionParticipantsListUpdated");
+			Console.WriteLine("SessionManager.OnSessionParticipantsListUpdated");
 			
 			if (isSessionAlive(sessionKey))
 			{
@@ -206,7 +214,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionOperationFail(string errorMessage)
 		{
-			Console.WriteLine("ScreenSessions.OnSessionOperationFail");
+			Console.WriteLine("SessionManager.OnSessionOperationFail");
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]

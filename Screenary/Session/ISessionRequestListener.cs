@@ -9,6 +9,7 @@ namespace Screenary
 		void OnSessionAuthenticationRequested(UInt32 sessionId, string username, string password);
 		void OnSessionCreateRequested(string username, string password);
 		void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus);
+		void OnSessionScreenControlRequested(string username);
 		void OnSessionOperationFail(string errorMessage);
 	}
 }

@@ -280,6 +280,23 @@ namespace Screenary
 			
 			listener.OnSessionTerminationRequested(sessionId, sessionKey, sessionStatus);
 		}
+		
+		private void RecvScreenControlReq(BinaryReader s)
+		{
+			Console.WriteLine("SessionServer.RecvScreenControlReq");
+
+			UInt32 sessionId;
+			string username = "";
+			UInt16 usernameLength;
+			
+			sessionId = s.ReadUInt32();
+			usernameLength = s.ReadUInt16();
+			
+			if (usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
+						
+			listener.OnSessionScreenControlRequested(username);
+		}
 				
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
@@ -332,7 +349,12 @@ namespace Screenary
 				case PDU_SESSION_AUTH_REQ:
 					RecvAuthReq(s);
 					return;
-				
+								
+				case PDU_SESSION_SCREEN_CONTROL_REQ:
+					RecvScreenControlReq(s);
+					return;
+
+
 				default:
 					return;
 			}

@@ -37,6 +37,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal Config config;
 	internal SessionClient sessionClient;
 	internal SurfaceClient surfaceClient;
+	internal InputClient inputClient;
 	internal int width, height;
 	internal Gdk.Window window;
 	internal Gdk.Pixbuf surface;
@@ -129,10 +130,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
 	{
-		/*Gdk.EventMotion e = args.Event;
+		Gdk.EventMotion e = args.Event;
 		
-		Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
+		/*Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
 			e.X, e.Y, e.XRoot, e.YRoot);*/
+		
+		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
+		//TODO check if the sessionId is not 0		
+		
+		if(transport.isConnected())
+			inputClient.sendMouseMotion(e.X, e.Y); 
+		
 	}
 	
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
@@ -367,6 +375,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		surfaceClient = new SurfaceClient(this, this.transport);
 		dispatcher.RegisterChannel(surfaceClient);
 		
+		inputClient = new InputClient(this, this.transport);
+		dispatcher.RegisterChannel(inputClient);
+		
 		try
 		{
 			this.transport.Connect(address, port);
@@ -462,6 +473,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		currentState = clientStates[RECEIVER_JOINED_STATE];
 		currentState.refresh();
+		
+		//update the input channel with the sessionId
+		inputClient.setSessionId(sessionClient.GetSessionId());
 		
 		DisplayStatusText("You have successfully joined the session! SessionKey: " + sessionKeyString);
 	}

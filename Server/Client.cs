@@ -13,6 +13,7 @@ namespace Screenary.Server
 	{
 		private SessionServer sessionServer;
 		private SurfaceServer surfaceServer;
+		private InputServer inputServer;
 		private ChannelDispatcher dispatcher;
 		private IClientListener clientListener;
 		
@@ -32,6 +33,9 @@ namespace Screenary.Server
 			
 			sessionServer = new SessionServer(transport, this);
 			dispatcher.RegisterChannel(sessionServer);
+			
+			inputServer = new InputServer(transport, this);
+			dispatcher.RegisterChannel(inputServer);
 			
 			transport.StartThread();
 			

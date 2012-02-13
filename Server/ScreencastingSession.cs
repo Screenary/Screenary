@@ -16,6 +16,7 @@ namespace Screenary.Server
 		/* Lists of TCP Clients */
 		public ConcurrentDictionary<Client, UInt32> joinedClients { get; set; }
 		public ConcurrentDictionary<Client, User> authenticatedClients { get; set; }
+		public ConcurrentDictionary<Client, string> screenControlRequestClients { get; set; }
 		
 		public struct User
 		{
@@ -31,6 +32,7 @@ namespace Screenary.Server
 			this.sessionPassword = sessionPassword;
 			this.joinedClients = new ConcurrentDictionary<Client, UInt32>();
 			this.authenticatedClients = new ConcurrentDictionary<Client, User>();
+			this.screenControlRequestClients = new ConcurrentDictionary<Client, string>();
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -106,6 +108,17 @@ namespace Screenary.Server
 			return isAuthenticated;
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void AddScreenControlRequest(Client client, string username)
+		{
+			Console.WriteLine("ScreencastingSession.AddScreenControlRequest");
+			if(authenticatedClients.ContainsKey(client)) 
+			{
+				screenControlRequestClients.TryAdd(client, username);				
+				//UpdateNotifications(client, "...", username);
+			}
+		}
+
 		public ArrayList GetParticipantUsernames()
 		{
 			ArrayList participantUsernames = new ArrayList();

@@ -83,9 +83,9 @@ namespace Screenary.Server
 			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
-		public void OnSessionScreenControlRequested(string username)
+		public void OnSessionScreenControlRequested(char[] sessionKey, string username)
 		{
-			clientListener.OnSessionScreenControlRequested(this, username);
+			clientListener.OnSessionScreenControlRequested(this, sessionKey, username);
 			//sessionServer.SendScreenControlRsp(...); //TA TODO		
 		}
 		

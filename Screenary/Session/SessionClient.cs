@@ -130,14 +130,15 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendTermReq done");
 		}
 		
-		public void SendScreenControlReq(string username)
+		public void SendScreenControlReq(char[] sessionKey, string username)
 		{
 			Console.WriteLine("SessionClient.SendScreenControlReq");
 			
 			byte[] buffer = null;
-			int length = username.Length + 2;
+			int length = sessionKey.Length + username.Length + 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
 			
+			s.Write(sessionKey);
 			s.Write((UInt16) username.Length);
 			s.Write(username.ToCharArray());
 				

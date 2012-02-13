@@ -319,7 +319,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	//TA's code
 	protected void OnRequestScreenControlActivated (object sender, System.EventArgs e)
 	{
-		sessionClient.SendScreenControlReq(this.username);
+		sessionClient.SendScreenControlReq(this.sessionKey.ToCharArray(), this.username);
 	}
 	
 	public void OnSurfaceCommand(BinaryReader s)

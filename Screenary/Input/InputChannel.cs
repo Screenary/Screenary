@@ -36,8 +36,6 @@ namespace Screenary
 		{
 			transport.SendPDU(buffer, PDU_CHANNEL_INPUT, pduType);
 		}
-		
-		
 	}
 }
 

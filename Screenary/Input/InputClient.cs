@@ -12,17 +12,11 @@ namespace Screenary
 		private readonly object channelLock = new object();
 		static private bool stopthread = false;
 		
-		//mouse motion
-		public const UInt16 PTR_FLAGS_MOVE = 0x0800;
-		//button press
-		public const UInt16 PTR_FLAGS_DOWN = 0x8000;
-		//button 1 (left)
-		public const UInt16 PTR_FLAGS_BTN1 = 0x1000;
-		//button 2 (right)
-		public const UInt16 PTR_FLAGS_BTN2 = 0x2000;
-		//button 3 (middle)
-		public const UInt16 PTR_FLAGS_BTN3 = 0x4000;	         
-
+		public const UInt16 PTR_FLAGS_MOVE = 0x0800; /* mouse motion */
+		public const UInt16 PTR_FLAGS_DOWN = 0x8000; /* button press */
+		public const UInt16 PTR_FLAGS_BTN1 = 0x1000; /* button 1 (left) */
+		public const UInt16 PTR_FLAGS_BTN2 = 0x2000; /* button 2 (right) */
+		public const UInt16 PTR_FLAGS_BTN3 = 0x4000; /* button 3 (middle) */
 		
 		public InputClient (ISessionResponseListener listener, TransportClient transport)
 		{
@@ -40,7 +34,7 @@ namespace Screenary
 			Console.WriteLine("InputClient.sendMouseMotion");
 						
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(double) *2;
+			int length = sizeof(UInt32) + sizeof(double) * 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
 			
 			s.Write((UInt16) PTR_FLAGS_MOVE);
@@ -61,15 +55,12 @@ namespace Screenary
 			x = s.ReadDouble();			
 			y = s.ReadDouble();
 			
-			if(pointerFlag == PTR_FLAGS_MOVE)
+			if (pointerFlag == PTR_FLAGS_MOVE)
 			{
 				Console.WriteLine("Received mouse motion: "+x+", "+y);
 				//listener.OnMouseMotionReceived(x,y);		
-			}			
-			
+			}	
 		}
-		
-		
 		
 		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
 		{
@@ -97,7 +88,6 @@ namespace Screenary
 			thread.Start();
 		}
 		
-		
 		public override void OnClose()
 		{
 			lock (channelLock)
@@ -107,7 +97,6 @@ namespace Screenary
 				Monitor.PulseAll(channelLock);
 			}
 		}
-		
 		
 		/**
 	 	* Processes a received PDU and calls the appropriate handler
@@ -156,8 +145,6 @@ namespace Screenary
 			
 			Console.WriteLine("InputClient.ChannelThreadProc end");
 		}
-		
-		
 	}
 }
 

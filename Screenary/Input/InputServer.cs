@@ -15,8 +15,7 @@ namespace Screenary
 			this.transport = transport;
 			this.listener = listener;
 		}
-
-					
+	
 		private void RecvMouseEvent(BinaryReader s)
 		{
 			Console.WriteLine("InputServer.RecvMouseEvent");
@@ -31,8 +30,7 @@ namespace Screenary
 			y = s.ReadDouble();
 		
 			Console.WriteLine("Received mouse event "+pointerFlag+": "+x+", "+y+" - for sessionid: "+sessionId);
-			
-					
+				
 			//listener.OnSessionJoinRequested(sessionKey);
 		}
 		

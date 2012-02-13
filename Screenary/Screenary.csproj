@@ -61,9 +61,9 @@
     <Compile Include="Session\ISessionResponseListener.cs" />
     <Compile Include="Session\ISessionRequestListener.cs" />
     <Compile Include="Surface\ISurfaceServer.cs" />
-    <Compile Include="Session\InputChannel.cs" />
-    <Compile Include="Session\InputClient.cs" />
-    <Compile Include="Session\InputServer.cs" />
+    <Compile Include="Input\InputChannel.cs" />
+    <Compile Include="Input\InputClient.cs" />
+    <Compile Include="Input\InputServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -72,5 +72,6 @@
     <Folder Include="Util\" />
     <Folder Include="NUnit\" />
     <Folder Include="Transport\" />
+    <Folder Include="Input\" />
   </ItemGroup>
 </Project>

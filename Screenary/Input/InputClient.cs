@@ -31,7 +31,7 @@ namespace Screenary
 		
 		public void sendMouseMotion(double x, double y)
 		{
-			Console.WriteLine("InputClient.sendMouseMotion");
+			//Console.WriteLine("InputClient.sendMouseMotion");
 						
 			byte[] buffer = null;
 			int length = sizeof(UInt32) + sizeof(double) * 2;

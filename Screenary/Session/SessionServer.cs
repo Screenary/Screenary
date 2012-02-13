@@ -286,16 +286,18 @@ namespace Screenary
 			Console.WriteLine("SessionServer.RecvScreenControlReq");
 
 			UInt32 sessionId;
+			char[] sessionKey;
 			string username = "";
 			UInt16 usernameLength;
 			
 			sessionId = s.ReadUInt32();
+			sessionKey = s.ReadChars(12);
 			usernameLength = s.ReadUInt16();
 			
 			if (usernameLength > 0)
 				username = new string(s.ReadChars(usernameLength));
 						
-			listener.OnSessionScreenControlRequested(username);
+			listener.OnSessionScreenControlRequested(sessionKey, username);
 		}
 				
 		public override void OnRecv(byte[] buffer, byte pduType)

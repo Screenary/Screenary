@@ -27,11 +27,27 @@ namespace FreeRDP
 		[DllImport("libfreerdp-core")]
 		public static extern void freerdp_free(freerdp* instance);
 		
+		[DllImport("libfreerdp-core")]
+		public static extern void freerdp_input_send_synchronize_event(rdpInput* input, UInt32 flags);
+		
+		[DllImport("libfreerdp-core")]
+		public static extern void freerdp_input_send_keyboard_event(rdpInput* input, UInt16 flags, UInt16 code);
+		
+		[DllImport("libfreerdp-core")]
+		public static extern void freerdp_input_send_unicode_keyboard_event(rdpInput* input, UInt16 flags, UInt16 code);
+		
+		[DllImport("libfreerdp-core")]
+		public static extern void freerdp_input_send_mouse_event(rdpInput* input, UInt16 flags, UInt16 x, UInt16 y);
+		
+		[DllImport("libfreerdp-core")]
+		public static extern void freerdp_input_send_extended_mouse_event(rdpInput* input, UInt16 flags, UInt16 x, UInt16 y);
+		
 		public int Port { get { return (int) settings->port; } set { settings->port = (UInt32) value; } }
 		public int Width { get { return (int) settings->width; } set { settings->width = (UInt32) value; } }
 		public int Height { get { return (int) settings->height; } set { settings->height = (UInt32) value; } }
 		
 		private freerdp* handle;
+		private rdpInput* input;
 		private rdpContext* context;
 		private rdpSettings* settings;
 		
@@ -105,6 +121,7 @@ namespace FreeRDP
 			instance->PostConnect = Marshal.GetFunctionPointerForDelegate(hPostConnect);
 			
 			this.context = context;
+			input = instance->input;
 			settings = instance->settings;
 		}
 		
@@ -177,6 +194,31 @@ namespace FreeRDP
 		public bool CheckFileDescriptor()
 		{
 			return ((freerdp_check_fds(handle) == 0) ? false : true);
+		}
+		
+		public void SendInputSynchronizeEvent(UInt32 flags)
+		{
+			freerdp_input_send_synchronize_event(input, flags);
+		}
+		
+		public void SendInputKeyboardEvent(UInt16 flags, UInt16 code)
+		{
+			freerdp_input_send_keyboard_event(input, flags, code);
+		}
+		
+		public void SendInputUnicodeKeyboardEvent(UInt16 flags, UInt16 code)
+		{
+			freerdp_input_send_unicode_keyboard_event(input, flags, code);
+		}
+		
+		public void SendInputMouseEvent(UInt16 flags, UInt16 x, UInt16 y)
+		{
+			freerdp_input_send_mouse_event(input, flags, x, y);
+		}
+		
+		public void SendInputExtendedMouseEvent(UInt16 flags, UInt16 x, UInt16 y)
+		{
+			freerdp_input_send_extended_mouse_event(input, flags, x, y);
 		}
 	}
 }

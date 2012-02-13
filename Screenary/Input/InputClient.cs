@@ -32,7 +32,7 @@ namespace Screenary
 		public void sendMouseMotion(double x, double y)
 		{
 			Console.WriteLine("InputClient.sendMouseMotion");
-						
+
 			byte[] buffer = null;
 			int length = sizeof(UInt32) + sizeof(double) * 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);

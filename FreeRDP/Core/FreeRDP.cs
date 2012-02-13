@@ -15,7 +15,7 @@ namespace FreeRDP
 		public rdpContext* context;
 		public fixed UInt32 paddingA[16-1];
 		
-		public IntPtr input;
+		public rdpInput* input;
 		public rdpUpdate* update;
 		public rdpSettings* settings;
 		public fixed UInt32 paddingB[32-19];

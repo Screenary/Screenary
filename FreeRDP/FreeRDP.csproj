@@ -75,6 +75,7 @@
     <Compile Include="Core\Graphics\Pointer.cs" />
     <Compile Include="Core\Graphics\Glyph.cs" />
     <Compile Include="Core\Graphics\Graphics.cs" />
+    <Compile Include="Input.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

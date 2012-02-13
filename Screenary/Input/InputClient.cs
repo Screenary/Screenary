@@ -18,7 +18,7 @@ namespace Screenary
 		public const UInt16 PTR_FLAGS_BTN2 = 0x2000; /* button 2 (right) */
 		public const UInt16 PTR_FLAGS_BTN3 = 0x4000; /* button 3 (middle) */
 		
-		public InputClient (ISessionResponseListener listener, TransportClient transport)
+		public InputClient(ISessionResponseListener listener, TransportClient transport)
 		{
 			this.transport = transport;
 			this.listener = listener;				
@@ -57,8 +57,8 @@ namespace Screenary
 			
 			if (pointerFlag == PTR_FLAGS_MOVE)
 			{
-				Console.WriteLine("Received mouse motion: "+x+", "+y);
-				//listener.OnMouseMotionReceived(x,y);		
+				Console.WriteLine("Received mouse motion: {0}, {1}", x, y);
+				//listener.OnMouseMotionReceived(x,y);
 			}	
 		}
 		

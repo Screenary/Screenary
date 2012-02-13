@@ -10,7 +10,7 @@ namespace Screenary
 		private ISessionRequestListener listener;
 		private readonly object channelLock = new object();
 		
-		public InputServer (TransportClient transport, ISessionRequestListener listener)
+		public InputServer(TransportClient transport, ISessionRequestListener listener)
 		{
 			this.transport = transport;
 			this.listener = listener;
@@ -29,14 +29,13 @@ namespace Screenary
 			x = s.ReadDouble();			
 			y = s.ReadDouble();
 		
-			Console.WriteLine("Received mouse event "+pointerFlag+": "+x+", "+y+" - for sessionid: "+sessionId);
-				
-			//listener.OnSessionJoinRequested(sessionKey);
+			Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
+				pointerFlag, x, y, sessionId);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
-			Console.WriteLine("SessionServer.OnRecv");
+			Console.WriteLine("InputServer.OnRecv");
 			
 			lock (channelLock)
 			{

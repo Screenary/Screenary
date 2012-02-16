@@ -12,5 +12,6 @@ namespace Screenary.Server
 		void OnSessionScreenControlRequested(Client client, char[] sessionKey, string username);
 		void OnSessionOperationFail(string errorMessage);
 		void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand);
+		void OnRecvMouseEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlag, double x, double y);			
 	}
 }

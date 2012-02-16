@@ -31,6 +31,24 @@ namespace Screenary
 		
 			Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
 				pointerFlag, x, y, sessionId);
+			
+			if(sessionId != 0)
+				listener.OnRecvMouseEvent(sessionId, pointerFlag, x, y);
+		}
+		
+		public void SendMouseEventToSender(UInt16 pointerFlag, double x, double y, UInt32 sessionId)
+		{
+			Console.WriteLine("InputServer.SendMouseEventToSender "+sessionId);
+			
+			byte[] buffer = null;
+			int length = sizeof(UInt32) + sizeof(double) * 2;
+			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);
+			
+			s.Write((UInt16) pointerFlag);
+			s.Write((double) x);
+			s.Write((double) y);
+									
+			Send(buffer, PDU_INPUT_MOUSE);						
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
@@ -73,7 +91,17 @@ namespace Screenary
 					return;
 			}
 		}
-		
+		private BinaryWriter InitRspPDU(ref byte[] buffer, int length, UInt32 id)
+		{
+			BinaryWriter s;
+			
+			buffer = new byte[length + 4];
+			s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write((UInt32) id);
+	
+			return s;
+		}
 		public void ChannelThreadProc()
 		{			
 			while (true)

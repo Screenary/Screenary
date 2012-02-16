@@ -138,7 +138,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
 		//TODO check if the sessionId is not 0		
 		
-		if (transport.isConnected())
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 			inputClient.sendMouseMotion(e.X, e.Y); 
 		
 	}

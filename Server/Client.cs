@@ -130,7 +130,7 @@ namespace Screenary.Server
 			surfaceServer.SendSurfaceCommand(sessionId, surfaceCommand);
 		}
 		
-		public void SendMouseEventToSender(UInt16 pointerFlag, double x, double y, UInt32 sessionId)
+		public void SendMouseEventToSender(UInt16 pointerFlag, int x, int y, UInt32 sessionId)
 		{
 			inputServer.SendMouseEventToSender(pointerFlag, x, y, sessionId);
 		}
@@ -139,8 +139,7 @@ namespace Screenary.Server
 			inputServer.SendKeyboardEventToSender(pointerFlag, keyCode, sessionId);
 		}
 		
-		
-		public void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlag, double x, double y)
+		public void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlag, int x, int y)
 		{
 			UInt32 sessionStatus = UInt32.MaxValue;
 			

@@ -191,9 +191,9 @@ namespace Screenary.Server
 			return participantUsernames;
 		}
 		
-		public void SendMouseEventToSender(UInt16 pointerFlag, double x, double y)
+		public void SendMouseEventToSender(UInt16 pointerFlags, int x, int y)
 		{
-			senderClient.SendMouseEventToSender(pointerFlag, x, y, this.senderId);
+			senderClient.SendMouseEventToSender(pointerFlags, x, y, this.senderId);
 		}
 		public void SendKeyboardEventToSender(UInt16 pointerFlag, UInt16 keyCode)
 		{

@@ -121,12 +121,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 		
 		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
-		//TODO check if the sessionId is not 0		
+		//TODO check if the sessionId is not 0
 		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-			inputClient.sendMouseClick(e.Button, e.X, e.Y);
-		
-		
+		{
+			if (inputClient.Active)
+				inputClient.sendMouseClick(e.Button, (int) e.X, (int) e.Y);
+		}
 	}
 	
 	protected void OnMainDrawingAreaButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
@@ -145,11 +146,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			e.X, e.Y, e.XRoot, e.YRoot);*/
 		
 		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
-		//TODO check if the sessionId is not 0		
+		//TODO check if the sessionId is not 0
 		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-			inputClient.sendMouseMotion(e.X, e.Y); 
-		
+		{
+			if (inputClient.Active)
+				inputClient.sendMouseMotion((int) e.X, (int) e.Y);
+		}
 	}
 	
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
@@ -162,8 +165,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
 		//TODO check if the sessionId is not 0		
 		//TODO check what to send e.Key, e.KeyValue or e.HardwareKeycode
+		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-			inputClient.sendKeyDown(e.KeyValue);
+		{
+			if (inputClient.Active)
+				inputClient.sendKeyDown(e.KeyValue);
+		}
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
@@ -389,7 +396,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		surfaceClient = new SurfaceClient(this, this.transport);
 		dispatcher.RegisterChannel(surfaceClient);
 		
-		inputClient = new InputClient(this, this.transport);
+		inputClient = new InputClient(this.transport);
 		dispatcher.RegisterChannel(inputClient);
 		
 		try
@@ -762,6 +769,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		public override void OnRecordAction()
 		{
 			mainWindow.rdpSource = new RdpSource(mainWindow);
+			
+			mainWindow.inputClient.Active = true;
+			mainWindow.inputClient.SetListener(mainWindow.rdpSource);
+			
 			mainWindow.rdpSource.Connect(mainWindow.config.RdpServerHostname,
 				mainWindow.config.RdpServerPort, mainWindow.config.RdpServerUsername,
 				mainWindow.config.RdpServerDomain, mainWindow.config.RdpServerPassword);

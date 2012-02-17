@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Screenary.Client
 {
-	public unsafe class RdpSource : IUpdate, IPrimaryUpdate
+	public unsafe class RdpSource : IUpdate, IPrimaryUpdate, IInputListener
 	{
 		private RDP rdp;
 		private int port;
@@ -54,6 +54,12 @@ namespace Screenary.Client
 
 			/* Prepare for next call */
 			thread = new Thread(() => ThreadProc(rdp));
+		}
+		
+		public void OnMouseEvent(UInt16 pointerFlags, UInt16 x, UInt16 y)
+		{
+			Console.WriteLine("RdpSource.OnMouseEvent");
+			rdp.SendInputMouseEvent(pointerFlags, x, y);
 		}
 		
 		public void BeginPaint(rdpContext* context) { }

@@ -13,8 +13,7 @@ namespace Screenary
 		//TA TODO rename
 		void OnSessionScreenControlPermissionRequested(char[] sessionKey, string username, Boolean permission);
 		void OnSessionOperationFail(string errorMessage);
-		void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlag, double x, double y);
-		void OnRecvKeyboardEvent(UInt32 sessionId, UInt16 pointerFlag, UInt16 keyCode);
+		void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlags, int x, int y);
+		void OnRecvKeyboardEvent(UInt32 sessionId, UInt16 pointerFlags, UInt16 keyCode);
 	}
 }
-

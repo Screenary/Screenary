@@ -64,6 +64,7 @@
     <Compile Include="Input\InputChannel.cs" />
     <Compile Include="Input\InputClient.cs" />
     <Compile Include="Input\InputServer.cs" />
+    <Compile Include="Input\IInputListener.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

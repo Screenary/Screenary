@@ -21,46 +21,46 @@ namespace Screenary
 			//Console.WriteLine("InputServer.RecvMouseEvent");
 			
 			UInt32 sessionId;
-			UInt16 pointerFlag;
-			double x, y;
+			UInt16 pointerFlags;
+			UInt16 x, y;
 			
 			sessionId = s.ReadUInt32();
-			pointerFlag = s.ReadUInt16();
-			x = s.ReadDouble();			
-			y = s.ReadDouble();
+			pointerFlags = s.ReadUInt16();
+			x = s.ReadUInt16();		
+			y = s.ReadUInt16();
 		
 			Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
-				pointerFlag, x, y, sessionId);
+				pointerFlags, x, y, sessionId);
 			
-			if(sessionId != 0)
-				listener.OnRecvMouseEvent(sessionId, pointerFlag, x, y);
+			if (sessionId != 0)
+				listener.OnRecvMouseEvent(sessionId, pointerFlags, x, y);
 		}
 		
-		public void SendMouseEventToSender(UInt16 pointerFlag, double x, double y, UInt32 sessionId)
+		public void SendMouseEventToSender(UInt16 pointerFlags, int x, int y, UInt32 sessionId)
 		{
-			Console.WriteLine("InputServer.SendMouseEventToSender "+sessionId);
+			Console.WriteLine("InputServer.SendMouseEventToSender " + sessionId);
 			
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(double) * 2;
+			int length = sizeof(UInt32) + sizeof(UInt16) * 2;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);
 			
-			s.Write((UInt16) pointerFlag);
-			s.Write((double) x);
-			s.Write((double) y);
+			s.Write((UInt16) pointerFlags);
+			s.Write((UInt16) x);
+			s.Write((UInt16) y);
 									
 			Send(buffer, PDU_INPUT_MOUSE);						
 		}
 		
-		public void SendKeyboardEventToSender(UInt16 pointerFlag, UInt16 keyCode, UInt32 sessionId)
+		public void SendKeyboardEventToSender(UInt16 keyboardFlags, UInt16 keyCode, UInt32 sessionId)
 		{
-			Console.WriteLine("InputServer.SendKeyboardEventToSender "+sessionId);
+			Console.WriteLine("InputServer.SendKeyboardEventToSender " + sessionId);
 			
 			byte[] buffer = null;
 			int length = sizeof(UInt32) + sizeof(UInt16);
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);
 			
-			s.Write((UInt16) pointerFlag);
-			s.Write((UInt16) keyCode);			
+			s.Write((UInt16) keyboardFlags);
+			s.Write((UInt16) keyCode);	
 									
 			Send(buffer, PDU_INPUT_KEYBOARD);						
 		}
@@ -70,21 +70,19 @@ namespace Screenary
 			//Console.WriteLine("InputServer.RecvKeyboardEvent");
 			
 			UInt32 sessionId;
-			UInt16 pointerFlag;
+			UInt16 keyboardFlags;
 			UInt16 keyCode;
 			
 			sessionId = s.ReadUInt32();
-			pointerFlag = s.ReadUInt16();
+			keyboardFlags = s.ReadUInt16();
 			keyCode = s.ReadUInt16();
 		
 			Console.WriteLine("Received keyboard event {0} - keyCode {1}",
-				pointerFlag, keyCode);
+				keyboardFlags, keyCode);
 			
-			if(sessionId != 0)
-				listener.OnRecvKeyboardEvent(sessionId, pointerFlag, keyCode);
+			if (sessionId != 0)
+				listener.OnRecvKeyboardEvent(sessionId, keyboardFlags, keyCode);
 		}
-		
-		
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
@@ -120,10 +118,12 @@ namespace Screenary
 			{
 				case PDU_INPUT_MOUSE:
 					RecvMouseEvent(s);
-					return;						
+					return;		
+				
 				case PDU_INPUT_KEYBOARD:
 					RecvKeyboardEvent(s);
-					return;						
+					return;
+				
 				default:
 					return;
 			}
@@ -155,4 +155,3 @@ namespace Screenary
 		
 	}
 }
-

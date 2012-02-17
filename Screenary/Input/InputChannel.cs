@@ -17,7 +17,7 @@ namespace Screenary
 		public const byte PDU_INPUT_KEYBOARD = 0x01;
 		public const byte PDU_INPUT_MOUSE = 0x02;		
 		
-		public InputChannel ()
+		public InputChannel()
 		{
 			queue = new Queue();
 		}

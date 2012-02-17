@@ -41,7 +41,7 @@ namespace Screenary
 			Console.WriteLine("InputServer.SendMouseEventToSender " + sessionId);
 			
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(UInt16) * 2;
+			int length = sizeof(UInt16) * 3;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);
 			
 			s.Write((UInt16) pointerFlags);
@@ -56,7 +56,7 @@ namespace Screenary
 			Console.WriteLine("InputServer.SendKeyboardEventToSender " + sessionId);
 			
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(UInt16);
+			int length = sizeof(UInt16) * 2;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);
 			
 			s.Write((UInt16) keyboardFlags);
@@ -85,9 +85,7 @@ namespace Screenary
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
-		{
-			Console.WriteLine("InputServer.OnRecv");
-			
+		{			
 			lock (channelLock)
 			{
 				queue.Enqueue(new PDU(buffer, GetChannelId(), pduType));

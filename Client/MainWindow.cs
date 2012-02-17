@@ -120,13 +120,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		/*Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
-		//TODO check if the sessionId is not 0
-		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
-				inputClient.sendMouseClick(e.Button, (int) e.X, (int) e.Y);
+				inputClient.SendMouseEvent(e.Button, true, (int) e.X, (int) e.Y);
 		}
 	}
 	
@@ -136,6 +133,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/*Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
+		
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+		{
+			if (inputClient.Active)
+				inputClient.SendMouseEvent(e.Button, false, (int) e.X, (int) e.Y);
+		}
 	}
 	
 	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
@@ -145,13 +148,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		/*Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
 			e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
-		//TODO check if the sessionId is not 0
-		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
-				inputClient.sendMouseMotion((int) e.X, (int) e.Y);
+				inputClient.SendMouseMotionEvent((int) e.X, (int) e.Y);
 		}
 	}
 	
@@ -496,7 +496,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState.refresh();
 		
 		//update the input channel with the sessionId
-		inputClient.setSessionId(sessionClient.GetSessionId());
+		inputClient.SetSessionId(sessionClient.GetSessionId());
 		
 		DisplayStatusText("You have successfully joined the session! SessionKey: " + sessionKeyString);
 	}
@@ -772,6 +772,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			
 			mainWindow.inputClient.Active = true;
 			mainWindow.inputClient.SetListener(mainWindow.rdpSource);
+			mainWindow.inputClient.SetSessionId(mainWindow.sessionClient.GetSessionId());
 			
 			mainWindow.rdpSource.Connect(mainWindow.config.RdpServerHostname,
 				mainWindow.config.RdpServerPort, mainWindow.config.RdpServerUsername,

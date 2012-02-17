@@ -37,40 +37,49 @@ namespace Screenary
 			this.listener = listener;
 		}
 		
-		public void setSessionId(UInt32 sessionId)
+		public void SetSessionId(UInt32 sessionId)
 		{
 			this.sessionId = sessionId;	
 		}
 		
-		public void sendMouseClick(uint button, int x, int y)
+		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
 		{
-			//Console.WriteLine("InputClient.sendMouseMotion");
-
+			BinaryWriter s;
+			
+			buffer = new byte[length + 4];
+			s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write((UInt32) sessionId);
+			return s;
+		}
+		
+		public void SendMouseEvent(uint button, bool down, int x, int y)
+		{
+			UInt16 pointerFlags;
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(UInt16) * 2;
+			int length = sizeof(UInt16) * 3;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
 			
-			if (button == 1)
-				s.Write((UInt16) PTR_FLAGS_BTN1);
-			else if (button == 2)
-				s.Write((UInt16) PTR_FLAGS_BTN2);
-			else if (button == 3)
-				s.Write((UInt16) PTR_FLAGS_BTN3);
-			else
-				s.Write((UInt16) PTR_FLAGS_DOWN);
+			pointerFlags = (down) ? PTR_FLAGS_DOWN : (UInt16) 0;
 			
+			if (button == 1)
+				pointerFlags |= PTR_FLAGS_BTN1;
+			else if (button == 2)
+				pointerFlags |= PTR_FLAGS_BTN3;
+			else if (button == 3)
+				pointerFlags |= PTR_FLAGS_BTN2;
+			
+			s.Write((UInt16) pointerFlags);
 			s.Write((UInt16) x);
 			s.Write((UInt16) y);
-									
+
 			Send(buffer, PDU_INPUT_MOUSE);
 		}
 		
-		public void sendMouseMotion(int x, int y)
+		public void SendMouseMotionEvent(int x, int y)
 		{
-			//Console.WriteLine("InputClient.sendMouseMotion");
-
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(UInt16) * 2;
+			int length = sizeof(UInt16) * 3;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
 		
 			s.Write((UInt16) PTR_FLAGS_MOVE);
@@ -93,15 +102,6 @@ namespace Screenary
 			
 			if (listener != null)
 				listener.OnMouseEvent(pointerFlags, x, y);
-			
-			if (pointerFlags == PTR_FLAGS_MOVE)
-			{
-				Console.WriteLine("Received mouse motion: {0}, {1}", x, y);
-			}	
-			else
-			{
-				Console.WriteLine("Received mouse click from button {0}: {1}, {2}", pointerFlags, x, y);
-			}
 		}		
 		
 		public void sendKeyDown(uint keyCode)
@@ -132,17 +132,6 @@ namespace Screenary
 				Console.WriteLine("Received keyboard down event keyCode: {0}", keyCode);
 				//listener.OnKeyBoardPressedReceived(x,y);
 			}
-		}
-		
-		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
-		{
-			BinaryWriter s;
-			
-			buffer = new byte[length + 4];
-			s = new BinaryWriter(new MemoryStream(buffer));
-			
-			s.Write((UInt32) sessionId);
-			return s;
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)

@@ -28,26 +28,26 @@ namespace FreeRDP
 		public static extern void freerdp_free(freerdp* instance);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_input_send_synchronize_event(rdpInput* input, UInt32 flags);
+		public static extern void freerdp_input_send_synchronize_event(IntPtr input, UInt32 flags);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_input_send_keyboard_event(rdpInput* input, UInt16 flags, UInt16 code);
+		public static extern void freerdp_input_send_keyboard_event(IntPtr input, UInt16 flags, UInt16 code);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_input_send_unicode_keyboard_event(rdpInput* input, UInt16 flags, UInt16 code);
+		public static extern void freerdp_input_send_unicode_keyboard_event(IntPtr input, UInt16 flags, UInt16 code);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_input_send_mouse_event(rdpInput* input, UInt16 flags, UInt16 x, UInt16 y);
+		public static extern void freerdp_input_send_mouse_event(IntPtr input, UInt16 flags, UInt16 x, UInt16 y);
 		
 		[DllImport("libfreerdp-core")]
-		public static extern void freerdp_input_send_extended_mouse_event(rdpInput* input, UInt16 flags, UInt16 x, UInt16 y);
+		public static extern void freerdp_input_send_extended_mouse_event(IntPtr input, UInt16 flags, UInt16 x, UInt16 y);
 		
 		public int Port { get { return (int) settings->port; } set { settings->port = (UInt32) value; } }
 		public int Width { get { return (int) settings->width; } set { settings->width = (UInt32) value; } }
 		public int Height { get { return (int) settings->height; } set { settings->height = (UInt32) value; } }
 		
 		private freerdp* handle;
-		private rdpInput* input;
+		private IntPtr input;
 		private rdpContext* context;
 		private rdpSettings* settings;
 		

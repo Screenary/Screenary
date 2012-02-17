@@ -47,7 +47,7 @@ namespace Screenary
 			s.Write((UInt16) pointerFlags);
 			s.Write((UInt16) x);
 			s.Write((UInt16) y);
-									
+
 			Send(buffer, PDU_INPUT_MOUSE);						
 		}
 		

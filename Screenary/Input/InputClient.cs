@@ -104,15 +104,17 @@ namespace Screenary
 				listener.OnMouseEvent(pointerFlags, x, y);
 		}		
 		
-		public void sendKeyDown(uint keyCode)
-		{			
-
+		public void SendKeyboardEvent(uint keyCode, bool down)
+		{
+			UInt16 keyboardFlags;
 			byte[] buffer = null;
-			int length = sizeof(UInt32) + sizeof(UInt16);
+			int length = sizeof(UInt16) * 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
 		
-			s.Write((UInt16) KBD_FLAGS_DOWN);
-			s.Write((UInt16) keyCode);			
+			keyboardFlags = (down) ? KBD_FLAGS_DOWN : (UInt16) 0;
+			
+			s.Write((UInt16) keyboardFlags);
+			s.Write((UInt16) keyCode);
 									
 			Send(buffer, PDU_INPUT_KEYBOARD);
 		}
@@ -120,18 +122,15 @@ namespace Screenary
 		public void RecvKeyboardEvent(BinaryReader s)
 		{
 			UInt32 sessionId;
-			UInt16 pointerFlag;
+			UInt16 keyboardFlags;
 			UInt16 keyCode;
 			
 			sessionId = s.ReadUInt32();
-			pointerFlag = s.ReadUInt16();
-			keyCode = s.ReadUInt16();						
-
-			if (pointerFlag == KBD_FLAGS_DOWN)
-			{
-				Console.WriteLine("Received keyboard down event keyCode: {0}", keyCode);
-				//listener.OnKeyBoardPressedReceived(x,y);
-			}
+			keyboardFlags = s.ReadUInt16();
+			keyCode = s.ReadUInt16();
+			
+			if (listener != null)
+				listener.OnKeyboardEvent(keyboardFlags, keyCode);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)

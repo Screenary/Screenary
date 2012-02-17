@@ -162,23 +162,27 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
 			e.Key, e.KeyValue, e.HardwareKeycode);
 		
-		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
-		//TODO check if the sessionId is not 0		
 		//TODO check what to send e.Key, e.KeyValue or e.HardwareKeycode
 		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
-				inputClient.sendKeyDown(e.KeyValue);
+				inputClient.SendKeyboardEvent(e.KeyValue, true);
 		}
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
 	{
-		/*Gdk.EventKey e = args.Event;
+		Gdk.EventKey e = args.Event;
 
-		Console.WriteLine("KeyReleaseEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
+		/*Console.WriteLine("KeyReleaseEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
 			e.Key, e.KeyValue, e.HardwareKeycode);*/
+		
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+		{
+			if (inputClient.Active)
+				inputClient.SendKeyboardEvent(e.KeyValue, false);
+		}
 	}
 
 	protected void OnMainDrawingAreaFocusInEvent(object o, Gtk.FocusInEventArgs args)

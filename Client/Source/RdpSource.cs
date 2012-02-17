@@ -58,8 +58,14 @@ namespace Screenary.Client
 		
 		public void OnMouseEvent(UInt16 pointerFlags, UInt16 x, UInt16 y)
 		{
-			Console.WriteLine("RdpSource.OnMouseEvent");
+			//Console.WriteLine("RdpSource.OnMouseEvent");
 			rdp.SendInputMouseEvent(pointerFlags, x, y);
+		}
+		
+		public void OnKeyboardEvent(UInt16 keyboardFlags, UInt16 keyCode)
+		{
+			Console.WriteLine("RdpSource.OnKeyboardEvent");
+			rdp.SendInputKeyboardEvent(keyboardFlags, keyCode);
 		}
 		
 		public void BeginPaint(rdpContext* context) { }

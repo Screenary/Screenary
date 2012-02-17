@@ -76,6 +76,7 @@
     <Compile Include="Core\Graphics\Glyph.cs" />
     <Compile Include="Core\Graphics\Graphics.cs" />
     <Compile Include="Core\Input.cs" />
+    <Compile Include="Kbd\Keyboard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -94,5 +95,6 @@
     <Folder Include="Cache\" />
     <Folder Include="Core\Update\" />
     <Folder Include="Core\Graphics\" />
+    <Folder Include="Kbd\" />
   </ItemGroup>
 </Project>

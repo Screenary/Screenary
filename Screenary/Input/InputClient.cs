@@ -18,6 +18,11 @@ namespace Screenary
 		public const UInt16 PTR_FLAGS_BTN2 = 0x2000; /* button 2 (right) */
 		public const UInt16 PTR_FLAGS_BTN3 = 0x4000; /* button 3 (middle) */
 		
+		public const UInt16 KBD_FLAGS_EXTENDED = 0x0100;
+		public const UInt16 KBD_FLAGS_DOWN = 0x4000;
+		public const UInt16 KBD_FLAGS_RELEASE = 0x8000;
+		
+		
 		public InputClient(ISessionResponseListener listener, TransportClient transport)
 		{
 			this.transport = transport;
@@ -27,6 +32,29 @@ namespace Screenary
 		public void setSessionId(UInt32 sessionId)
 		{
 			this.sessionId = sessionId;	
+		}
+		
+		public void sendMouseClick(uint button, double x, double y)
+		{
+			//Console.WriteLine("InputClient.sendMouseMotion");
+
+			byte[] buffer = null;
+			int length = sizeof(UInt32) + sizeof(double) * 2;
+			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
+			
+			if(button == 1)
+				s.Write((UInt16) PTR_FLAGS_BTN1);
+			else if(button == 2)
+				s.Write((UInt16) PTR_FLAGS_BTN2);
+			else if(button == 3)
+				s.Write((UInt16) PTR_FLAGS_BTN3);
+			else
+				s.Write((UInt16) PTR_FLAGS_DOWN);
+			
+			s.Write((double) x);
+			s.Write((double) y);
+									
+			Send(buffer, PDU_INPUT_MOUSE);
 		}
 		
 		public void sendMouseMotion(double x, double y)
@@ -60,7 +88,44 @@ namespace Screenary
 				Console.WriteLine("Received mouse motion: {0}, {1}", x, y);
 				//listener.OnMouseMotionReceived(x,y);
 			}	
+			else
+			{
+				Console.WriteLine("Received mouse click from button {0}: {1}, {2}", pointerFlag, x, y);
+				//listener.OnMouseClickReceived(pointerFlag, x,y);
+			}
+		}		
+		
+		public void sendKeyDown(uint keyCode)
+		{			
+
+			byte[] buffer = null;
+			int length = sizeof(UInt32) + sizeof(UInt16);
+			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
+		
+			s.Write((UInt16) KBD_FLAGS_DOWN);
+			s.Write((UInt16) keyCode);			
+									
+			Send(buffer, PDU_INPUT_KEYBOARD);
 		}
+		
+		public void RecvKeyboardEvent(BinaryReader s)
+		{
+			UInt32 sessionId;
+			UInt16 pointerFlag;
+			UInt16 keyCode;
+			
+			sessionId = s.ReadUInt32();
+			pointerFlag = s.ReadUInt16();
+			keyCode = s.ReadUInt16();						
+
+			if (pointerFlag == KBD_FLAGS_DOWN)
+			{
+				Console.WriteLine("Received keyboard down event keyCode: {0}",keyCode);
+				//listener.OnKeyBoardPressedReceived(x,y);
+			}	
+			
+		}
+		
 		
 		private BinaryWriter InitReqPDU(ref byte[] buffer, int length, UInt32 sessionId)
 		{
@@ -110,6 +175,10 @@ namespace Screenary
 			{
 				case PDU_INPUT_MOUSE:
 					RecvMouseEvent(s);
+					return;
+				
+				case PDU_INPUT_KEYBOARD:
+					RecvKeyboardEvent(s);
 					return;
 				
 				default:

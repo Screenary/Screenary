@@ -195,6 +195,11 @@ namespace Screenary.Server
 		{
 			senderClient.SendMouseEventToSender(pointerFlag, x, y, this.senderId);
 		}
+		public void SendKeyboardEventToSender(UInt16 pointerFlag, UInt16 keyCode)
+		{
+			senderClient.SendKeyboardEventToSender(pointerFlag, keyCode, this.senderId);
+		}		
+		
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public bool isPasswordProtected()

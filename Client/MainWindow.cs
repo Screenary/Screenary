@@ -107,7 +107,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		this.transport = null;
 		
-		pcapSource = new PcapSource(this);
+		//pcapSource = new PcapSource(this);
 		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
@@ -115,17 +115,25 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnMainDrawingAreaButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
 	{
-		/*Gdk.EventButton e = args.Event;
+		Gdk.EventButton e = args.Event;
 		
-		Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
+		/*Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
+		
+		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
+		//TODO check if the sessionId is not 0		
+		
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+			inputClient.sendMouseClick(e.Button, e.X, e.Y);
+		
+		
 	}
 	
 	protected void OnMainDrawingAreaButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
 	{
-		/*Gdk.EventButton e = args.Event;
+		Gdk.EventButton e = args.Event;
 		
-		Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
+		/*Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 	}
 	
@@ -146,10 +154,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
 	{
-		/*Gdk.EventKey e = args.Event;
+		Gdk.EventKey e = args.Event;
 
 		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
-			e.Key, e.KeyValue, e.HardwareKeycode);*/
+			e.Key, e.KeyValue, e.HardwareKeycode);
+		
+		//TODO check if the user is a receiver and has successfully received the OK from sender to send mouse motion
+		//TODO check if the sessionId is not 0		
+		//TODO check what to send e.Key, e.KeyValue or e.HardwareKeycode
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+			inputClient.sendKeyDown(e.KeyValue);
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)

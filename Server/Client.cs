@@ -134,6 +134,11 @@ namespace Screenary.Server
 		{
 			inputServer.SendMouseEventToSender(pointerFlag, x, y, sessionId);
 		}
+		public void SendKeyboardEventToSender(UInt16 pointerFlag, UInt16 keyCode, UInt32 sessionId)
+		{
+			inputServer.SendKeyboardEventToSender(pointerFlag, keyCode, sessionId);
+		}
+		
 		
 		public void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlag, double x, double y)
 		{
@@ -142,5 +147,12 @@ namespace Screenary.Server
 			clientListener.OnRecvMouseEvent(this, sessionId, sessionServer.sessionKey, ref sessionStatus, pointerFlag, x, y);
 			//sessionServer.SendLeaveRsp(sessionId, sessionStatus);		
 		}
+		public void OnRecvKeyboardEvent(UInt32 sessionId, UInt16 pointerFlag, UInt16 keyCode)
+		{
+			UInt32 sessionStatus = UInt32.MaxValue;
+			
+			clientListener.OnRecvKeyboardEvent(this, sessionId, sessionServer.sessionKey, ref sessionStatus, pointerFlag, keyCode);
+		}
+		
 	}
 }

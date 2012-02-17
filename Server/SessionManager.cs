@@ -280,6 +280,22 @@ namespace Screenary.Server
 			sessionStatus = 1;
 		}
 		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnRecvKeyboardEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlag, UInt16 keyCode)
+		{
+			Console.WriteLine("SessionManager.OnRecvKeyboardEvent sessionkey: "+sessionKey.ToString());
+			
+			if (isSessionAlive(sessionKey))
+			{
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);				
+				screencastSession.SendKeyboardEventToSender(pointerFlag, keyCode);
+				return;
+				
+			}
+
+			sessionStatus = 1;
+		}
+		
 		/**
 	 	* Generates a unique key for sessionKey
 	 	**/

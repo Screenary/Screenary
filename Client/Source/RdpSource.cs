@@ -14,8 +14,12 @@ namespace Screenary.Client
 		private string password;
 		
 		private Thread thread;
+		private static bool procRunning = true;
 		private ISource iSource;
 		
+		/**
+		 * Instantiate RDP and Thread
+		 */ 
 		public RdpSource(ISource iSource)
 		{
 			port = 3389;
@@ -28,12 +32,28 @@ namespace Screenary.Client
 			thread = new Thread(() => ThreadProc(rdp));
 		}
 		
+		/**
+		 * Connect to FreeRDP server, start thread
+		 */ 
 		public void Connect(string hostname, int port, string username, string domain, string password)
 		{
 			rdp.SetUpdateInterface(this);
 			rdp.SetPrimaryUpdateInterface(this);
 			rdp.Connect(hostname, port, username, domain, password);
+			procRunning = true;
 			thread.Start();
+		}
+		
+		/**
+		 * Disconnect from FreeRDP server, stop thread
+		 */ 
+		public void Disconnect()
+		{
+			rdp.Disconnect();
+			procRunning = false;
+
+			/* Prepare for next call */
+			thread = new Thread(() => ThreadProc(rdp));
 		}
 		
 		public void BeginPaint(rdpContext* context) { }
@@ -77,7 +97,7 @@ namespace Screenary.Client
 		
 		static void ThreadProc(RDP rdp)
 		{
-			while (true)
+			while (procRunning)
 			{
 				rdp.CheckFileDescriptor();
 				Thread.Sleep(10);

@@ -261,6 +261,26 @@ namespace Screenary.Server
 		}
 		
 		/**
+	 	* 	 	
+	 	**/
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnRecvMouseEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlag, double x, double y)
+		{
+			Console.WriteLine("SessionManager.OnRecvMouseEvent sessionkey: "+sessionKey.ToString());
+			
+			if (isSessionAlive(sessionKey))
+			{
+				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
+				Console.WriteLine("ScreencastSession sender is: "+screencastSession.senderId+" "+screencastSession.senderUsername);
+				screencastSession.SendMouseEventToSender(pointerFlag, x, y);
+				return;
+				
+			}
+
+			sessionStatus = 1;
+		}
+		
+		/**
 	 	* Generates a unique key for sessionKey
 	 	**/
 		private char[] GenerateUniqueSessionKey()

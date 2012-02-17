@@ -42,7 +42,7 @@ namespace Screenary.Client
 			RdpServerHostname = "localhost";
 			RdpServerUsername = "Administrator";
 			RdpServerDomain = "";
-			RdpServerPassword = "Password123!";
+			RdpServerPassword = "";
 		}
 		
 		public static void Save(Config config)

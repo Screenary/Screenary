@@ -36,7 +36,7 @@ namespace Screenary
 			byte[] buffer = null;
 			int length = sizeof(UInt32) + sizeof(double) * 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
-			
+		
 			s.Write((UInt16) PTR_FLAGS_MOVE);
 			s.Write((double) x);
 			s.Write((double) y);
@@ -54,7 +54,7 @@ namespace Screenary
 			pointerFlag = s.ReadUInt16();
 			x = s.ReadDouble();			
 			y = s.ReadDouble();
-			
+
 			if (pointerFlag == PTR_FLAGS_MOVE)
 			{
 				Console.WriteLine("Received mouse motion: {0}, {1}", x, y);

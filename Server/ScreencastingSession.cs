@@ -12,9 +12,9 @@ namespace Screenary.Server
 		public UInt32 senderId { get; set; }
 		public string senderUsername { get; set; }
 		private string sessionPassword;
-		private Client senderClient;
+		public Client senderClient;
 		private Client screenController;
-		
+	
 		/* Lists of TCP Clients */
 		public ConcurrentDictionary<Client, UInt32> joinedClients { get; set; }
 		public ConcurrentDictionary<Client, User> authenticatedClients { get; set; }
@@ -53,6 +53,7 @@ namespace Screenary.Server
 			user.username = username;
 			screenController = client;
 			authenticatedClients.TryAdd(client, user);
+			senderClient = client;
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -188,6 +189,11 @@ namespace Screenary.Server
 			}
 			
 			return participantUsernames;
+		}
+		
+		public void SendMouseEventToSender(UInt16 pointerFlag, double x, double y)
+		{
+			senderClient.SendMouseEventToSender(pointerFlag, x, y, this.senderId);
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]

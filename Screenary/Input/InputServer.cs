@@ -18,7 +18,7 @@ namespace Screenary
 	
 		private void RecvMouseEvent(BinaryReader s)
 		{
-			Console.WriteLine("InputServer.RecvMouseEvent");
+			//Console.WriteLine("InputServer.RecvMouseEvent");
 			
 			UInt32 sessionId;
 			UInt16 pointerFlag;

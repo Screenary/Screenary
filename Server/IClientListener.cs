@@ -10,6 +10,8 @@ namespace Screenary.Server
 		void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey);
 		void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus);
 		void OnSessionScreenControlRequested(Client client, char[] sessionKey, string username);
+		//TA TODO rename
+		void OnSessionScreenControlPermissionRequested(Client client, char[] sessionKey, string username, Boolean permission);
 		void OnSessionOperationFail(string errorMessage);
 		void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand);
 		void OnRecvMouseEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlag, double x, double y);			

@@ -130,6 +130,9 @@ namespace Screenary
 			Console.WriteLine("SessionClient.SendTermReq done");
 		}
 		
+		/**
+		 * Receiver's request to gain control of mouse and keyboard
+		 */
 		public void SendScreenControlReq(char[] sessionKey, string username)
 		{
 			Console.WriteLine("SessionClient.SendScreenControlReq");
@@ -143,6 +146,26 @@ namespace Screenary
 			s.Write(username.ToCharArray());
 				
 			Send(buffer, PDU_SESSION_SCREEN_CONTROL_REQ);			
+		}
+		
+		/**
+		 * Sender's request to grant/deny Receiver's request
+		 * //TODO Rename this method
+		 */
+		public void SendScreenControlPermissionReq(char[] sessionKey, string username, Boolean permission)
+		{
+			Console.WriteLine("SessionClient.SendScreenControlPermissionReq");
+			
+			byte[] buffer = null;
+			int length = sessionKey.Length + username.Length + 2 + 1;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
+			
+			s.Write(sessionKey);
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+			s.Write(permission);
+				
+			Send(buffer, PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ);			
 		}
 				
 		/**
@@ -352,6 +375,21 @@ namespace Screenary
 			listener.OnSessionNotificationUpdate(type, username);
 		}
 		
+		public void RecvScreenControlRsp(BinaryReader s)
+		{
+			Console.WriteLine("SessionClient.RecvScreenControlRsp");
+
+			UInt16 usernameLength;
+			string username = "";
+				
+			usernameLength = s.ReadUInt16();
+			
+			if (usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
+
+			listener.OnSessionScreenControlRequested(username);			
+		}
+		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			lock (channelLock)
@@ -415,8 +453,12 @@ namespace Screenary
 					RecvParticipantListRsp(s);
 					return;
 				
-			case PDU_SESSION_NOTIFICATION_RSP:
+				case PDU_SESSION_NOTIFICATION_RSP:
 					RecvNotificationUpdate(s);
+					return;
+				
+				case PDU_SESSION_SCREEN_CONTROL_RSP:
+					RecvScreenControlRsp(s);
 					return;
 					
 				default:

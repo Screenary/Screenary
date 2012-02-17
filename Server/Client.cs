@@ -83,12 +83,27 @@ namespace Screenary.Server
 			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
+		/**
+		 * Receiver sends request to Broadcaster
+		 */
 		public void OnSessionScreenControlRequested(char[] sessionKey, string username)
 		{
 			clientListener.OnSessionScreenControlRequested(this, sessionKey, username);
-			//sessionServer.SendScreenControlRsp(...); //TA TODO		
 		}
 		
+		/**
+		 * Broadcaster informs Sender of the request
+		 */
+		public void OnSessionScreenControlRequested(string username)
+		{
+			sessionServer.SendScreenControlRsp(username);	
+		}
+
+		public void OnSessionScreenControlPermissionRequested(char[] sessionKey, string username, Boolean permission)
+		{
+			clientListener.OnSessionScreenControlPermissionRequested(this, sessionKey, username, permission);			
+		}
+
 		public void OnSessionOperationFail(string errorMessage)
 		{
 			Console.WriteLine("Client.OnSessionOperationFail");

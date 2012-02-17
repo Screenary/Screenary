@@ -129,7 +129,7 @@ namespace Screenary.Server
 				if (screencastSession.Authenticate(client, sessionId, username, password))
 				{
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
-					screencastSession.UpdateNotifications(client, "joined",username);
+					screencastSession.UpdateNotifications("joined",username);
 					sessionStatus = 0;
 					return;
 				}
@@ -151,7 +151,7 @@ namespace Screenary.Server
 
 			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 
-			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password);
+			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password, client);
 			
 			sessions.TryAdd(new string(sessionKey), screencastSession);
 			screencastSession.AddFirstUser(client, sessionId, username);
@@ -184,15 +184,32 @@ namespace Screenary.Server
 		}	
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSessionScreenControlRequested(Client client, char[] sessionKey, string username)
+		public void OnSessionScreenControlRequested(Client receiverClient, char[] sessionKey, string username)
 		{
 			Console.WriteLine("SessionManager.OnSessionScreenControlRequested");
 			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
 			
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
-			screencastSession.AddScreenControlRequest(client, username);
+			screencastSession.AddScreenControlRequest(receiverClient, username);
 		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnSessionScreenControlPermissionRequested(Client client, char[] sessionKey, string username, Boolean permission)
+		{
+			Console.WriteLine("SessionManager.OnSessionScreenControlPermissionRequested");
+			Console.WriteLine("Username: {0} Granted: {1}", username, permission);
 
+			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
+			if(permission)
+			{
+				screencastSession.GrantScreenControl(client, username);	
+			}
+			else
+			{
+				screencastSession.DenyScreenControl(client, username);	
+			}
+		}
+		
 		/**
 	 	* Processes a modification in the participant list
 	 	**/

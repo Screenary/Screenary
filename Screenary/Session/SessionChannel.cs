@@ -19,6 +19,7 @@ namespace Screenary
 		public const byte PDU_SESSION_TERM_REQ = 0x04;
 		public const byte PDU_SESSION_AUTH_REQ = 0x05;
 		public const byte PDU_SESSION_SCREEN_CONTROL_REQ = 0x06;
+		public const byte PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ = 0x07;
 		public const byte PDU_SESSION_JOIN_RSP = 0x81;
 		public const byte PDU_SESSION_LEAVE_RSP = 0x82;
 		public const byte PDU_SESSION_CREATE_RSP = 0x83;
@@ -26,6 +27,8 @@ namespace Screenary
 		public const byte PDU_SESSION_AUTH_RSP = 0x85;
 		public const byte PDU_SESSION_PARTICIPANTS_RSP = 0x86;	
 		public const byte PDU_SESSION_NOTIFICATION_RSP = 0x87;
+		public const byte PDU_SESSION_SCREEN_CONTROL_RSP = 0x88;
+		public const byte PDU_SESSION_SCREEN_CONTROL_PERMISSION_RSP = 0x89;
 		
 		public const byte SESSION_FLAGS_PASSWORD_PROTECTED = 0x01;
 						

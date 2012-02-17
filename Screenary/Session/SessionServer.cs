@@ -113,7 +113,21 @@ namespace Screenary
 			
 			Send(buffer, PDU_SESSION_TERM_RSP);
 		}
-				
+			
+		public void SendScreenControlRsp(string username)
+		{
+			Console.WriteLine("SessionServer.SendScreenControlRsp");
+			
+			int length = username.Length + 2;
+			byte[] buffer = new byte[length];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+			
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+			
+			Send(buffer, PDU_SESSION_SCREEN_CONTROL_RSP);
+			
+		}
 		/**
 	 	* Sends the participant list
 	 	**/
@@ -299,7 +313,30 @@ namespace Screenary
 						
 			listener.OnSessionScreenControlRequested(sessionKey, username);
 		}
-				
+		
+		//TA TODO rename this method
+		private void RecvScreenControlPermissionReq(BinaryReader s)
+		{
+			Console.WriteLine("SessionServer.RecvScreenControlPermissionReq");
+
+			UInt32 sessionId;
+			char[] sessionKey;
+			string username = "";
+			UInt16 usernameLength;
+			Boolean permission;
+			
+			sessionId = s.ReadUInt32();
+			sessionKey = s.ReadChars(12);
+			usernameLength = s.ReadUInt16();
+			
+			if (usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
+
+			permission = s.ReadBoolean();
+
+			listener.OnSessionScreenControlPermissionRequested(sessionKey, username, permission);
+		}
+		
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			Console.WriteLine("SessionServer.OnRecv");
@@ -355,7 +392,10 @@ namespace Screenary
 				case PDU_SESSION_SCREEN_CONTROL_REQ:
 					RecvScreenControlReq(s);
 					return;
-
+				
+				case PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ:
+					RecvScreenControlPermissionReq(s);
+					return;
 
 				default:
 					return;

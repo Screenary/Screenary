@@ -62,18 +62,20 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal static int SENDER_CREATED_STATE = 1;
 	internal static int RECEIVER_JOINED_STATE = 2;
 	internal static int RECEIVER_AUTHENTICATED_STATE = 3;
+	internal static int SENDER_SENDING_STATE = 4;
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 
 		/* Instantiate client states */
-		clientStates = new IClientState[4]
+		clientStates = new IClientState[5]
 		{
 			new StartedState(this),
 			new SenderCreatedState(this),
 			new ReceiverJoinedState(this),
-			new ReceiverAuthenticatedState(this)
+			new ReceiverAuthenticatedState(this),
+			new SenderSendingState(this)
 		};
 		
 		/* Set current state to STARTED */
@@ -105,7 +107,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		this.transport = null;
 		
-		rdpSource = new RdpSource(this);
 		pcapSource = new PcapSource(this);
 		
 		if (config.BroadcasterAutoconnect)
@@ -353,12 +354,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	/**
-	 * Set the application into Record State [NOT IMPLEMENTED YET]
+	 * Invoked when Share/StopShare toggle is clicked. Delegate to current state
 	 **/
 	protected void OnRecordActionActivated(object sender, System.EventArgs e)
 	{
-		rdpSource.Connect(config.RdpServerHostname, config.RdpServerPort,
-			config.RdpServerUsername, config.RdpServerDomain, config.RdpServerPassword);
+		currentState.OnRecordAction();
 	}
 	
 	/**
@@ -664,6 +664,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		 * Refresh UI layout
 		 */ 
 		public abstract void refresh();
+		
+		public abstract void OnRecordAction();
 	}
 	
 	/**
@@ -686,6 +688,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = false;
 		}
+		
+		public override void OnRecordAction()
+		{
+			// Should not happen
+		}
 	}	
 	
 	/**
@@ -705,11 +712,56 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.JoinSessionAction.Visible = false;
 			mainWindow.CreateSessionAction.Visible = false;
 			mainWindow.recordAction.Visible = true;
+			mainWindow.recordAction.Label = "Share Screen";
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestScreenControlAction.Visible = false;
 			
 			mainWindow.DisplayCreator();
+		}
+		
+		/**
+		 * Transition to SenderSendingState and capture live source
+		 */ 
+		public override void OnRecordAction()
+		{
+			mainWindow.rdpSource = new RdpSource(mainWindow);
+			mainWindow.rdpSource.Connect(mainWindow.config.RdpServerHostname,
+				mainWindow.config.RdpServerPort, mainWindow.config.RdpServerUsername,
+				mainWindow.config.RdpServerDomain, mainWindow.config.RdpServerPassword);
+			mainWindow.currentState = mainWindow.clientStates[SENDER_SENDING_STATE];
+			mainWindow.currentState.refresh();	
+		}
+	}
+	
+	/**
+	 * Class isolates behavior to Sender-Sending State
+	 */ 
+	public class SenderSendingState : IClientState
+	{
+		public SenderSendingState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		public override void refresh()
+		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = true;
+			mainWindow.recordAction.Label = "Stop Sharing Screen";
+			mainWindow.LeaveSessionAction.Visible = false;
+			mainWindow.EndSessionAction.Visible = true;
+			mainWindow.RequestScreenControlAction.Visible = false;			
+		}
+		
+		/**
+		 * Transition to SenderCreatedState and stop live source capture
+		 */ 
+		public override void OnRecordAction()
+		{
+			mainWindow.rdpSource.Disconnect();
+			mainWindow.currentState = mainWindow.clientStates[SENDER_CREATED_STATE];
+			mainWindow.currentState.refresh();		
 		}
 	}	
 	
@@ -729,10 +781,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.vbox3.Visible = true;
 			mainWindow.JoinSessionAction.Visible = false;
 			mainWindow.CreateSessionAction.Visible = false;
-			mainWindow.recordAction.Visible = true;
+			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = false;
+		}
+		
+		public override void OnRecordAction()
+		{
+			// Should not happen
 		}
 	}
 	
@@ -752,11 +809,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.vbox3.Visible = true;
 			mainWindow.JoinSessionAction.Visible = false;
 			mainWindow.CreateSessionAction.Visible = false;
-			mainWindow.recordAction.Visible = true;
+			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = true;
 		}
+		
+		public override void OnRecordAction()
+		{
+			// Should not happen
+		}
 	}
-
 }

@@ -12,11 +12,13 @@ namespace Screenary.Server
 		public UInt32 senderId { get; set; }
 		public string senderUsername { get; set; }
 		private string sessionPassword;
+		private Client senderClient;
+		private Client screenController;
 		
 		/* Lists of TCP Clients */
 		public ConcurrentDictionary<Client, UInt32> joinedClients { get; set; }
 		public ConcurrentDictionary<Client, User> authenticatedClients { get; set; }
-		public ConcurrentDictionary<Client, string> screenControlRequestClients { get; set; }
+		public ConcurrentDictionary<string, Client> screenControlRequestClients { get; set; } //TA TODO What if username is not unique? maybe pass around sessionId instead
 		
 		public struct User
 		{
@@ -24,15 +26,17 @@ namespace Screenary.Server
 			public string username;
 		}
 		
-		public ScreencastingSession(char[] sessionKey, UInt32 senderId, string senderUsername, string sessionPassword)
+		public ScreencastingSession(char[] sessionKey, UInt32 senderId, string senderUsername, string sessionPassword, Client senderClient)
 		{
 			this.sessionKey = sessionKey;
 			this.senderId = senderId;
 			this.senderUsername = senderUsername;
 			this.sessionPassword = sessionPassword;
+			this.senderClient = senderClient;
+			this.screenController = null;
 			this.joinedClients = new ConcurrentDictionary<Client, UInt32>();
 			this.authenticatedClients = new ConcurrentDictionary<Client, User>();
-			this.screenControlRequestClients = new ConcurrentDictionary<Client, string>();
+			this.screenControlRequestClients = new ConcurrentDictionary<string, Client>();
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -47,6 +51,7 @@ namespace Screenary.Server
 			User user;
 			user.sessionId = id;
 			user.username = username;
+			screenController = client;
 			authenticatedClients.TryAdd(client, user);
 		}
 		
@@ -64,7 +69,7 @@ namespace Screenary.Server
 				done = true;
 			}
 			
-			UpdateNotifications(client, "joined",username);
+			UpdateNotifications("joined",username);
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -77,7 +82,7 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void UpdateNotifications(Client client, string type, string username)
+		public void UpdateNotifications(string type, string username)
 		{
 			foreach (Client clients in authenticatedClients.Keys)
 			{
@@ -92,7 +97,7 @@ namespace Screenary.Server
 			User user;
 			authenticatedClients.TryRemove(client, out user);
 			joinedClients.TryRemove(client, out sessionId);
-			UpdateNotifications(client, "left", username);
+			UpdateNotifications("left", username);
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -109,16 +114,70 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void AddScreenControlRequest(Client client, string username)
+		public void AddScreenControlRequest(Client requestingClient, string username)
 		{
 			Console.WriteLine("ScreencastingSession.AddScreenControlRequest");
-			if(authenticatedClients.ContainsKey(client)) 
+			
+			if(authenticatedClients.ContainsKey(requestingClient)) 
 			{
-				screenControlRequestClients.TryAdd(client, username);				
-				//UpdateNotifications(client, "...", username);
+				/*if another receiver has control, deny*/
+				if(screenController != senderClient)
+				{
+					DenyScreenControl(requestingClient, username);
+				}
+				/*if sender is requesting control, regain it*/
+				else if(senderClient == requestingClient)
+				{
+					screenController = requestingClient;
+					UpdateNotifications("control of", username);					
+				}
+				/*if sender has control, add requester to list and inform sender*/
+				else
+				{
+					Console.WriteLine("ScreencastingSession.AddScreenControlRequest /*if sender has control, add requester to list and inform sender*/");
+					screenControlRequestClients.TryAdd(username, requestingClient);				
+					senderClient.OnSessionScreenControlRequested(username);
+				}
 			}
 		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void GrantScreenControl(Client senderClient, string receiverUsername)
+		{
+			Console.WriteLine("ScreencastingSession.GrantScreenControl receiverUsername: {0}", receiverUsername);
 
+			string potentialSenderUsername = authenticatedClients[senderClient].username;
+			
+			if(senderUsername.Equals(potentialSenderUsername))
+			{
+				Console.WriteLine("ScreencastingSession.GrantScreenControl senderUsername.Equals(potentialSenderUsername) is TRUE");
+				
+				Client receiverClient = screenControlRequestClients[receiverUsername];
+
+				if(receiverClient != null) 
+				{
+					Console.WriteLine("ScreencastingSession.GrantScreenControl receiverClient is not null");
+					screenController = receiverClient;
+					screenControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+					UpdateNotifications("control of", receiverUsername);
+				}
+			}	
+		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void DenyScreenControl(Client senderClient, string receiverUsername)
+		{
+			Console.WriteLine("ScreencastingSession.DenyScreenControl");
+
+			string username = authenticatedClients[senderClient].username;
+			
+			if(senderUsername.Equals(username))
+			{
+				Client receiverClient = null;
+				screenControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+			}	
+		}	
+				
 		public ArrayList GetParticipantUsernames()
 		{
 			ArrayList participantUsernames = new ArrayList();

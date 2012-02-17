@@ -10,6 +10,8 @@ namespace Screenary
 		void OnSessionCreateRequested(string username, string password);
 		void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus);
 		void OnSessionScreenControlRequested(char[] sessionKey, string username);
+		//TA TODO rename
+		void OnSessionScreenControlPermissionRequested(char[] sessionKey, string username, Boolean permission);
 		void OnSessionOperationFail(string errorMessage);
 	}
 }

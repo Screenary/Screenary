@@ -628,6 +628,28 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	/**
+	 * Sender receives and handles receiver's request from the Broadcaster
+	 */
+	public void OnSessionScreenControlRequested(string receiverUsername)
+	{
+		Console.WriteLine("MainWindow.OnSessionScreenControlRequested");
+		Console.WriteLine("Username: {0}", receiverUsername);
+		
+		//TODO implement
+		//in dialog box
+		//=========================
+		//<username> wants access...
+		//[GRANT] [DENY]
+		//=========================
+		
+		//if sender grants access, permission == true;
+		//else permission == false;
+		
+		Boolean permission = true; /*this value is hardcoded*/
+		sessionClient.SendScreenControlPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);
+			
+	}
+	/**
 	 * When end session is activated it sends the termination request
 	 **/
 	protected void OnEndSessionActionActivated(object sender, System.EventArgs e)
@@ -707,7 +729,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = true;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
-			mainWindow.RequestScreenControlAction.Visible = false;
+			mainWindow.RequestScreenControlAction.Visible = true; //TODO maybe have new menu item with title "regain control" for sender instead of "request screen control access"
 			
 			mainWindow.DisplayCreator();
 		}

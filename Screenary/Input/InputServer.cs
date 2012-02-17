@@ -18,7 +18,7 @@ namespace Screenary
 	
 		private void RecvMouseEvent(BinaryReader s)
 		{
-			Console.WriteLine("InputServer.RecvMouseEvent");
+			//Console.WriteLine("InputServer.RecvMouseEvent");
 			
 			UInt32 sessionId;
 			UInt16 pointerFlag;
@@ -29,8 +29,8 @@ namespace Screenary
 			x = s.ReadDouble();			
 			y = s.ReadDouble();
 		
-			Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
-				pointerFlag, x, y, sessionId);
+			//Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
+				//pointerFlag, x, y, sessionId);
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)

@@ -107,7 +107,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		this.transport = null;
 		
-		//pcapSource = new PcapSource(this);
+		pcapSource = new PcapSource(this);
 		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);

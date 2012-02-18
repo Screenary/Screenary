@@ -122,15 +122,9 @@ namespace Screenary.Server
 			if(authenticatedClients.ContainsKey(requestingClient)) 
 			{
 				/*if another receiver has control, deny*/
-				if(screenController != senderClient)
+				if(screenController != this.senderClient)
 				{
 					DenyScreenControl(requestingClient, username);
-				}
-				/*if sender is requesting control, regain it*/
-				else if(senderClient == requestingClient)
-				{
-					screenController = requestingClient;
-					UpdateNotifications("control of", username);					
 				}
 				/*if sender has control, add requester to list and inform sender*/
 				else
@@ -177,8 +171,18 @@ namespace Screenary.Server
 				Client receiverClient = null;
 				screenControlRequestClients.TryRemove(receiverUsername, out receiverClient);
 			}	
-		}	
-				
+		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void TermRemoteAccessRequested(string receiverUsername)
+		{
+			//TA TODO prevent other a receiver who is not in control from terminating the remote access
+			Console.WriteLine("ScreencastingSession.TermRemoteAccessRequested");
+			screenController = this.senderClient;
+			screenControlRequestClients.Clear();
+			UpdateNotifications("control of", this.senderUsername);					
+		}
+						
 		public ArrayList GetParticipantUsernames()
 		{
 			ArrayList participantUsernames = new ArrayList();

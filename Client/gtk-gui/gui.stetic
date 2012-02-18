@@ -116,6 +116,12 @@
         <property name="ShortLabel" translatable="yes">Request Screen Control</property>
         <signal name="Activated" handler="OnRequestScreenControlActivated" />
       </action>
+      <action id="TerminateRemoteAccessAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Terminate Remote Access</property>
+        <property name="ShortLabel" translatable="yes">Terminate Remote Access</property>
+        <signal name="Activated" handler="OnTerminateRemoteAccessActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Screenary</property>
@@ -151,6 +157,7 @@
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
                     <node type="Menuitem" action="RequestScreenControlAction" />
+                    <node type="Menuitem" action="TerminateRemoteAccessAction" />
                   </node>
                   <node type="Menu" action="HelpAction">
                     <node type="Menuitem" action="aboutAction" />

@@ -104,6 +104,11 @@ namespace Screenary.Server
 			clientListener.OnSessionScreenControlPermissionRequested(this, sessionKey, username, permission);			
 		}
 
+		public void OnSessionTermRemoteAccessRequested(char[] sessionKey, string username)
+		{
+			clientListener.OnSessionTermRemoteAccessRequested(this, sessionKey, username);			
+		}
+
 		public void OnSessionOperationFail(string errorMessage)
 		{
 			Console.WriteLine("Client.OnSessionOperationFail");

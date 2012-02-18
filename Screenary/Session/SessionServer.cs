@@ -114,9 +114,9 @@ namespace Screenary
 			Send(buffer, PDU_SESSION_TERM_RSP);
 		}
 			
-		public void SendScreenControlRsp(string username)
+		public void SendRemoteAccessRsp(string username)
 		{
-			Console.WriteLine("SessionServer.SendScreenControlRsp");
+			Console.WriteLine("SessionServer.SendRemoteAccessRsp");
 			
 			int length = username.Length + 2;
 			byte[] buffer = new byte[length];
@@ -125,7 +125,7 @@ namespace Screenary
 			s.Write((UInt16) username.Length);
 			s.Write(username.ToCharArray());
 			
-			Send(buffer, PDU_SESSION_SCREEN_CONTROL_RSP);
+			Send(buffer, PDU_SESSION_REMOTE_ACCESS_RSP);
 			
 		}
 		/**
@@ -295,9 +295,9 @@ namespace Screenary
 			listener.OnSessionTerminationRequested(sessionId, sessionKey, sessionStatus);
 		}
 		
-		private void RecvScreenControlReq(BinaryReader s)
+		private void RecvRemoteAccessReq(BinaryReader s)
 		{
-			Console.WriteLine("SessionServer.RecvScreenControlReq");
+			Console.WriteLine("SessionServer.RecvRemoteAccessReq");
 
 			UInt32 sessionId;
 			char[] sessionKey;
@@ -311,13 +311,12 @@ namespace Screenary
 			if (usernameLength > 0)
 				username = new string(s.ReadChars(usernameLength));
 						
-			listener.OnSessionScreenControlRequested(sessionKey, username);
+			listener.OnSessionRemoteAccessRequested(sessionKey, username);
 		}
 		
-		//TA TODO rename this method
-		private void RecvScreenControlPermissionReq(BinaryReader s)
+		private void RecvRemoteAccessPermissionReq(BinaryReader s)
 		{
-			Console.WriteLine("SessionServer.RecvScreenControlPermissionReq");
+			Console.WriteLine("SessionServer.RecvRemoteAccessPermissionReq");
 
 			UInt32 sessionId;
 			char[] sessionKey;
@@ -334,7 +333,7 @@ namespace Screenary
 
 			permission = s.ReadBoolean();
 
-			listener.OnSessionScreenControlPermissionRequested(sessionKey, username, permission);
+			listener.OnSessionRemoteAccessPermissionSet(sessionKey, username, permission);
 		}
 
 		private void RecvTermRemoteAccessReq(BinaryReader s)
@@ -408,12 +407,12 @@ namespace Screenary
 					RecvAuthReq(s);
 					return;
 								
-				case PDU_SESSION_SCREEN_CONTROL_REQ:
-					RecvScreenControlReq(s);
+				case PDU_SESSION_REMOTE_ACCESS_REQ:
+					RecvRemoteAccessReq(s);
 					return;
 				
-				case PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ:
-					RecvScreenControlPermissionReq(s);
+				case PDU_SESSION_REMOTE_ACCESS_PERMISSION_REQ:
+					RecvRemoteAccessPermissionReq(s);
 					return;
 
 				case PDU_SESSION_TERM_REMOTE_ACCESS_REQ:

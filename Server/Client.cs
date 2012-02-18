@@ -86,22 +86,22 @@ namespace Screenary.Server
 		/**
 		 * Receiver sends request to Broadcaster
 		 */
-		public void OnSessionScreenControlRequested(char[] sessionKey, string username)
+		public void OnSessionRemoteAccessRequested(char[] sessionKey, string username)
 		{
-			clientListener.OnSessionScreenControlRequested(this, sessionKey, username);
+			clientListener.OnSessionRemoteAccessRequested(this, sessionKey, username);
 		}
 		
 		/**
 		 * Broadcaster informs Sender of the request
 		 */
-		public void OnSessionScreenControlRequested(string username)
+		public void OnSessionRemoteAccessRequested(string username)
 		{
-			sessionServer.SendScreenControlRsp(username);	
+			sessionServer.SendRemoteAccessRsp(username);	
 		}
 
-		public void OnSessionScreenControlPermissionRequested(char[] sessionKey, string username, Boolean permission)
+		public void OnSessionRemoteAccessPermissionSet(char[] sessionKey, string username, Boolean permission)
 		{
-			clientListener.OnSessionScreenControlPermissionRequested(this, sessionKey, username, permission);			
+			clientListener.OnSessionRemoteAccessPermissionSet(this, sessionKey, username, permission);			
 		}
 
 		public void OnSessionTermRemoteAccessRequested(char[] sessionKey, string username)

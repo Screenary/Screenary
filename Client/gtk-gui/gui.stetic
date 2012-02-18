@@ -110,11 +110,11 @@
         <property name="ShortLabel" translatable="yes">Leave Session</property>
         <signal name="Activated" handler="OnLeaveSessionActionActivated" />
       </action>
-      <action id="RequestScreenControlAction">
+      <action id="RequestRemoteAccessAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Request Screen Control</property>
+        <property name="Label" translatable="yes">Request Remote Access</property>
         <property name="ShortLabel" translatable="yes">Request Screen Control</property>
-        <signal name="Activated" handler="OnRequestScreenControlActivated" />
+        <signal name="Activated" handler="OnRequestRemoteAccessActivated" />
       </action>
       <action id="TerminateRemoteAccessAction">
         <property name="Type">Action</property>
@@ -156,7 +156,7 @@
                     <node type="Menuitem" action="recordAction" />
                     <node type="Menuitem" action="RemoteFXAction" />
                     <node type="Menuitem" action="FreeRDPAction" />
-                    <node type="Menuitem" action="RequestScreenControlAction" />
+                    <node type="Menuitem" action="RequestRemoteAccessAction" />
                     <node type="Menuitem" action="TerminateRemoteAccessAction" />
                   </node>
                   <node type="Menu" action="HelpAction">

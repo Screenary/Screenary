@@ -342,9 +342,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		receiver = new SurfaceReceiver(window, surface);
 	}
 	
-	protected void OnRequestScreenControlActivated (object sender, System.EventArgs e)
+	protected void OnRequestRemoteAccessActivated (object sender, System.EventArgs e)
 	{
-		sessionClient.SendScreenControlReq(this.sessionKey.ToCharArray(), this.username);
+		sessionClient.SendRemoteAccessReq(this.sessionKey.ToCharArray(), this.username);
 	}
 	
 	protected void OnTerminateRemoteAccessActivated (object sender, System.EventArgs e)
@@ -659,9 +659,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	/**
 	 * Sender receives and handles receiver's request from the Broadcaster
 	 */
-	public void OnSessionScreenControlRequested(string receiverUsername)
+	int count = 0; //TA temp testing code until ui widget is added
+	public void OnSessionRemoteAccessRequestReceived(string receiverUsername)
 	{
-		Console.WriteLine("MainWindow.OnSessionScreenControlRequested");
+		Console.WriteLine("MainWindow.OnSessionRemoteAccessRequestReceived");
 		Console.WriteLine("Username: {0}", receiverUsername);
 		
 		//TODO implement
@@ -674,8 +675,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		//if sender grants access, permission == true;
 		//else permission == false;
 		
-		Boolean permission = true; /*this value is hardcoded*/
-		sessionClient.SendScreenControlPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);
+		Boolean permission = ((++count)%2 == 0); //TA temp code
+		sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);
 			
 	}
 	/**
@@ -737,7 +738,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = false;
-			mainWindow.RequestScreenControlAction.Visible = false;
+			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
 		}
 		
@@ -767,7 +768,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Label = "Share Screen";
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
-			mainWindow.RequestScreenControlAction.Visible = true; //TODO maybe have new menu item with title "regain control" for sender instead of "request screen control access"
+			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
 			
 			mainWindow.DisplayCreator();
@@ -809,7 +810,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Label = "Stop Sharing Screen";
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
-			mainWindow.RequestScreenControlAction.Visible = false;			
+			mainWindow.RequestRemoteAccessAction.Visible = false;			
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
 		}
 		
@@ -843,7 +844,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
-			mainWindow.RequestScreenControlAction.Visible = false;
+			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
 		}
 		
@@ -872,7 +873,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.recordAction.Visible = false;
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
-			mainWindow.RequestScreenControlAction.Visible = true;
+			mainWindow.RequestRemoteAccessAction.Visible = true;
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
 		}
 		

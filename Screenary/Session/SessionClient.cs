@@ -133,9 +133,9 @@ namespace Screenary
 		/**
 		 * Receiver's request to gain control of mouse and keyboard
 		 */
-		public void SendScreenControlReq(char[] sessionKey, string username)
+		public void SendRemoteAccessReq(char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionClient.SendScreenControlReq");
+			Console.WriteLine("SessionClient.SendRemoteAccessReq");
 			
 			byte[] buffer = null;
 			int length = sessionKey.Length + username.Length + 2;
@@ -145,16 +145,15 @@ namespace Screenary
 			s.Write((UInt16) username.Length);
 			s.Write(username.ToCharArray());
 				
-			Send(buffer, PDU_SESSION_SCREEN_CONTROL_REQ);			
+			Send(buffer, PDU_SESSION_REMOTE_ACCESS_REQ);			
 		}
 		
 		/**
 		 * Sender's request to grant/deny Receiver's request
-		 * //TODO Rename this method
 		 */
-		public void SendScreenControlPermissionReq(char[] sessionKey, string username, Boolean permission)
+		public void SendRemoteAccessPermissionReq(char[] sessionKey, string username, Boolean permission)
 		{
-			Console.WriteLine("SessionClient.SendScreenControlPermissionReq");
+			Console.WriteLine("SessionClient.SendRemoteAccessPermissionReq");
 			
 			byte[] buffer = null;
 			int length = sessionKey.Length + username.Length + 2 + 1;
@@ -165,7 +164,7 @@ namespace Screenary
 			s.Write(username.ToCharArray());
 			s.Write(permission);
 				
-			Send(buffer, PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ);			
+			Send(buffer, PDU_SESSION_REMOTE_ACCESS_PERMISSION_REQ);			
 		}
 		
 		public void SendTermRemoteAccessReq(char[] sessionKey, string username)
@@ -391,9 +390,9 @@ namespace Screenary
 			listener.OnSessionNotificationUpdate(type, username);
 		}
 		
-		public void RecvScreenControlRsp(BinaryReader s)
+		public void RecvRemoteAccessRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvScreenControlRsp");
+			Console.WriteLine("SessionClient.RecvRemoteAccessRsp");
 
 			UInt16 usernameLength;
 			string username = "";
@@ -403,7 +402,7 @@ namespace Screenary
 			if (usernameLength > 0)
 				username = new string(s.ReadChars(usernameLength));
 
-			listener.OnSessionScreenControlRequested(username);			
+			listener.OnSessionRemoteAccessRequestReceived(username);			
 		}
 		
 		public override void OnRecv(byte[] buffer, byte pduType)
@@ -473,8 +472,8 @@ namespace Screenary
 					RecvNotificationUpdate(s);
 					return;
 				
-				case PDU_SESSION_SCREEN_CONTROL_RSP:
-					RecvScreenControlRsp(s);
+				case PDU_SESSION_REMOTE_ACCESS_RSP:
+					RecvRemoteAccessRsp(s);
 					return;
 					
 				default:

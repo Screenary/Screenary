@@ -209,7 +209,17 @@ namespace Screenary.Server
 				screencastSession.DenyScreenControl(client, username);	
 			}
 		}
-		
+
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void OnSessionTermRemoteAccessRequested(Client client, char[] sessionKey, string username)
+		{
+			Console.WriteLine("SessionManager.OnSessionScreenControlRequested");
+			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
+			
+			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
+			screencastSession.TermRemoteAccessRequested(username);
+		}
+
 		/**
 	 	* Processes a modification in the participant list
 	 	**/

@@ -167,6 +167,22 @@ namespace Screenary
 				
 			Send(buffer, PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ);			
 		}
+		
+		public void SendTermRemoteAccessReq(char[] sessionKey, string username)
+		{
+			Console.WriteLine("SessionClient.SendTermRemoteAccess");
+			
+			byte[] buffer = null;
+			int length = sessionKey.Length + username.Length + 2 + 1;
+			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
+			
+			s.Write(sessionKey);
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+				
+			Send(buffer, PDU_SESSION_TERM_REMOTE_ACCESS_REQ);			
+			
+		}
 				
 		/**
 	 	* Processes a join response

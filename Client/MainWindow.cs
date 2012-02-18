@@ -342,12 +342,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		receiver = new SurfaceReceiver(window, surface);
 	}
 	
-	//TA's code
 	protected void OnRequestScreenControlActivated (object sender, System.EventArgs e)
 	{
 		sessionClient.SendScreenControlReq(this.sessionKey.ToCharArray(), this.username);
 	}
 	
+	protected void OnTerminateRemoteAccessActivated (object sender, System.EventArgs e)
+	{
+		sessionClient.SendTermRemoteAccessReq(this.sessionKey.ToCharArray(), this.username);
+	}
+
 	public void OnSurfaceCommand(BinaryReader s)
 	{
 		Gtk.Application.Invoke(delegate {
@@ -734,6 +738,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = false;
+			mainWindow.TerminateRemoteAccessAction.Visible = false;
 		}
 		
 		public override void OnRecordAction()
@@ -763,6 +768,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestScreenControlAction.Visible = true; //TODO maybe have new menu item with title "regain control" for sender instead of "request screen control access"
+			mainWindow.TerminateRemoteAccessAction.Visible = true;
 			
 			mainWindow.DisplayCreator();
 		}
@@ -804,6 +810,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestScreenControlAction.Visible = false;			
+			mainWindow.TerminateRemoteAccessAction.Visible = true;
 		}
 		
 		/**
@@ -837,6 +844,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = false;
+			mainWindow.TerminateRemoteAccessAction.Visible = false;
 		}
 		
 		public override void OnRecordAction()
@@ -865,6 +873,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestScreenControlAction.Visible = true;
+			mainWindow.TerminateRemoteAccessAction.Visible = true;
 		}
 		
 		public override void OnRecordAction()
@@ -872,4 +881,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			// Should not happen
 		}
 	}
+
+
 }

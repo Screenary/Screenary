@@ -184,36 +184,36 @@ namespace Screenary.Server
 		}	
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSessionScreenControlRequested(Client receiverClient, char[] sessionKey, string username)
+		public void OnSessionRemoteAccessRequested(Client receiverClient, char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionManager.OnSessionScreenControlRequested");
+			Console.WriteLine("SessionManager.OnSessionRemoteAccessRequested");
 			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
 			
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
-			screencastSession.AddScreenControlRequest(receiverClient, username);
+			screencastSession.AddRemoteAccessRequest(receiverClient, username);
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSessionScreenControlPermissionRequested(Client client, char[] sessionKey, string username, Boolean permission)
+		public void OnSessionRemoteAccessPermissionSet(Client client, char[] sessionKey, string username, Boolean permission)
 		{
-			Console.WriteLine("SessionManager.OnSessionScreenControlPermissionRequested");
+			Console.WriteLine("SessionManager.OnSessionRemoteAccessPermissionSet");
 			Console.WriteLine("Username: {0} Granted: {1}", username, permission);
 
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 			if(permission)
 			{
-				screencastSession.GrantScreenControl(client, username);	
+				screencastSession.GrantRemoteAccess(client, username);	
 			}
 			else
 			{
-				screencastSession.DenyScreenControl(client, username);	
+				screencastSession.DenyRemoteAccess(client, username);	
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTermRemoteAccessRequested(Client client, char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionManager.OnSessionScreenControlRequested");
+			Console.WriteLine("SessionManager.OnSessionTermRemoteAccessRequested");
 			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
 			
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);

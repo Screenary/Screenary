@@ -13,12 +13,12 @@ namespace Screenary.Server
 		public string senderUsername { get; set; }
 		private string sessionPassword;
 		public Client senderClient;
-		private Client screenController;
+		private Client remoteController;
 	
 		/* Lists of TCP Clients */
 		public ConcurrentDictionary<Client, UInt32> joinedClients { get; set; }
 		public ConcurrentDictionary<Client, User> authenticatedClients { get; set; }
-		public ConcurrentDictionary<string, Client> screenControlRequestClients { get; set; } //TA TODO What if username is not unique? maybe pass around sessionId instead
+		public ConcurrentDictionary<string, Client> remoteControlRequestClients { get; set; }
 		
 		public struct User
 		{
@@ -33,10 +33,10 @@ namespace Screenary.Server
 			this.senderUsername = senderUsername;
 			this.sessionPassword = sessionPassword;
 			this.senderClient = senderClient;
-			this.screenController = null;
+			this.remoteController = null;
 			this.joinedClients = new ConcurrentDictionary<Client, UInt32>();
 			this.authenticatedClients = new ConcurrentDictionary<Client, User>();
-			this.screenControlRequestClients = new ConcurrentDictionary<string, Client>();
+			this.remoteControlRequestClients = new ConcurrentDictionary<string, Client>();
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -51,7 +51,7 @@ namespace Screenary.Server
 			User user;
 			user.sessionId = id;
 			user.username = username;
-			screenController = client;
+			remoteController = client;
 			authenticatedClients.TryAdd(client, user);
 			senderClient = client;
 		}
@@ -115,72 +115,70 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void AddScreenControlRequest(Client requestingClient, string username)
+		public void AddRemoteAccessRequest(Client requestingClient, string username)
 		{
-			Console.WriteLine("ScreencastingSession.AddScreenControlRequest");
+			Console.WriteLine("ScreencastingSession.AddRemoteAccessRequest");
 			
 			if(authenticatedClients.ContainsKey(requestingClient)) 
 			{
 				/*if another receiver has control, deny*/
-				if(screenController != this.senderClient)
+				if(remoteController != this.senderClient)
 				{
-					DenyScreenControl(requestingClient, username);
+					DenyRemoteAccess(requestingClient, username);
 				}
 				/*if sender has control, add requester to list and inform sender*/
 				else
 				{
-					Console.WriteLine("ScreencastingSession.AddScreenControlRequest /*if sender has control, add requester to list and inform sender*/");
-					screenControlRequestClients.TryAdd(username, requestingClient);				
-					senderClient.OnSessionScreenControlRequested(username);
+					remoteControlRequestClients.TryAdd(username, requestingClient);				
+					senderClient.OnSessionRemoteAccessRequested(username);
 				}
 			}
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void GrantScreenControl(Client senderClient, string receiverUsername)
+		public void GrantRemoteAccess(Client senderClient, string receiverUsername)
 		{
-			Console.WriteLine("ScreencastingSession.GrantScreenControl receiverUsername: {0}", receiverUsername);
+			Console.WriteLine("ScreencastingSession.GrantRemoteAccess receiverUsername: {0}", receiverUsername);
 
 			string potentialSenderUsername = authenticatedClients[senderClient].username;
 			
 			if(senderUsername.Equals(potentialSenderUsername))
-			{
-				Console.WriteLine("ScreencastingSession.GrantScreenControl senderUsername.Equals(potentialSenderUsername) is TRUE");
-				
-				Client receiverClient = screenControlRequestClients[receiverUsername];
+			{				
+				Client receiverClient = remoteControlRequestClients[receiverUsername];
 
 				if(receiverClient != null) 
 				{
-					Console.WriteLine("ScreencastingSession.GrantScreenControl receiverClient is not null");
-					screenController = receiverClient;
-					screenControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+					remoteControlRequestClients.Clear();
 					UpdateNotifications("control of", receiverUsername);
 				}
 			}	
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void DenyScreenControl(Client senderClient, string receiverUsername)
+		public void DenyRemoteAccess(Client senderClient, string receiverUsername)
 		{
-			Console.WriteLine("ScreencastingSession.DenyScreenControl");
+			Console.WriteLine("ScreencastingSession.DenyRemoteAccess");
 
 			string username = authenticatedClients[senderClient].username;
 			
 			if(senderUsername.Equals(username))
 			{
 				Client receiverClient = null;
-				screenControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+				remoteControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+				receiverClient.OnSessionNotificationUpdate("been denied control of", receiverUsername);
 			}	
 		}
 		
+		/**
+		 * Sender of Receiver with remote access may terminate and restore access to Sender
+		 */
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void TermRemoteAccessRequested(string receiverUsername)
+		public void TermRemoteAccessRequested(string username)
 		{
-			//TA TODO prevent other a receiver who is not in control from terminating the remote access
 			Console.WriteLine("ScreencastingSession.TermRemoteAccessRequested");
-			screenController = this.senderClient;
-			screenControlRequestClients.Clear();
-			UpdateNotifications("control of", this.senderUsername);					
+			remoteController = this.senderClient;
+			remoteControlRequestClients.Clear();
+			UpdateNotifications("control of", this.senderUsername);	
 		}
 						
 		public ArrayList GetParticipantUsernames()

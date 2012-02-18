@@ -20,7 +20,7 @@ public partial class MainWindow
 	private global::Gtk.Action ConnectAction;
 	private global::Gtk.Action EndSessionAction;
 	private global::Gtk.Action LeaveSessionAction;
-	private global::Gtk.Action RequestScreenControlAction;
+	private global::Gtk.Action RequestRemoteAccessAction;
 	private global::Gtk.Action TerminateRemoteAccessAction;
 	private global::Gtk.VBox mainVbox;
 	private global::Gtk.VBox vbox1;
@@ -89,9 +89,9 @@ public partial class MainWindow
 		this.LeaveSessionAction = new global::Gtk.Action ("LeaveSessionAction", global::Mono.Unix.Catalog.GetString ("Leave Session"), null, null);
 		this.LeaveSessionAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Leave Session");
 		w1.Add (this.LeaveSessionAction, null);
-		this.RequestScreenControlAction = new global::Gtk.Action ("RequestScreenControlAction", global::Mono.Unix.Catalog.GetString ("Request Screen Control"), null, null);
-		this.RequestScreenControlAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Request Screen Control");
-		w1.Add (this.RequestScreenControlAction, null);
+		this.RequestRemoteAccessAction = new global::Gtk.Action ("RequestRemoteAccessAction", global::Mono.Unix.Catalog.GetString ("Request Remote Access"), null, null);
+		this.RequestRemoteAccessAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Request Screen Control");
+		w1.Add (this.RequestRemoteAccessAction, null);
 		this.TerminateRemoteAccessAction = new global::Gtk.Action ("TerminateRemoteAccessAction", global::Mono.Unix.Catalog.GetString ("Terminate Remote Access"), null, null);
 		this.TerminateRemoteAccessAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Terminate Remote Access");
 		w1.Add (this.TerminateRemoteAccessAction, null);
@@ -110,7 +110,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menuitem name='ConnectAction' action='ConnectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='EndSessionAction' action='EndSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='LeaveSessionAction' action='LeaveSessionAction'/><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/><menuitem name='RequestScreenControlAction' action='RequestScreenControlAction'/><menuitem name='TerminateRemoteAccessAction' action='TerminateRemoteAccessAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menuitem name='ConnectAction' action='ConnectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='EndSessionAction' action='EndSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='LeaveSessionAction' action='LeaveSessionAction'/><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/><menuitem name='RequestRemoteAccessAction' action='RequestRemoteAccessAction'/><menuitem name='TerminateRemoteAccessAction' action='TerminateRemoteAccessAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.CanDefault = true;
 		this.menubar1.Events = ((global::Gdk.EventMask)(2));
@@ -210,7 +210,7 @@ public partial class MainWindow
 		this.ConnectAction.Activated += new global::System.EventHandler (this.OnConnectActionActivated);
 		this.EndSessionAction.Activated += new global::System.EventHandler (this.OnEndSessionActionActivated);
 		this.LeaveSessionAction.Activated += new global::System.EventHandler (this.OnLeaveSessionActionActivated);
-		this.RequestScreenControlAction.Activated += new global::System.EventHandler (this.OnRequestScreenControlActivated);
+		this.RequestRemoteAccessAction.Activated += new global::System.EventHandler (this.OnRequestRemoteAccessActivated);
 		this.TerminateRemoteAccessAction.Activated += new global::System.EventHandler (this.OnTerminateRemoteAccessActivated);
 		this.mainDrawingArea.ExposeEvent += new global::Gtk.ExposeEventHandler (this.OnMainDrawingAreaExposeEvent);
 		this.mainDrawingArea.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnMainDrawingAreaButtonReleaseEvent);

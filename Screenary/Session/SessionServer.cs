@@ -336,7 +336,26 @@ namespace Screenary
 
 			listener.OnSessionScreenControlPermissionRequested(sessionKey, username, permission);
 		}
-		
+
+		private void RecvTermRemoteAccessReq(BinaryReader s)
+		{
+			Console.WriteLine("SessionServer.RecvTermRemoteAccessReq");
+
+			UInt32 sessionId;
+			char[] sessionKey;
+			string username = "";
+			UInt16 usernameLength;
+			
+			sessionId = s.ReadUInt32();
+			sessionKey = s.ReadChars(12);
+			usernameLength = s.ReadUInt16();
+			
+			if (usernameLength > 0)
+				username = new string(s.ReadChars(usernameLength));
+						
+			listener.OnSessionTermRemoteAccessRequested(sessionKey, username);
+		}
+
 		public override void OnRecv(byte[] buffer, byte pduType)
 		{
 			Console.WriteLine("SessionServer.OnRecv");
@@ -395,6 +414,10 @@ namespace Screenary
 				
 				case PDU_SESSION_SCREEN_CONTROL_PERMISSION_REQ:
 					RecvScreenControlPermissionReq(s);
+					return;
+
+				case PDU_SESSION_TERM_REMOTE_ACCESS_REQ:
+					RecvTermRemoteAccessReq(s);
 					return;
 
 				default:

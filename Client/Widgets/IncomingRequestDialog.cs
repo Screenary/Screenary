@@ -17,6 +17,11 @@ namespace Screenary.Client
 				usernamelbl.LabelProp = this.username; 
 			});
 		}
+		
+		public string GetUsername()
+		{
+			return username;
+		}
 
 		protected void OnButtonDenyClicked (object sender, System.EventArgs e)
 		{

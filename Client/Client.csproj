@@ -78,6 +78,8 @@
     <Compile Include="Source\PcapSource.cs" />
     <Compile Include="Source\RdpSource.cs" />
     <Compile Include="Source\ISource.cs" />
+    <Compile Include="Widgets\IncomingRequestDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.IncomingRequestDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

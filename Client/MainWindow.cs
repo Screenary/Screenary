@@ -59,23 +59,27 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal IClientState currentState;
 	internal IClientState[] clientStates;
 	internal static int STARTED_STATE = 0;
-	internal static int SENDER_CREATED_STATE = 1;
+	internal static int SENDER_CREATED_STATE = 1; //Sender is in control of remote by default
 	internal static int RECEIVER_JOINED_STATE = 2;
-	internal static int RECEIVER_AUTHENTICATED_STATE = 3;
+	internal static int RECEIVER_AUTHENTICATED_STATE = 3;//Receiver is not in control of remote by default
 	internal static int SENDER_SENDING_STATE = 4;
+	internal static int RECEIVER_IN_CONTROL_STATE = 5;//Receiver has been granted control
+	internal static int SENDER_SENDING_REMOTE_STATE = 6;//Sender has granted control to a receiver
 	
 	public MainWindow(int m): base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 
 		/* Instantiate client states */
-		clientStates = new IClientState[5]
+		clientStates = new IClientState[7]
 		{
 			new StartedState(this),
 			new SenderCreatedState(this),
 			new ReceiverJoinedState(this),
 			new ReceiverAuthenticatedState(this),
-			new SenderSendingState(this)
+			new SenderSendingState(this),
+			new ReceiverInControlState(this),
+			new SenderSendingRemoteState(this)
 		};
 		
 		/* Set current state to STARTED */
@@ -236,7 +240,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{				
-		if (currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		if (currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
 		{
 			sessionClient.SendLeaveReq(username);
 		}
@@ -640,7 +644,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}
 	
 	/**
-	 * Notifies when a user has joined/left a session
+	 * Notifies when a user has joined/left a session, who has control of the session. FOR NOW: Switching states when a user has
+	 * taken control. 
 	 **/
 	public void OnSessionNotificationUpdate(string type, string username)
 	{
@@ -654,31 +659,57 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			DisplayStatusText(username + " has " + type + " the session.");
 		}
+		
+		if(type.Equals("control of") && this.username.Equals(username))
+		{
+			if(currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
+			{
+				currentState = clientStates[RECEIVER_IN_CONTROL_STATE];
+				currentState.refresh();
+			}
+			
+			if(currentState.ToString().Equals(clientStates[SENDER_SENDING_REMOTE_STATE].ToString()))
+			{
+				currentState = clientStates[SENDER_SENDING_STATE];
+				currentState.refresh();
+			}
+			
+		}
+		
+		if(type.Equals("control of") && !this.username.Equals(username))
+		{
+			if(currentState.ToString().Equals(clientStates[RECEIVER_IN_CONTROL_STATE].ToString()))
+			{
+				currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
+				currentState.refresh();
+			}
+			
+			if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()) || currentState.ToString().Equals(clientStates[SENDER_SENDING_STATE].ToString()))
+			{
+				currentState = clientStates[SENDER_SENDING_REMOTE_STATE];
+				currentState.refresh();
+			}
+		}
 	}
 	
 	/**
 	 * Sender receives and handles receiver's request from the Broadcaster
 	 */
-	int count = 0; //TA temp testing code until ui widget is added
 	public void OnSessionRemoteAccessRequestReceived(string receiverUsername)
 	{
 		Console.WriteLine("MainWindow.OnSessionRemoteAccessRequestReceived");
 		Console.WriteLine("Username: {0}", receiverUsername);
-		
-		//TODO implement
-		//in dialog box
-		//=========================
-		//<username> wants access...
-		//[GRANT] [DENY]
-		//=========================
-		
-		//if sender grants access, permission == true;
-		//else permission == false;
-		
-		Boolean permission = ((++count)%2 == 0); //TA temp code
-		sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);
 			
+		IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);		
 	}
+	
+	/*When the sender either grants/denies access to the receiver requesting control, this method is called
+	 * */
+	public void OnUserRequestResponse(Boolean permission, string receiverUsername)
+	{
+		sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);	
+	}
+	
 	/**
 	 * When end session is activated it sends the termination request
 	 **/
@@ -769,7 +800,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
-			mainWindow.TerminateRemoteAccessAction.Visible = true;
+			mainWindow.TerminateRemoteAccessAction.Visible = false;
 			
 			mainWindow.DisplayCreator();
 		}
@@ -811,7 +842,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestRemoteAccessAction.Visible = false;			
-			mainWindow.TerminateRemoteAccessAction.Visible = true;
+			mainWindow.TerminateRemoteAccessAction.Visible = false;
 		}
 		
 		/**
@@ -863,7 +894,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{ }
 		
 		/**
-		 * Only show participants, recording, and leave session triggers
+		 * Only show participants, recording, and leave session triggers, no terminate remote
 		 **/ 
 		public override void refresh()
 		{
@@ -874,6 +905,34 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.LeaveSessionAction.Visible = true;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = true;
+			mainWindow.TerminateRemoteAccessAction.Visible = false;
+		}
+		
+		public override void OnRecordAction()
+		{
+			// Should not happen
+		}
+	}
+	/**
+	 * Class contains functionality specific to Receiver-In Control State
+	 */ 
+	public class ReceiverInControlState : IClientState
+	{
+		public ReceiverInControlState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		/**
+		 * Only show participants, recording, and leave session triggers, no request remote
+		 **/ 
+		public override void refresh()
+		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = false;
+			mainWindow.LeaveSessionAction.Visible = true;
+			mainWindow.EndSessionAction.Visible = false;
+			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
 		}
 		
@@ -882,6 +941,38 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			// Should not happen
 		}
 	}
-
+	
+	/**
+	 * Class isolates behavior to Sender-Sending Remote State
+	 */ 
+	public class SenderSendingRemoteState : IClientState
+	{
+		public SenderSendingRemoteState(MainWindow mainWindow) : base(mainWindow)
+		{ }
+		
+		public override void refresh()
+		{
+			mainWindow.vbox3.Visible = true;
+			mainWindow.JoinSessionAction.Visible = false;
+			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.recordAction.Visible = true;
+			mainWindow.recordAction.Label = "Stop Sharing Screen";
+			mainWindow.LeaveSessionAction.Visible = false;
+			mainWindow.EndSessionAction.Visible = true;
+			mainWindow.RequestRemoteAccessAction.Visible = false;			
+			mainWindow.TerminateRemoteAccessAction.Visible = true;
+		}
+		
+		/**
+		 * Transition to SenderCreatedState and stop live source capture
+		 */ 
+		public override void OnRecordAction()
+		{
+			mainWindow.rdpSource.Disconnect();
+			mainWindow.currentState = mainWindow.clientStates[SENDER_CREATED_STATE];
+			mainWindow.currentState.refresh();		
+		}
+	}	
+	
 
 }

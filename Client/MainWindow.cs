@@ -52,7 +52,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	private uint messageId = 0;
 	private uint contextId = 1;
 	private readonly object mainLock = new object();
-	
+	internal ArrayList incomingRequestList = new ArrayList();
 	internal RdpSource rdpSource;
 	internal PcapSource pcapSource;
 	
@@ -700,14 +700,32 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		Console.WriteLine("MainWindow.OnSessionRemoteAccessRequestReceived");
 		Console.WriteLine("Username: {0}", receiverUsername);
 			
-		IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);		
+		IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);
+		incomingRequestList.Add(request);
 	}
 	
 	/*When the sender either grants/denies access to the receiver requesting control, this method is called
 	 * */
 	public void OnUserRequestResponse(Boolean permission, string receiverUsername)
 	{
-		sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);	
+		/* Deny all other requests  */
+		if(permission) 
+		{
+			foreach(IncomingRequestDialog incomingRequestDialog in incomingRequestList)
+			{
+				string otherUsername = incomingRequestDialog.GetUsername();
+				if(!receiverUsername.Equals(otherUsername))
+				{
+					sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), otherUsername, false);
+					incomingRequestDialog.Destroy();
+				}
+			}
+			incomingRequestList.Clear();
+		}
+		
+		/* Grant chosen request */
+		sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), receiverUsername, permission);
+
 	}
 	
 	/**

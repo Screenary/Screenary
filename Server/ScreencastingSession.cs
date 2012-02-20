@@ -124,7 +124,8 @@ namespace Screenary.Server
 				/*if another receiver has control, deny*/
 				if(remoteController != this.senderClient)
 				{
-					DenyRemoteAccess(requestingClient, username);
+					remoteControlRequestClients.TryAdd(username, requestingClient);				
+					DenyRemoteAccess(this.senderClient, username);
 				}
 				/*if sender has control, add requester to list and inform sender*/
 				else
@@ -148,7 +149,8 @@ namespace Screenary.Server
 
 				if(receiverClient != null) 
 				{
-					remoteControlRequestClients.Clear();
+					remoteControlRequestClients.TryRemove(receiverUsername, out receiverClient);
+					remoteController = receiverClient;
 					UpdateNotifications("control of", receiverUsername);
 				}
 			}	
@@ -158,10 +160,8 @@ namespace Screenary.Server
 		public void DenyRemoteAccess(Client senderClient, string receiverUsername)
 		{
 			Console.WriteLine("ScreencastingSession.DenyRemoteAccess");
-
-			string username = authenticatedClients[senderClient].username;
 			
-			if(senderUsername.Equals(username))
+			if(this.senderClient == senderClient)
 			{
 				Client receiverClient = null;
 				remoteControlRequestClients.TryRemove(receiverUsername, out receiverClient);

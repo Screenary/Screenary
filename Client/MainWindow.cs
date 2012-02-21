@@ -55,6 +55,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal ArrayList incomingRequestList = new ArrayList();
 	internal RdpSource rdpSource;
 	internal PcapSource pcapSource;
+	internal Keyboard keyboard;
 	
 	internal IClientState currentState;
 	internal IClientState[] clientStates;
@@ -113,6 +114,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		pcapSource = new PcapSource(this);
 		
+		keyboard = new Keyboard();
+		
 		if (config.BroadcasterAutoconnect)
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
@@ -164,6 +167,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 */ 
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
 	{
+		UInt32 scancode;
+		int extended = 0;
 		Gdk.EventKey e = args.Event;
 
 		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
@@ -174,12 +179,17 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
-				inputClient.SendKeyboardEvent(e.KeyValue, true);
+			{
+				scancode = keyboard.GetRdpScancodeFromX11Keycode(e.HardwareKeycode, ref extended);
+				inputClient.SendKeyboardEvent(scancode, true);
+			}
 		}
 	}
 	
 	protected void OnMainDrawingAreaKeyReleaseEvent(object o, Gtk.KeyReleaseEventArgs args)
 	{
+		UInt32 scancode;
+		int extended = 0;
 		Gdk.EventKey e = args.Event;
 
 		/*Console.WriteLine("KeyReleaseEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
@@ -188,7 +198,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
+			{
+				scancode = keyboard.GetRdpScancodeFromX11Keycode(e.HardwareKeycode, ref extended);
 				inputClient.SendKeyboardEvent(e.KeyValue, false);
+			}
 		}
 	}
 
@@ -871,7 +884,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
 			
 			if (mainWindow.inputClient != null)
-				mainWindow.inputClient.Active = false;
+			{
+				string hostname = mainWindow.config.RdpServerHostname;
+				
+				if (hostname.Equals("localhost") || hostname.Equals("127.0.0.1"))
+					mainWindow.inputClient.Active = false;
+			}
 		}
 		
 		/**

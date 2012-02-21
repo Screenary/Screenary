@@ -27,6 +27,8 @@ namespace Screenary
 			TransportClient client;
 				
 			tcpClient = tcpListener.AcceptTcpClient();
+			tcpClient.NoDelay = true;
+
 			client = new TransportClient(tcpClient);
 	
 			return client;

@@ -81,7 +81,10 @@ namespace Screenary
 			this.port = port;
 	
 			if (tcpClient == null)
+			{
 				tcpClient = new TcpClient();
+				tcpClient.NoDelay = true;
+			}
 			
 			tcpClient.Connect(this.hostname, this.port);
 			

@@ -117,6 +117,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			OnUserConnect(config.BroadcasterHostname, config.BroadcasterPort);
 	}
 	
+	/**
+	 * Invoked when mouse clicks occur on window
+	 */ 
 	protected void OnMainDrawingAreaButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
 	{
 		Gdk.EventButton e = args.Event;
@@ -124,13 +127,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		/*Console.WriteLine("ButtonPressEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-		{
-			if (inputClient.Active)
-				inputClient.SendMouseEvent(e.Button, true, (int) e.X, (int) e.Y);
-		}
+		if (inputClient.Active && transport.isConnected() && sessionClient.GetSessionId() != 0)
+			inputClient.SendMouseEvent(e.Button, true, (int) e.X, (int) e.Y);
 	}
 	
+	/**
+	 * Invoked when mouse clicks are released on window
+	 */ 
 	protected void OnMainDrawingAreaButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
 	{
 		Gdk.EventButton e = args.Event;
@@ -138,27 +141,27 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		/*Console.WriteLine("ButtonReleaseEvent button:{0} ({1},{2}) ({3},{4})",
 			e.Button, e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-		{
-			if (inputClient.Active)
-				inputClient.SendMouseEvent(e.Button, false, (int) e.X, (int) e.Y);
-		}
+		if (inputClient.Active && transport.isConnected() && sessionClient.GetSessionId() != 0)
+			inputClient.SendMouseEvent(e.Button, false, (int) e.X, (int) e.Y);
 	}
 	
+	/**
+	 * Invoked when mouse moves across window
+	 */ 
 	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
 	{
 		Gdk.EventMotion e = args.Event;
-		
+				
 		/*Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
 			e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
-		{
-			if (inputClient.Active)
-				inputClient.SendMouseMotionEvent((int) e.X, (int) e.Y);
-		}
+		if (inputClient.Active && transport.isConnected() && sessionClient.GetSessionId() != 0)
+			inputClient.SendMouseMotionEvent((int) e.X, (int) e.Y);
 	}
 	
+	/**
+	 * Invoked when keyboard presses occur on window
+	 */ 
 	protected void OnMainDrawingAreaKeyPressEvent(object o, Gtk.KeyPressEventArgs args)
 	{
 		Gdk.EventKey e = args.Event;
@@ -789,6 +792,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
+			
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		public override void OnRecordAction()
@@ -821,6 +827,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
 			
 			mainWindow.DisplayCreator();
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		/**
@@ -838,7 +846,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 				mainWindow.config.RdpServerPort, mainWindow.config.RdpServerUsername,
 				mainWindow.config.RdpServerDomain, mainWindow.config.RdpServerPassword);
 			mainWindow.currentState = mainWindow.clientStates[SENDER_SENDING_STATE];
-			mainWindow.currentState.refresh();	
+			mainWindow.currentState.refresh();
 		}
 	}
 	
@@ -861,6 +869,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestRemoteAccessAction.Visible = false;			
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
+			
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		/**
@@ -895,6 +906,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
+			
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		public override void OnRecordAction()
@@ -924,6 +938,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = true;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
+			
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		public override void OnRecordAction()
@@ -952,6 +969,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
+			
+			/* Enable Input Channel */
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = true;
 		}
 		
 		public override void OnRecordAction()
@@ -979,6 +1000,9 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestRemoteAccessAction.Visible = false;			
 			mainWindow.TerminateRemoteAccessAction.Visible = true;
+			
+			if (mainWindow.inputClient != null)
+				mainWindow.inputClient.Active = false;
 		}
 		
 		/**

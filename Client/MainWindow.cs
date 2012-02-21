@@ -171,17 +171,15 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		int extended = 0;
 		Gdk.EventKey e = args.Event;
 
-		Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
-			e.Key, e.KeyValue, e.HardwareKeycode);
-		
-		//TODO check what to send e.Key, e.KeyValue or e.HardwareKeycode
+		/*Console.WriteLine("KeyPressEvent key:{0} keyValue:{1} hardwareKeyCode:{2}",
+			e.Key, e.KeyValue, e.HardwareKeycode);*/
 		
 		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
 		{
 			if (inputClient.Active)
 			{
-				scancode = keyboard.GetRdpScancodeFromX11Keycode(e.HardwareKeycode, ref extended);
-				inputClient.SendKeyboardEvent(scancode, true);
+				scancode = keyboard.GetRdpScancodeFromX11Keycode((UInt32) e.HardwareKeycode, ref extended);
+				inputClient.SendKeyboardEvent(scancode, true, (extended == 0) ? false : true);
 			}
 		}
 	}
@@ -199,8 +197,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			if (inputClient.Active)
 			{
-				scancode = keyboard.GetRdpScancodeFromX11Keycode(e.HardwareKeycode, ref extended);
-				inputClient.SendKeyboardEvent(e.KeyValue, false);
+				scancode = keyboard.GetRdpScancodeFromX11Keycode((UInt32) e.HardwareKeycode, ref extended);
+				inputClient.SendKeyboardEvent(e.KeyValue, false, (extended == 0) ? false : true);
 			}
 		}
 	}

@@ -64,7 +64,7 @@ namespace Screenary.Client
 		
 		public void OnKeyboardEvent(UInt16 keyboardFlags, UInt16 keyCode)
 		{
-			Console.WriteLine("RdpSource.OnKeyboardEvent");
+			Console.WriteLine("RdpSource.OnKeyboardEvent: {0}", keyCode);
 			rdp.SendInputKeyboardEvent(keyboardFlags, keyCode);
 		}
 		

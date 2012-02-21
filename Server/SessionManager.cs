@@ -275,9 +275,7 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnRecvMouseEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlags, int x, int y)
-		{
-			Console.WriteLine("SessionManager.OnRecvMouseEvent sessionkey: "+sessionKey.ToString());
-			
+		{			
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);

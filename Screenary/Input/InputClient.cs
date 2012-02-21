@@ -104,14 +104,15 @@ namespace Screenary
 				listener.OnMouseEvent(pointerFlags, x, y);
 		}		
 		
-		public void SendKeyboardEvent(uint keyCode, bool down)
+		public void SendKeyboardEvent(uint keyCode, bool down, bool extended)
 		{
 			UInt16 keyboardFlags;
 			byte[] buffer = null;
 			int length = sizeof(UInt16) * 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
 		
-			keyboardFlags = (down) ? KBD_FLAGS_DOWN : (UInt16) 0;
+			keyboardFlags = (extended) ? KBD_FLAGS_EXTENDED : (UInt16) 0;
+			keyboardFlags |= (down) ? KBD_FLAGS_DOWN : KBD_FLAGS_RELEASE;
 			
 			s.Write((UInt16) keyboardFlags);
 			s.Write((UInt16) keyCode);

@@ -11,6 +11,9 @@ namespace FreeRDP
 		public static extern UInt32 freerdp_keyboard_init(UInt32 keyboardLayoutId);
 		
 		[DllImport("libfreerdp-locale")]
+		public static extern IntPtr freerdp_keyboard_get_layout_name_from_id(UInt32 keyboardLayoutId);
+		
+		[DllImport("libfreerdp-locale")]
 		public static extern UInt32 freerdp_keyboard_get_rdp_scancode_from_x11_keycode(UInt32 keycode, ref int extended);
 		
 		[DllImport("libfreerdp-locale")]
@@ -18,10 +21,21 @@ namespace FreeRDP
 		
 		[DllImport("libfreerdp-locale")]
 		public static extern UInt32 freerdp_keyboard_get_rdp_scancode_from_virtual_key_code(UInt32 vkcode, ref int extended);
+	
+		[DllImport("libfreerdp-locale")]
+		public static extern IntPtr freerdp_keyboard_get_virtual_key_code_name(UInt32 vkcode);
 		
 		public Keyboard()
 		{
 			keyboardLayoutId = freerdp_keyboard_init(0);
+		}
+		
+		public string GetKeyboardLayoutNameFromId(UInt32 keyboardLayoutId)
+		{
+			string keyboardLayoutName;
+			IntPtr cstr = freerdp_keyboard_get_layout_name_from_id(keyboardLayoutId);
+			keyboardLayoutName = Marshal.PtrToStringAuto(cstr);
+			return keyboardLayoutName;
 		}
 		
 		public UInt32 GetRdpScancodeFromX11Keycode(UInt32 keycode, ref int extended)
@@ -43,6 +57,14 @@ namespace FreeRDP
 			UInt32 scancode;
 			scancode = freerdp_keyboard_get_rdp_scancode_from_virtual_key_code(vkcode, ref extended);
 			return scancode;
+		}
+		
+		public string GetVirtualKeyCodeName(UInt32 vkcode)
+		{
+			string vkcodeName;
+			IntPtr cstr = freerdp_keyboard_get_virtual_key_code_name(vkcode);
+			vkcodeName = Marshal.PtrToStringAuto(cstr);
+			return vkcodeName;
 		}
 		
 		~Keyboard()

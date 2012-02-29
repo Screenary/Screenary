@@ -634,7 +634,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
-		DisplayStatusText("You have succesfully terminated the session.");
+		DisplayStatusText("The session has been terminated.");
 	}
 	
 	/**

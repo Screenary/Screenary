@@ -80,9 +80,13 @@ namespace Screenary.Server
 		public void OnSessionTerminationRequested(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
 		{
 			clientListener.OnSessionTerminationRequested(this, sessionId, sessionKey, ref sessionStatus);
-			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
 		}	
 		
+		public void OnSessionTermination(UInt32 sessionId, char[] sessionKey, UInt32 sessionStatus)
+		{
+			sessionServer.SendTermRsp(sessionId, sessionKey, sessionStatus);
+		}	
+
 		/**
 		 * Receiver sends request to Broadcaster
 		 */

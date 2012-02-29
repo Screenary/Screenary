@@ -168,14 +168,19 @@ namespace Screenary.Server
 			
 			if (isSessionAlive(sessionKey))
 			{
-				/* Only the sender can terminate a session */
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 				
+				/* Only the sender can terminate a session */
 				if (screencastSession.senderId == sessionId)
 				{
+					sessionStatus = 0;
+					foreach(Client authenticatedClient in screencastSession.authenticatedClients.Keys)
+					{
+						UInt32 clientSessionId = screencastSession.authenticatedClients[authenticatedClient].sessionId;
+						authenticatedClient.OnSessionTermination(clientSessionId, sessionKey, sessionStatus);
+					}
 					screencastSession.authenticatedClients.Clear();
 					sessions.TryRemove(new string(sessionKey), out screencastSession);
-					sessionStatus = 0;
 					return;
 				}
 			}

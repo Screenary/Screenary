@@ -634,6 +634,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
+		ExceptionDialog exception = new ExceptionDialog("Alert", "The session has been terminated.");
 		DisplayStatusText("The session has been terminated.");
 	}
 	

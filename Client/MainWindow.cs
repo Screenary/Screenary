@@ -232,7 +232,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{				
-		if (currentState.ToString().Equals(clientStates[RECEIVER_JOINED_STATE].ToString()))
+		if (currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
 		{
 			sessionClient.SendLeaveReq(username);
 		}

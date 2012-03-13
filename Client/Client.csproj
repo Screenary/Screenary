@@ -80,6 +80,8 @@
     <Compile Include="Source\ISource.cs" />
     <Compile Include="Widgets\IncomingRequestDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.IncomingRequestDialog.cs" />
+    <Compile Include="Widgets\CreationDialog.cs" />
+    <Compile Include="gtk-gui\Screenary.Client.CreationDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -628,8 +628,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 
 		currentState.refresh();
 		Console.WriteLine("MainWindow.Refresh");
-
-		DisplayStatusText("You have succesfully created a session. The session key is: " + sessionKeyString);
+		
+		this.Title = "Screenary - Session: " + sessionKeyString;
+		
+		CreationDialog dialog = new CreationDialog(sessionKeyString);
+		
 	}
 	
 	/**
@@ -644,7 +647,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
+		this.Title = "Screenary";
+		
 		ExceptionDialog exception = new ExceptionDialog("Alert", "The session has been terminated.");
+		
 		DisplayStatusText("The session has been terminated.");
 	}
 	

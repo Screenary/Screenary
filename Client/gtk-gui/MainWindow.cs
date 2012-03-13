@@ -157,6 +157,7 @@ public partial class MainWindow
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 		this.txtParticipants = new global::Gtk.TextView ();
+		this.txtParticipants.Sensitive = false;
 		this.txtParticipants.CanFocus = true;
 		this.txtParticipants.Name = "txtParticipants";
 		this.txtParticipants.Editable = false;

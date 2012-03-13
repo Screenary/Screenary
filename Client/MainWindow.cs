@@ -524,8 +524,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		//update the input channel with the sessionId
 		inputClient.SetSessionId(sessionClient.GetSessionId());
-		
-		DisplayStatusText("You have successfully joined the session! SessionKey: " + sessionKeyString);
 	}
 	
 	/**
@@ -598,6 +596,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
+		this.Title = "Screenary";
+		
 		DisplayStatusText("You have succesfully left the session.");
 	}
 	
@@ -610,6 +610,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
 		currentState.refresh();
+		
+		this.Title = "Screenary - Session: " + sessionKey;
+		
+		DisplayStatusText("You have successfully joined the session! SessionKey: " + sessionKey);
 	}
 	
 	/**
@@ -953,11 +957,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		 **/ 		
 		public override void refresh()
 		{
-			mainWindow.vbox3.Visible = true;
-			mainWindow.JoinSessionAction.Visible = false;
-			mainWindow.CreateSessionAction.Visible = false;
+			mainWindow.vbox3.Visible = false;
+			mainWindow.JoinSessionAction.Visible = true;
+			mainWindow.CreateSessionAction.Visible = true;
 			mainWindow.recordAction.Visible = false;
-			mainWindow.LeaveSessionAction.Visible = true;
+			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = false;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
 			mainWindow.TerminateRemoteAccessAction.Visible = false;
@@ -970,6 +974,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			// Should not happen
 		}
+	
 	}
 	
 	/**

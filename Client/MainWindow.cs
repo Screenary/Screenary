@@ -233,11 +233,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{				
-		if (currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
+		if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
 		{
 			sessionClient.SendLeaveReq(username);
 		}
-		else if (currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		else if (currentState == clientStates[SENDER_CREATED_STATE])
 		{			
 			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
@@ -255,11 +255,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{				
-		if (currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
+		if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
 		{
 			sessionClient.SendLeaveReq(username);
 		}
-		else if (currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()))
+		else if (currentState == clientStates[SENDER_CREATED_STATE] ||
+			currentState == clientStates[SENDER_SENDING_STATE] ||
+			currentState == clientStates[SENDER_SENDING_REMOTE_STATE])
 		{			
 			sessionClient.SendTermReq(sessionKey.ToCharArray());
 		}
@@ -695,17 +697,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			DisplayStatusText(username + " has " + type + " the session.");
 		}
 		
-		if(type.Equals("control of") && this.username.Equals(username))
+		if (type.Equals("control of") && this.username.Equals(username))
 		{
-			controller = username;//set the controller information
-			if(currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
+			// Save the controller's username
+			controller = username;
+			if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
 			{
 				currentState = clientStates[RECEIVER_IN_CONTROL_STATE];
 				currentState.refresh();
 				DisplayParticipants();
 			}
 			
-			if(currentState.ToString().Equals(clientStates[SENDER_SENDING_REMOTE_STATE].ToString()))
+			if (currentState == clientStates[SENDER_SENDING_REMOTE_STATE])
 			{
 				currentState = clientStates[SENDER_SENDING_STATE];
 				currentState.refresh();
@@ -714,17 +717,18 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			
 		}
 		
-		if(type.Equals("control of") && !this.username.Equals(username))
+		if (type.Equals("control of") && !this.username.Equals(username))
 		{
-			controller = username;//set the controller information
-			if(currentState.ToString().Equals(clientStates[RECEIVER_IN_CONTROL_STATE].ToString()))
+			// Save controller's username
+			controller = username;
+			if (currentState == clientStates[RECEIVER_IN_CONTROL_STATE])
 			{
 				currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
 				currentState.refresh();
 				DisplayParticipants();
 			}
 			
-			if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()) || currentState.ToString().Equals(clientStates[SENDER_SENDING_STATE].ToString()))
+			if (currentState == clientStates[SENDER_CREATED_STATE] || currentState == clientStates[SENDER_SENDING_STATE])
 			{
 				currentState = clientStates[SENDER_SENDING_REMOTE_STATE];
 				currentState.refresh();

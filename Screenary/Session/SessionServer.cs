@@ -185,6 +185,33 @@ namespace Screenary
 		}
 		
 		/**
+	 	* Sends a notification response when joining a session
+	 	**/
+		public void SendFirstNotificationRsp(string type, string username, string senderClient)
+		{	
+			int length = 2;
+			length += type.Length + 2;
+			length += username.Length + 2;
+			length += senderClient.Length + 2;
+			
+			byte[] buffer = new byte[length];
+			BinaryWriter s = new BinaryWriter(new MemoryStream(buffer));
+	
+			s.Write((UInt16) length);
+			
+			s.Write((UInt16) type.Length);
+			s.Write(type.ToCharArray());
+			
+			s.Write((UInt16) username.Length);
+			s.Write(username.ToCharArray());
+			
+			s.Write((UInt16) senderClient.Length);
+			s.Write(senderClient.ToCharArray());
+						
+			Send(buffer, PDU_SESSION_FIRST_NOTIFICATION_RSP);
+		}
+		
+		/**
 	 	* Processes a join request by a receiver
 	 	**/
 		private void RecvJoinReq(BinaryReader s)

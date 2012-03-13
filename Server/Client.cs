@@ -129,6 +129,11 @@ namespace Screenary.Server
 			sessionServer.SendNotificationRsp(type, username);
 		}
 		
+		public void OnSessionFirstNotificationUpdate(string type, string username, string senderClient)
+		{
+			sessionServer.SendFirstNotificationRsp(type, username, senderClient);
+		}
+		
 		public void OnSurfaceCommand(UInt32 sessionId, byte[] surfaceCommand)
 		{
 			clientListener.OnSurfaceCommand(this, sessionId, surfaceCommand);

@@ -49,6 +49,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal TransportClient transport;
 	internal ArrayList participants;
 	internal string creator;
+	internal string controller;
 	private uint messageId = 0;
 	private uint contextId = 1;
 	private readonly object mainLock = new object();
@@ -542,7 +543,16 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			{
 				foreach (string username in participants)
 				{
-					txtParticipants.Buffer.InsertAtCursor(username + "\r\n");
+					if(username.Equals(creator))
+					{
+						txtParticipants.Buffer.InsertAtCursor(username + " (Sender)\r\n");
+					}
+					else if (username.Equals(controller))
+					{
+						txtParticipants.Buffer.InsertAtCursor(username + " (Remote)\r\n");
+					}
+					else
+						txtParticipants.Buffer.InsertAtCursor(username + "\r\n");
 				}
 			}
 			
@@ -562,7 +572,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			
 			if (creator != null)
 			{
-				txtParticipants.Buffer.InsertAtCursor(creator + "\r\n");
+				txtParticipants.Buffer.InsertAtCursor(creator + " (Sender)\r\n");
 			}
 		});
 	}
@@ -677,33 +687,55 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		if(type.Equals("control of") && this.username.Equals(username))
 		{
+			controller = username;//set the controller information
 			if(currentState.ToString().Equals(clientStates[RECEIVER_AUTHENTICATED_STATE].ToString()))
 			{
 				currentState = clientStates[RECEIVER_IN_CONTROL_STATE];
 				currentState.refresh();
+				DisplayParticipants();
 			}
 			
 			if(currentState.ToString().Equals(clientStates[SENDER_SENDING_REMOTE_STATE].ToString()))
 			{
 				currentState = clientStates[SENDER_SENDING_STATE];
 				currentState.refresh();
+				DisplayParticipants();
 			}
 			
 		}
 		
 		if(type.Equals("control of") && !this.username.Equals(username))
 		{
+			controller = username;//set the controller information
 			if(currentState.ToString().Equals(clientStates[RECEIVER_IN_CONTROL_STATE].ToString()))
 			{
 				currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
 				currentState.refresh();
+				DisplayParticipants();
 			}
 			
 			if(currentState.ToString().Equals(clientStates[SENDER_CREATED_STATE].ToString()) || currentState.ToString().Equals(clientStates[SENDER_SENDING_STATE].ToString()))
 			{
 				currentState = clientStates[SENDER_SENDING_REMOTE_STATE];
 				currentState.refresh();
+				DisplayParticipants();
 			}
+		}
+	}
+	
+	/**
+	 * Notifies when a user has joined a session and sets the creator for the client.
+	 **/
+	public void OnSessionFirstNotificationUpdate(string type, string username, string senderClient)
+	{
+		if (this.username.Equals(username) && type.Equals("joined"))
+		{
+			creator = senderClient;
+			DisplayStatusText("You have successfully joined the session.");
+		}
+		else
+		{
+			DisplayStatusText(username + " has " + type + " the session.");
 		}
 	}
 	

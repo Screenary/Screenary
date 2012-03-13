@@ -70,7 +70,7 @@ namespace Screenary.Server
 				done = true;
 			}
 			
-			UpdateNotifications("joined",username);
+			UpdateFirstNotifications("joined",username, senderUsername);
 		}
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
@@ -91,7 +91,16 @@ namespace Screenary.Server
 				clients.OnSessionNotificationUpdate(type, username);
 			}
 		}
-
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void UpdateFirstNotifications(string type, string username, string senderClient)
+		{
+			foreach (Client clients in authenticatedClients.Keys)
+			{
+				clients.OnSessionFirstNotificationUpdate(type, username, senderClient);
+			}
+		}
+		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void RemoveAuthenticatedUser(Client client, string username, UInt32 sessionId)
 		{
@@ -197,6 +206,7 @@ namespace Screenary.Server
 		{
 			senderClient.SendMouseEventToSender(pointerFlags, x, y, this.senderId);
 		}
+		
 		public void SendKeyboardEventToSender(UInt16 pointerFlag, UInt16 keyCode)
 		{
 			senderClient.SendKeyboardEventToSender(pointerFlag, keyCode, this.senderId);

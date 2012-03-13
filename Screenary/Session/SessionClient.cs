@@ -389,6 +389,49 @@ namespace Screenary
 			
 			listener.OnSessionNotificationUpdate(type, username);
 		}
+		/**
+	 	* Processes notification update when user joins
+	 	**/
+		public void RecvFirstNotificationUpdate(BinaryReader s)
+		{
+			string type = "";
+			string username = "";
+			string senderClient = "";
+			
+			int length = (int) s.ReadUInt16();
+			
+			/* subtract bytes stored for total length */
+			length -= 2;
+			
+			while (length > 0)
+			{
+				UInt16 typeLength = s.ReadUInt16();
+				
+				if (typeLength > 0)
+					type = new string(s.ReadChars(typeLength));
+				
+				/* subtract bytes stored for length and string */
+				length -= (type.Length + 2);
+				
+				UInt16 usernameLength = s.ReadUInt16();
+				
+				if (usernameLength > 0)
+					username = new string(s.ReadChars(usernameLength));
+				
+				/* subtract bytes stored for length and string */
+				length -= (username.Length + 2);
+				
+				UInt16 senderLength = s.ReadUInt16();
+				
+				if (senderLength > 0)
+					senderClient = new string(s.ReadChars(senderLength));
+				
+				/* subtract bytes stored for length and string */
+				length -= (senderClient.Length + 2);
+			}
+			
+			listener.OnSessionFirstNotificationUpdate(type, username, senderClient);
+		}
 		
 		public void RecvRemoteAccessRsp(BinaryReader s)
 		{
@@ -470,6 +513,10 @@ namespace Screenary
 				
 				case PDU_SESSION_NOTIFICATION_RSP:
 					RecvNotificationUpdate(s);
+					return;
+				
+				case PDU_SESSION_FIRST_NOTIFICATION_RSP:
+					RecvFirstNotificationUpdate(s);
 					return;
 				
 				case PDU_SESSION_REMOTE_ACCESS_RSP:

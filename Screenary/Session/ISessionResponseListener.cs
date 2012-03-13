@@ -13,6 +13,7 @@ namespace Screenary
 		void OnSessionOperationFail(string errorMessage);
 		void OnSessionParticipantListUpdate(ArrayList participants);
 		void OnSessionNotificationUpdate(string type, string username);
+		void OnSessionFirstNotificationUpdate(string type, string username, string senderClient);
 		void OnSessionRemoteAccessRequestReceived(string username);			
 	}
 }

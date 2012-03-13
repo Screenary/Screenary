@@ -28,8 +28,9 @@ namespace Screenary
 		public const byte PDU_SESSION_AUTH_RSP = 0x85;
 		public const byte PDU_SESSION_PARTICIPANTS_RSP = 0x86;	
 		public const byte PDU_SESSION_NOTIFICATION_RSP = 0x87;
-		public const byte PDU_SESSION_REMOTE_ACCESS_RSP = 0x88;
-		public const byte PDU_SESSION_REMOTE_ACCESS_PERMISSION_RSP = 0x89;
+		public const byte PDU_SESSION_FIRST_NOTIFICATION_RSP = 0x88;
+		public const byte PDU_SESSION_REMOTE_ACCESS_RSP = 0x89;
+		public const byte PDU_SESSION_REMOTE_ACCESS_PERMISSION_RSP = 0x90;
 		
 		public const byte SESSION_FLAGS_PASSWORD_PROTECTED = 0x01;
 						

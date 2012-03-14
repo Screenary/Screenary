@@ -60,9 +60,7 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionJoinRequested(Client client, char[] sessionKey, ref UInt32 sessionId, ref UInt32 sessionStatus, ref byte sessionFlags)
-		{
-			Console.WriteLine("SessionManager.OnSessionJoinRequested");
-			
+		{			
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
@@ -74,10 +72,7 @@ namespace Screenary.Server
 					sessionFlags = SESSION_FLAGS_PASSWORD_PROTECTED;
 				else
 					sessionFlags = SESSION_FLAGS_NON_PASSWORD_PROTECTED;
-				
-				Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
-						new string(sessionKey), sessionId, sessionStatus);
-				
+								
 				return;
 			}
 						
@@ -89,9 +84,7 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionLeaveRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, string username)
-		{
-			Console.WriteLine("SessionManager.OnSessionLeaveRequested");
-			
+		{			
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
@@ -101,9 +94,6 @@ namespace Screenary.Server
 					screencastSession.RemoveAuthenticatedUser(client, username, sessionId);
 					OnSessionParticipantListUpdated(screencastSession.sessionKey);
 					sessionStatus = 0;
-
-					Console.WriteLine("SessionKey:{0}, SessionId:{1}, SessionStatus:{2}", 
-						new string(sessionKey), sessionId, sessionStatus);
 
 					return;
 				}
@@ -119,9 +109,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionAuthenticationRequested(Client client, UInt32 sessionId, char[] sessionKey, string username, string password, ref UInt32 sessionStatus)
 		{
-			Console.WriteLine("SessionManager.OnSessionAuthenticationRequested");
-			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
-			
 			if (isSessionAlive(sessionKey))
 			{	
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
@@ -143,13 +130,9 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionCreateRequested(Client client, string username, string password, ref UInt32 sessionId, ref char[] sessionKey)
-		{
-			Console.WriteLine("SessionManager.OnSessionCreateRequested");
-			
+		{			
 			sessionId = GenerateUniqueSessionId();
 			sessionKey = GenerateUniqueSessionKey();
-
-			Console.WriteLine("sessionId:{0} username:{1} password:{2}", sessionId, username, password);
 
 			ScreencastingSession screencastSession = new ScreencastingSession(sessionKey, sessionId, username, password, client);
 			
@@ -162,10 +145,7 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTerminationRequested(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus)
-		{
-			Console.WriteLine("SessionManager.OnSessionTerminationRequested");
-			Console.WriteLine("SessionId:{0}, SessionStatus:{1}, SessionKey:{2}", sessionId, sessionStatus, new string(sessionKey));
-			
+		{			
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
@@ -191,9 +171,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionRemoteAccessRequested(Client receiverClient, char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionManager.OnSessionRemoteAccessRequested");
-			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
-			
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 			screencastSession.AddRemoteAccessRequest(receiverClient, username);
 		}
@@ -201,9 +178,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionRemoteAccessPermissionSet(Client client, char[] sessionKey, string username, Boolean permission)
 		{
-			Console.WriteLine("SessionManager.OnSessionRemoteAccessPermissionSet");
-			Console.WriteLine("Username: {0} Granted: {1}", username, permission);
-
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 			if(permission)
 			{
@@ -218,9 +192,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSessionTermRemoteAccessRequested(Client client, char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionManager.OnSessionTermRemoteAccessRequested");
-			Console.WriteLine("SessionKey:{0} Username: {1}", new string(sessionKey), username);
-			
 			ScreencastingSession screencastSession = getSessionByKey(sessionKey);
 			screencastSession.TermRemoteAccessRequested(username);
 		}
@@ -230,9 +201,7 @@ namespace Screenary.Server
 	 	**/
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		private void OnSessionParticipantListUpdated(char[] sessionKey)
-		{
-			Console.WriteLine("SessionManager.OnSessionParticipantsListUpdated");
-			
+		{	
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession session = getSessionByKey(sessionKey);
@@ -244,13 +213,7 @@ namespace Screenary.Server
 				}
 			}
 		}	
-		
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void OnSessionOperationFail(string errorMessage)
-		{
-			Console.WriteLine("SessionManager.OnSessionOperationFail");
-		}
-		
+				
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand)
 		{

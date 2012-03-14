@@ -307,9 +307,7 @@ namespace Screenary
 		}
 		
 		static void ThreadProc(TransportClient client)
-		{
-			Console.WriteLine("TransportClient.ThreadProc");
-			
+		{			
 			try
 			{
 				while (client.isConnected())
@@ -323,7 +321,6 @@ namespace Screenary
 				Console.WriteLine(e.ToString());	
 			}
 			
-			Console.WriteLine("TransportClient.ThreadProc end");
 		}
 	}
 }

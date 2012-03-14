@@ -41,8 +41,6 @@ namespace Screenary
 	 	**/
 		public void SendJoinReq(char[] sessionKey)
 		{
-			Console.WriteLine("SessionClient.SendJoinReq");
-			
 			UInt32 sessionId = 0;
 			
 			byte[] buffer = null;
@@ -60,8 +58,6 @@ namespace Screenary
 	 	**/
 		public void SendLeaveReq(string username)
 		{
-			Console.WriteLine("SessionClient.SendLeaveReq");
-						
 			byte[] buffer = null;
 			int length = username.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
@@ -78,8 +74,6 @@ namespace Screenary
 	 	**/
 		public void SendAuthReq(string username, string password)
 		{
-			Console.WriteLine("SessionClient.SendAuthReq");
-						
 			byte[] buffer = null;
 			int length = username.Length + password.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
@@ -97,8 +91,6 @@ namespace Screenary
 	 	**/
 		public void SendCreateReq(string username, string password)
 		{
-			Console.WriteLine("SessionClient.SendCreateReq");
-
 			UInt32 sessionId = 0;
 			
 			byte[] buffer = null;
@@ -118,8 +110,6 @@ namespace Screenary
 	 	**/
 		public void SendTermReq(char[] sessionKey)
 		{
-			Console.WriteLine("SessionClient.SendTermReq");
-						
 			byte[] buffer = null;
 			int length = sessionKey.Length + 4;
 			BinaryWriter s = InitReqPDU(ref buffer, length, this.sessionId);
@@ -127,7 +117,6 @@ namespace Screenary
 			s.Write(sessionKey);
 			
 			Send(buffer, PDU_SESSION_TERM_REQ);
-			Console.WriteLine("SessionClient.SendTermReq done");
 		}
 		
 		/**
@@ -135,8 +124,6 @@ namespace Screenary
 		 */
 		public void SendRemoteAccessReq(char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionClient.SendRemoteAccessReq");
-			
 			byte[] buffer = null;
 			int length = sessionKey.Length + username.Length + 2;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
@@ -153,8 +140,6 @@ namespace Screenary
 		 */
 		public void SendRemoteAccessPermissionReq(char[] sessionKey, string username, Boolean permission)
 		{
-			Console.WriteLine("SessionClient.SendRemoteAccessPermissionReq");
-			
 			byte[] buffer = null;
 			int length = sessionKey.Length + username.Length + 2 + 1;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
@@ -169,8 +154,6 @@ namespace Screenary
 		
 		public void SendTermRemoteAccessReq(char[] sessionKey, string username)
 		{
-			Console.WriteLine("SessionClient.SendTermRemoteAccess");
-			
 			byte[] buffer = null;
 			int length = sessionKey.Length + username.Length + 2 + 1;
 			BinaryWriter s = InitReqPDU(ref buffer, length, sessionId);
@@ -188,8 +171,6 @@ namespace Screenary
 	 	**/
 		public void RecvJoinRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvJoinRsp");
-
 			Boolean isPasswordProtected = false;
 			UInt32 sessionStatus;
 			char[] sessionKey;
@@ -221,8 +202,6 @@ namespace Screenary
 	 	**/
 		public void RecvLeaveRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvLeaveRsp");
-
 			UInt32 sessionId;
 			UInt32 sessionStatus;
 			
@@ -244,8 +223,6 @@ namespace Screenary
 	 	**/
 		public void RecvAuthRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvAuthRsp");
-
 			UInt32 sessionId;
 			UInt32 sessionStatus;
 			
@@ -272,9 +249,7 @@ namespace Screenary
 	 	* Processes a create session response
 	 	**/
 		public void RecvCreateRsp(BinaryReader s)
-		{
-			Console.WriteLine("SessionClient.RecvCreateRsp");
-			
+		{	
 			UInt32 sessionStatus;
 			char[] sessionKey;
 			
@@ -298,8 +273,6 @@ namespace Screenary
 	 	**/
 		public void RecvTermRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvTermRsp");
-
 			UInt32 sessionId;
 			UInt32 sessionStatus;
 			char[] sessionKey;
@@ -323,9 +296,7 @@ namespace Screenary
 	 	* Processes the received list of participants
 	 	**/
 		public void RecvParticipantListRsp(BinaryReader s)
-		{
-			Console.WriteLine("SessionClient.RecvPartipantsListRsp");
-			
+		{			
 			ArrayList participants = new ArrayList();
 			
 			int length = (int) s.ReadUInt16();
@@ -356,8 +327,6 @@ namespace Screenary
 	 	**/
 		public void RecvNotificationUpdate(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvNotificationUpdate");
-			
 			string type = "";
 			string username = "";
 			
@@ -384,9 +353,7 @@ namespace Screenary
 				/* subtract bytes stored for length and string */
 				length -= (username.Length + 2);
 			}
-			
-			Console.WriteLine("RecvNotificationUpdate type:{0} username:{1}", type, username);
-			
+				
 			listener.OnSessionNotificationUpdate(type, username);
 		}
 		/**
@@ -435,8 +402,6 @@ namespace Screenary
 		
 		public void RecvRemoteAccessRsp(BinaryReader s)
 		{
-			Console.WriteLine("SessionClient.RecvRemoteAccessRsp");
-
 			UInt16 usernameLength;
 			string username = "";
 				
@@ -532,9 +497,7 @@ namespace Screenary
 	 	* Code executed by the thread. Listening and processing received packets
 	 	**/
 		public void ChannelThreadProc()
-		{
-			Console.WriteLine("SessionClient.ChannelThreadProc");
-			
+		{			
 			while (!stopthread)
 			{
 				lock (channelLock)
@@ -553,8 +516,6 @@ namespace Screenary
 					Monitor.Pulse(channelLock);
 				}
 			}
-			
-			Console.WriteLine("SessionClient.ChannelThreadProc end");
 		}
 	}
 }

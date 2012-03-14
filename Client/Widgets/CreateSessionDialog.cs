@@ -28,9 +28,7 @@ namespace Screenary.Client
 			
 			username = txtUsername.Text;
 			password = txtPassword.Text;
-			
-			Console.WriteLine("creating session with username {0} and password {1}", username, password);
-			
+						
 			observer.OnUserCreateSession(username, password);
 			
 			this.Destroy();

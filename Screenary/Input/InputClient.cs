@@ -187,7 +187,6 @@ namespace Screenary
 	 	**/
 		public void ChannelThreadProc()
 		{
-			Console.WriteLine("InputClient.ChannelThreadProc");
 			
 			while (!stopthread)
 			{

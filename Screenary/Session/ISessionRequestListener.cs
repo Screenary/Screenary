@@ -12,7 +12,6 @@ namespace Screenary
 		void OnSessionRemoteAccessRequested(char[] sessionKey, string username);
 		void OnSessionRemoteAccessPermissionSet(char[] sessionKey, string username, Boolean permission);
 		void OnSessionTermRemoteAccessRequested(char[] sessionKey, string username);
-		void OnSessionOperationFail(string errorMessage);
 		void OnRecvMouseEvent(UInt32 sessionId, UInt16 pointerFlags, int x, int y);
 		void OnRecvKeyboardEvent(UInt32 sessionId, UInt16 pointerFlags, UInt16 keyCode);
 	}

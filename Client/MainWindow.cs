@@ -514,12 +514,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void OnSessionJoinSuccess(char[] sessionKey, Boolean isPasswordProtected)
 	{
 		sessionClient.SendAuthReq(username,password);
-		
-		Console.WriteLine("MainWindow.OnSessionJoinSuccess");
-		string sessionKeyString = new string(sessionKey);
-		Console.WriteLine("SessionKey:{0}, Password Protected:{1}", sessionKeyString, isPasswordProtected);
-		
-		this.sessionKey = sessionKeyString;
+				
+		this.sessionKey = new string(sessionKey);
 		
 		currentState = clientStates[RECEIVER_JOINED_STATE];
 		currentState.refresh();
@@ -532,9 +528,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * Display/update the participants list
 	 **/
 	public void DisplayParticipants()
-	{
-		Console.WriteLine("MainWindow.DisplayParticipants()");
-		
+	{		
 		Gtk.Application.Invoke(delegate {
 		
 			txtParticipants.Buffer.Clear();
@@ -563,9 +557,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * Display/update the participants list for the sender 
 	 **/
 	public void DisplayCreator()
-	{
-		Console.WriteLine("MainWindow.DisplayCreator()");
-		
+	{		
 		Gtk.Application.Invoke(delegate {
 
 			txtParticipants.Buffer.Clear();
@@ -592,9 +584,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * When a session is left succesfully, change to the starter state, refresh, and update notification bar
 	 **/
 	public void OnSessionLeaveSuccess()
-	{
-		Console.WriteLine("MainWindow.OnSessionLeaveSuccess");
-		
+	{		
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
@@ -608,8 +598,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionAuthenticationSuccess()
 	{
-		Console.WriteLine("MainWindow.OnSessionAuthenticationSuccess");
-		
 		currentState = clientStates[RECEIVER_AUTHENTICATED_STATE];
 		currentState.refresh();
 		
@@ -623,17 +611,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionCreationSuccess(char[] sessionKey)
 	{
-		Console.WriteLine("MainWindow.OnSessionCreationSuccess");
 		string sessionKeyString = new string(sessionKey);
 		Console.WriteLine("SessionKey:{0}", sessionKeyString);
 		
 		this.sessionKey = sessionKeyString;
 		
 		currentState = clientStates[SENDER_CREATED_STATE];
-		Console.WriteLine("MainWindow.Switch States");
 
 		currentState.refresh();
-		Console.WriteLine("MainWindow.Refresh");
 		
 		this.Title = "Screenary - Session: " + sessionKeyString;
 		
@@ -646,10 +631,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionTerminationSuccess(char[] sessionKey)
 	{
-		Console.WriteLine("MainWindow.OnSessionTerminationSuccess");
-		string sessionKeyString = new string(sessionKey);
-		Console.WriteLine("SessionKey:{0}", sessionKeyString);
-		
 		currentState = clientStates[STARTED_STATE];
 		currentState.refresh();
 		
@@ -674,7 +655,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	public void OnSessionParticipantListUpdate(ArrayList participants)
 	{
-		Console.WriteLine("MainWindow.OnSessionPartipantsListUpdate");
 		this.participants = participants;
 			
 		DisplayParticipants();
@@ -685,9 +665,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * taken control. 
 	 **/
 	public void OnSessionNotificationUpdate(string type, string username)
-	{
-		Console.WriteLine("MainWindow.OnSessionNotificationUpdate");
-		
+	{		
 		if (this.username.Equals(username) && type.Equals("joined"))
 		{
 			DisplayStatusText("You have successfully joined the session.");
@@ -758,9 +736,6 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 */
 	public void OnSessionRemoteAccessRequestReceived(string receiverUsername)
 	{
-		Console.WriteLine("MainWindow.OnSessionRemoteAccessRequestReceived");
-		Console.WriteLine("Username: {0}", receiverUsername);
-			
 		IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);
 		incomingRequestList.Add(request);
 	}

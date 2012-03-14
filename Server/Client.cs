@@ -112,13 +112,7 @@ namespace Screenary.Server
 		{
 			clientListener.OnSessionTermRemoteAccessRequested(this, sessionKey, username);			
 		}
-
-		public void OnSessionOperationFail(string errorMessage)
-		{
-			Console.WriteLine("Client.OnSessionOperationFail");
-			Console.WriteLine("errorMessage: {0}", errorMessage);
-		}	
-		
+				
 		public void OnSessionParticipantListUpdated(ArrayList participants)
 		{
 			sessionServer.SendParticipantsListRsp(participants);

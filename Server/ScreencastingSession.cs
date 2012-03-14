@@ -87,7 +87,6 @@ namespace Screenary.Server
 		{
 			foreach (Client clients in authenticatedClients.Keys)
 			{
-				Console.WriteLine("UpdateNotifications: {0}", username);
 				clients.OnSessionNotificationUpdate(type, username);
 			}
 		}
@@ -125,9 +124,7 @@ namespace Screenary.Server
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void AddRemoteAccessRequest(Client requestingClient, string username)
-		{
-			Console.WriteLine("ScreencastingSession.AddRemoteAccessRequest");
-			
+		{			
 			if(authenticatedClients.ContainsKey(requestingClient)) 
 			{
 				/*if another receiver has control, deny*/
@@ -148,8 +145,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void GrantRemoteAccess(Client senderClient, string receiverUsername)
 		{
-			Console.WriteLine("ScreencastingSession.GrantRemoteAccess receiverUsername: {0}", receiverUsername);
-
 			string potentialSenderUsername = authenticatedClients[senderClient].username;
 			
 			if(senderUsername.Equals(potentialSenderUsername))
@@ -167,9 +162,7 @@ namespace Screenary.Server
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void DenyRemoteAccess(Client senderClient, string receiverUsername)
-		{
-			Console.WriteLine("ScreencastingSession.DenyRemoteAccess");
-			
+		{			
 			if(this.senderClient == senderClient)
 			{
 				Client receiverClient = null;
@@ -184,7 +177,6 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void TermRemoteAccessRequested(string username)
 		{
-			Console.WriteLine("ScreencastingSession.TermRemoteAccessRequested");
 			remoteController = this.senderClient;
 			remoteControlRequestClients.Clear();
 			UpdateNotifications("control of", this.senderUsername);	

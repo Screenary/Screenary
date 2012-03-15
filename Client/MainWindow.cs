@@ -232,8 +232,13 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * When application is closed notify the sender/receiver and disconnect from server
 	 **/
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-	{				
-		if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
+	{			
+		if(currentState == clientStates[RECEIVER_IN_CONTROL_STATE])
+		{
+			sessionClient.SendTermRemoteAccessReq(this.sessionKey.ToCharArray(), this.username);	
+			sessionClient.SendLeaveReq(username);
+		}
+		else if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
 		{
 			sessionClient.SendLeaveReq(username);
 		}
@@ -255,7 +260,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnQuitActionActivated(object sender, System.EventArgs e)
 	{				
-		if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
+		if(currentState == clientStates[RECEIVER_IN_CONTROL_STATE])
+		{
+			sessionClient.SendTermRemoteAccessReq(this.sessionKey.ToCharArray(), this.username);	
+			sessionClient.SendLeaveReq(username);
+		}
+		else if (currentState == clientStates[RECEIVER_AUTHENTICATED_STATE])
 		{
 			sessionClient.SendLeaveReq(username);
 		}

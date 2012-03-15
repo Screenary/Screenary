@@ -787,6 +787,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 **/
 	protected void OnLeaveSessionActionActivated(object sender, System.EventArgs e)
 	{
+		if(currentState == clientStates[RECEIVER_IN_CONTROL_STATE])
+		{
+			sessionClient.SendTermRemoteAccessReq(this.sessionKey.ToCharArray(), this.username);				
+		}
+		
 		sessionClient.SendLeaveReq(username);
 	}
 	

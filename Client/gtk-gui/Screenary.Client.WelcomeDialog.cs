@@ -7,7 +7,7 @@ namespace Screenary.Client
 		private global::Gtk.Label label1;
 		private global::Gtk.Button buttonSender;
 		private global::Gtk.Button buttonReceiver;
-		
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

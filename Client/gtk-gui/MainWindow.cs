@@ -9,11 +9,9 @@ public partial class MainWindow
 	private global::Gtk.Action closeAction;
 	private global::Gtk.Action quitAction;
 	private global::Gtk.Action ToolsAction;
-	private global::Gtk.Action recordAction;
-	private global::Gtk.Action RemoteFXAction;
+	private global::Gtk.Action shareScreenAction;
 	private global::Gtk.Action HelpAction;
 	private global::Gtk.Action aboutAction;
-	private global::Gtk.Action FreeRDPAction;
 	private global::Gtk.Action CreateSessionAction;
 	private global::Gtk.Action JoinSessionAction;
 	private global::Gtk.Action DocumentationAction;
@@ -33,7 +31,7 @@ public partial class MainWindow
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
 	private global::Gtk.TextView txtParticipants;
 	private global::Gtk.Statusbar notificationBar;
-	
+    
 	protected virtual void Build ()
 	{
 		global::Stetic.Gui.Initialize (this);
@@ -56,21 +54,15 @@ public partial class MainWindow
 		this.ToolsAction.HideIfEmpty = false;
 		this.ToolsAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Tools");
 		w1.Add (this.ToolsAction, "<Alt>t");
-		this.recordAction = new global::Gtk.Action ("recordAction", global::Mono.Unix.Catalog.GetString ("Record"), null, null);
-		this.recordAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Record");
-		w1.Add (this.recordAction, "<Control>r");
-		this.RemoteFXAction = new global::Gtk.Action ("RemoteFXAction", global::Mono.Unix.Catalog.GetString ("RemoteFX"), null, null);
-		this.RemoteFXAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("RemoteFX");
-		w1.Add (this.RemoteFXAction, null);
+		this.shareScreenAction = new global::Gtk.Action ("shareScreenAction", global::Mono.Unix.Catalog.GetString ("Share Screen"), null, null);
+		this.shareScreenAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Record");
+		w1.Add (this.shareScreenAction, "<Control>r");
 		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
 		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
 		w1.Add (this.HelpAction, "<Alt>h");
 		this.aboutAction = new global::Gtk.Action ("aboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
 		this.aboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.aboutAction, "<Control>a");
-		this.FreeRDPAction = new global::Gtk.Action ("FreeRDPAction", global::Mono.Unix.Catalog.GetString ("FreeRDP"), null, null);
-		this.FreeRDPAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("FreeRDP");
-		w1.Add (this.FreeRDPAction, null);
 		this.CreateSessionAction = new global::Gtk.Action ("CreateSessionAction", global::Mono.Unix.Catalog.GetString ("Create Session"), null, null);
 		this.CreateSessionAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Create Session");
 		w1.Add (this.CreateSessionAction, null);
@@ -110,7 +102,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menuitem name='ConnectAction' action='ConnectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='EndSessionAction' action='EndSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='LeaveSessionAction' action='LeaveSessionAction'/><menuitem name='recordAction' action='recordAction'/><menuitem name='RemoteFXAction' action='RemoteFXAction'/><menuitem name='FreeRDPAction' action='FreeRDPAction'/><menuitem name='RequestRemoteAccessAction' action='RequestRemoteAccessAction'/><menuitem name='TerminateRemoteAccessAction' action='TerminateRemoteAccessAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='OpenFileAction' action='OpenFileAction'/><menuitem name='ConnectAction' action='ConnectAction'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='CreateSessionAction' action='CreateSessionAction'/><menuitem name='EndSessionAction' action='EndSessionAction'/><menuitem name='JoinSessionAction' action='JoinSessionAction'/><menuitem name='LeaveSessionAction' action='LeaveSessionAction'/><menuitem name='shareScreenAction' action='shareScreenAction'/><menuitem name='RequestRemoteAccessAction' action='RequestRemoteAccessAction'/><menuitem name='TerminateRemoteAccessAction' action='TerminateRemoteAccessAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/><menuitem name='DocumentationAction' action='DocumentationAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.CanDefault = true;
 		this.menubar1.Events = ((global::Gdk.EventMask)(2));
@@ -202,10 +194,8 @@ public partial class MainWindow
 		this.OpenFileAction.Activated += new global::System.EventHandler (this.OnOpenActionActivated);
 		this.closeAction.Activated += new global::System.EventHandler (this.OnCloseActionActivated);
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
-		this.recordAction.Activated += new global::System.EventHandler (this.OnRecordActionActivated);
-		this.RemoteFXAction.Activated += new global::System.EventHandler (this.OnRemoteFXActionActivated);
+		this.shareScreenAction.Activated += new global::System.EventHandler (this.OnShareScreenActionActivated);
 		this.aboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
-		this.FreeRDPAction.Activated += new global::System.EventHandler (this.OnFreeRDPActionActivated);
 		this.CreateSessionAction.Activated += new global::System.EventHandler (this.OnCreateSessionActionActivated);
 		this.JoinSessionAction.Activated += new global::System.EventHandler (this.OnJoinSessionActionActivated);
 		this.ConnectAction.Activated += new global::System.EventHandler (this.OnConnectActionActivated);
@@ -219,7 +209,5 @@ public partial class MainWindow
 		this.mainDrawingArea.MotionNotifyEvent += new global::Gtk.MotionNotifyEventHandler (this.OnMainDrawingAreaMotionNotifyEvent);
 		this.mainDrawingArea.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnMainDrawingAreaKeyPressEvent);
 		this.mainDrawingArea.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler (this.OnMainDrawingAreaKeyReleaseEvent);
-		this.mainDrawingArea.FocusInEvent += new global::Gtk.FocusInEventHandler (this.OnMainDrawingAreaFocusInEvent);
-		this.mainDrawingArea.FocusOutEvent += new global::Gtk.FocusOutEventHandler (this.OnMainDrawingAreaFocusOutEvent);
 	}
 }

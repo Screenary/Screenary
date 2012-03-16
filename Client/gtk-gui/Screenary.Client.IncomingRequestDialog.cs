@@ -9,7 +9,7 @@ namespace Screenary.Client
 		private global::Gtk.Label infolbl;
 		private global::Gtk.Button buttonDeny;
 		private global::Gtk.Button buttonGrant;
-		
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

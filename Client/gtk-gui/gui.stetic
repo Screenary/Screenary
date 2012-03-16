@@ -43,18 +43,12 @@
         <property name="Label" translatable="yes">Tools</property>
         <property name="ShortLabel" translatable="yes">Tools</property>
       </action>
-      <action id="recordAction">
+      <action id="shareScreenAction">
         <property name="Type">Action</property>
         <property name="Accelerator">&lt;Control&gt;r</property>
-        <property name="Label" translatable="yes">Record</property>
+        <property name="Label" translatable="yes">Share Screen</property>
         <property name="ShortLabel" translatable="yes">Record</property>
-        <signal name="Activated" handler="OnRecordActionActivated" />
-      </action>
-      <action id="RemoteFXAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">RemoteFX</property>
-        <property name="ShortLabel" translatable="yes">RemoteFX</property>
-        <signal name="Activated" handler="OnRemoteFXActionActivated" />
+        <signal name="Activated" handler="OnShareScreenActionActivated" />
       </action>
       <action id="HelpAction">
         <property name="Type">Action</property>
@@ -68,12 +62,6 @@
         <property name="Label" translatable="yes">About</property>
         <property name="ShortLabel" translatable="yes">About</property>
         <signal name="Activated" handler="OnAboutActionActivated" />
-      </action>
-      <action id="FreeRDPAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">FreeRDP</property>
-        <property name="ShortLabel" translatable="yes">FreeRDP</property>
-        <signal name="Activated" handler="OnFreeRDPActionActivated" />
       </action>
       <action id="CreateSessionAction">
         <property name="Type">Action</property>
@@ -153,9 +141,7 @@
                     <node type="Menuitem" action="EndSessionAction" />
                     <node type="Menuitem" action="JoinSessionAction" />
                     <node type="Menuitem" action="LeaveSessionAction" />
-                    <node type="Menuitem" action="recordAction" />
-                    <node type="Menuitem" action="RemoteFXAction" />
-                    <node type="Menuitem" action="FreeRDPAction" />
+                    <node type="Menuitem" action="shareScreenAction" />
                     <node type="Menuitem" action="RequestRemoteAccessAction" />
                     <node type="Menuitem" action="TerminateRemoteAccessAction" />
                   </node>
@@ -192,8 +178,6 @@
                         <signal name="MotionNotifyEvent" handler="OnMainDrawingAreaMotionNotifyEvent" />
                         <signal name="KeyPressEvent" handler="OnMainDrawingAreaKeyPressEvent" />
                         <signal name="KeyReleaseEvent" handler="OnMainDrawingAreaKeyReleaseEvent" />
-                        <signal name="FocusInEvent" handler="OnMainDrawingAreaFocusInEvent" />
-                        <signal name="FocusOutEvent" handler="OnMainDrawingAreaFocusOutEvent" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
@@ -681,74 +665,6 @@
             <property name="ResponseId">-5</property>
             <signal name="Clicked" handler="OnButtonOkClicked" />
             <property name="label">gtk-ok</property>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-      </widget>
-    </child>
-  </widget>
-  <widget class="Gtk.Dialog" id="Screenary.Client.WelcomeDialog" design-size="410 133">
-    <property name="MemberName" />
-    <property name="Title" translatable="yes">Welcome to Screenary!</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <property name="Buttons">2</property>
-    <property name="HelpButton">False</property>
-    <child internal-child="VBox">
-      <widget class="Gtk.VBox" id="dialog1_VBox">
-        <property name="MemberName" />
-        <property name="BorderWidth">2</property>
-        <child>
-          <widget class="Gtk.Label" id="label1">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Would you like to use the application as a sender or receiver?</property>
-          </widget>
-          <packing>
-            <property name="Position">0</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-            <property name="Padding">16</property>
-          </packing>
-        </child>
-      </widget>
-    </child>
-    <child internal-child="ActionArea">
-      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
-        <property name="MemberName" />
-        <property name="Spacing">10</property>
-        <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
-        <property name="LayoutStyle">End</property>
-        <child>
-          <widget class="Gtk.Button" id="buttonSender">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Sender</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">-6</property>
-            <signal name="Clicked" handler="OnButtonSenderClicked" />
-          </widget>
-          <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonReceiver">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Receiver</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">-5</property>
-            <signal name="Clicked" handler="OnButtonReceiverClicked" />
           </widget>
           <packing>
             <property name="Position">1</property>

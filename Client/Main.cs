@@ -31,12 +31,9 @@ namespace Screenary.Client
 		 * Entry point function, creates main window and starts application
 		 */ 
 		public static void Main (string[] args)
-		{
-			//MainWindow window;
-			
+		{	
 			Application.Init();
 			
-			//WelcomeDialog welcome = new WelcomeDialog();
 			MainWindow newSenderReceiver = new MainWindow(0);
 			
 			WorkingDirectory = Directory.GetCurrentDirectory();
@@ -45,9 +42,6 @@ namespace Screenary.Client
 				WorkingDirectory += "/";
 			
 			Directory.SetCurrentDirectory(WorkingDirectory + "../../");
-			
-			//window = new MainWindow();
-			//window.Show();
 			
 			Application.Run();
 		}

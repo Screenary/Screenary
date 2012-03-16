@@ -66,14 +66,12 @@
     <Compile Include="gtk-gui\Screenary.Client.CreateSessionDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.JoinDialog.cs" />
     <Compile Include="gtk-gui\Screenary.Client.AuthenticateDialog.cs" />
-    <Compile Include="gtk-gui\Screenary.Client.WelcomeDialog.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="gtk-gui\Screenary.Client.ExceptionDialog.cs" />
     <Compile Include="Widgets\JoinDialog.cs" />
     <Compile Include="Widgets\AuthenticateDialog.cs" />
     <Compile Include="Widgets\CreateSessionDialog.cs" />
     <Compile Include="Widgets\ExceptionDialog.cs" />
-    <Compile Include="Widgets\WelcomeDialog.cs" />
     <Compile Include="Widgets\IUserAction.cs" />
     <Compile Include="Source\PcapSource.cs" />
     <Compile Include="Source\RdpSource.cs" />

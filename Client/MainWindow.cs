@@ -404,6 +404,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		byte[] pduBuffer = cmd.Write();
 		
 		surfaceClient.SendSurfaceCommand(pduBuffer, sessionClient.GetSessionId());
+	
+		string hostname = config.RdpServerHostname;
+				
+		if (hostname.Equals("localhost") || hostname.Equals("127.0.0.1"))
+					return;
 		
 		Gtk.Application.Invoke(delegate {
 			

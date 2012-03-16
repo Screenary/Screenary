@@ -28,6 +28,9 @@ namespace FreeRDP
 	public unsafe delegate bool pPreConnect(freerdp* instance);
 	public unsafe delegate bool pPostConnect(freerdp* instance);
 	
+	public unsafe delegate bool pAuthenticate(freerdp* instance, IntPtr username, IntPtr password, IntPtr domain);
+	public unsafe delegate bool pVerifyCertificate(freerdp* instance, IntPtr subject, IntPtr issuer, IntPtr fingerprint);
+	
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct freerdp
 	{
@@ -47,7 +50,7 @@ namespace FreeRDP
 		public IntPtr PreConnect;
 		public IntPtr PostConnect;
 		public IntPtr Authenticate;
-		public IntPtr VerifyAuthenticate;
+		public IntPtr VerifyCertificate;
 		public fixed UInt32 paddingD[64-52];
 		
 		public IntPtr SendChannelData;

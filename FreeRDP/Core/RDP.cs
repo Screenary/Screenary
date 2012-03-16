@@ -81,6 +81,9 @@ namespace FreeRDP
 		private pPreConnect hPreConnect;
 		private pPostConnect hPostConnect;
 		
+		private pAuthenticate hAuthenticate;
+		private pVerifyCertificate hVerifyCertificate;
+		
 		private Update update;
 		private PrimaryUpdate primary;
 		
@@ -98,7 +101,13 @@ namespace FreeRDP
 			
 			handle->ContextNew = Marshal.GetFunctionPointerForDelegate(hContextNew);
 			handle->ContextFree = Marshal.GetFunctionPointerForDelegate(hContextFree);
-
+			
+			hAuthenticate = new pAuthenticate(Authenticate);
+			hVerifyCertificate = new pVerifyCertificate(VerifyCertificate);
+			
+			handle->Authenticate = Marshal.GetFunctionPointerForDelegate(hAuthenticate);
+			handle->VerifyCertificate = Marshal.GetFunctionPointerForDelegate(hVerifyCertificate);
+			
 			freerdp_context_new(handle);
 		}
 		
@@ -191,6 +200,8 @@ namespace FreeRDP
 			Console.WriteLine("hostname:{0} username:{1} width:{2} height:{3} port:{4}",
 				hostname, username, settings->width, settings->height, settings->port);
 			
+			settings->ignoreCertificate = 1;
+			
 			settings->hostname = GetNativeAnsiString(hostname);
 			settings->username = GetNativeAnsiString(username);
 			
@@ -208,6 +219,16 @@ namespace FreeRDP
 		public bool Disconnect()
 		{
 			return ((freerdp_disconnect(handle) == 0) ? false : true);
+		}
+		
+		private bool Authenticate(freerdp* instance, IntPtr username, IntPtr password, IntPtr domain)
+		{
+			return true;
+		}
+		
+		private bool VerifyCertificate(freerdp* instance, IntPtr subject, IntPtr issuer, IntPtr fingerprint)
+		{
+			return true;
 		}
 		
 		public bool CheckFileDescriptor()

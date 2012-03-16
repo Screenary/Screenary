@@ -61,7 +61,9 @@ namespace FreeRDP
 		public int compression;
 		public UInt32 performanceFlags;
 		public IntPtr passwordCookie;
-		public fixed UInt32 paddingC[80-62];
+		public IntPtr kerberosKDC;
+		public IntPtr kerberosRealm;
+		public fixed UInt32 paddingC[80-64];
 		
 		/* User Interface Parameters */
 		public int softwareGdi;

@@ -2,6 +2,7 @@
  * Screenary: Real-Time Collaboration Redefined.
  * Pcap Reader Utils
  *
+ * Copyright 2011-2012 Terri-Anne Cambridge <tacambridge@gmail.com>
  * Copyright 2011-2012 Marc-Andre Moreau <marcandre.moreau@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

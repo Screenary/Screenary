@@ -59,6 +59,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	internal RdpSource rdpSource;
 	internal PcapSource pcapSource;
 	internal Keyboard keyboard;
+	internal Boolean statusText = false;
 	
 	internal IClientState currentState;
 	internal IClientState[] clientStates;
@@ -554,11 +555,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void DisplayStatusText(string text)
 	{
 		Gtk.Application.Invoke(delegate {
-			
-			if (messageId != 0)
-				notificationBar.Remove(contextId, messageId);
 				
 			messageId = notificationBar.Push(contextId, text);
+			StatusMessage message = new StatusMessage(this,messageId, contextId);
+			message.StartTimer();
+
 		});
 	}
 	
@@ -1044,5 +1045,38 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		}
 	}	
 	
+	/**
+	* Class to store information about messages to remove them after a timeout of 5 seconds
+	*/ 
+	public class StatusMessage
+	{
+		private uint messageId;
+		private uint contextId;
+		protected MainWindow mainWindow;
+		
+		public StatusMessage(MainWindow mainWindow, uint messageId, uint contextId)
+		{
+			this.messageId = messageId;
+			this.contextId = contextId;
+			this.mainWindow = mainWindow;
+		}
+		
+		public Boolean ClearStatusText()
+		{
+			Gtk.Application.Invoke(delegate {
+				
+					mainWindow.notificationBar.Remove(this.contextId, this.messageId);
+			});
+			
+			return false;
+		}
+	
+		public void StartTimer()
+		{
+			GLib.Timeout.Add(5000, new GLib.TimeoutHandler(ClearStatusText));
+		}
+	}
+		
+		
 
 }

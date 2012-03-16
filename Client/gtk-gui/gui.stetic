@@ -45,7 +45,6 @@
       </action>
       <action id="shareScreenAction">
         <property name="Type">Action</property>
-        <property name="Accelerator">&lt;Control&gt;r</property>
         <property name="Label" translatable="yes">Share Screen</property>
         <property name="ShortLabel" translatable="yes">Record</property>
         <signal name="Activated" handler="OnShareScreenActionActivated" />

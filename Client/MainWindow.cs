@@ -650,6 +650,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		{
 			DisplayStatusText("You have successfully joined the session.");
 		}
+		else if (this.username.Equals(username) && type.Equals("control of"))
+		{
+			DisplayStatusText("You have control of the session.");
+		}
 		else
 		{
 			DisplayStatusText(username + " has " + type + " the session.");

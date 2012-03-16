@@ -56,7 +56,7 @@ public partial class MainWindow
 		w1.Add (this.ToolsAction, "<Alt>t");
 		this.shareScreenAction = new global::Gtk.Action ("shareScreenAction", global::Mono.Unix.Catalog.GetString ("Share Screen"), null, null);
 		this.shareScreenAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Record");
-		w1.Add (this.shareScreenAction, "<Control>r");
+		w1.Add (this.shareScreenAction, null);
 		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
 		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
 		w1.Add (this.HelpAction, "<Alt>h");

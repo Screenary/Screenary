@@ -142,8 +142,11 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	{
 		Gdk.EventButton e = args.Event;
 		
-		if (inputClient.Active && transport.isConnected() && sessionClient.GetSessionId() != 0)
-			inputClient.SendMouseEvent(e.Button, false, (int) e.X, (int) e.Y);
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+		{
+			if (inputClient.Active)
+				inputClient.SendMouseEvent(e.Button, false, (int) e.X, (int) e.Y);
+		}
 	}
 	
 	/**
@@ -152,12 +155,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	protected void OnMainDrawingAreaMotionNotifyEvent(object o, Gtk.MotionNotifyEventArgs args)
 	{
 		Gdk.EventMotion e = args.Event;
-				
-		/*Console.WriteLine("MotionNotifyEvent ({0},{1}) ({2},{3})",
-			e.X, e.Y, e.XRoot, e.YRoot);*/
 		
-		if (inputClient.Active && transport.isConnected() && sessionClient.GetSessionId() != 0)
-			inputClient.SendMouseMotionEvent((int) e.X, (int) e.Y);
+		if (transport.isConnected() && sessionClient.GetSessionId() != 0)
+		{
+			if (inputClient.Active)
+				inputClient.SendMouseMotionEvent((int) e.X, (int) e.Y);
+		}
 	}
 	
 	/**
@@ -193,7 +196,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			if (inputClient.Active)
 			{
 				scancode = keyboard.GetRdpScancodeFromX11Keycode((UInt32) e.HardwareKeycode, ref extended);
-				inputClient.SendKeyboardEvent(e.KeyValue, false, (extended == 0) ? false : true);
+				inputClient.SendKeyboardEvent(scancode, false, (extended == 0) ? false : true);
 			}
 		}
 	}

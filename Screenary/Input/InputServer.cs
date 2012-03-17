@@ -37,11 +37,9 @@ namespace Screenary
 	
 		private void RecvMouseEvent(BinaryReader s)
 		{
-			//Console.WriteLine("InputServer.RecvMouseEvent");
-			
+			UInt16 x, y;
 			UInt32 sessionId;
 			UInt16 pointerFlags;
-			UInt16 x, y;
 			
 			sessionId = s.ReadUInt32();
 			pointerFlags = s.ReadUInt16();
@@ -85,9 +83,7 @@ namespace Screenary
 		}
 		
 		private void RecvKeyboardEvent(BinaryReader s)
-		{
-			//Console.WriteLine("InputServer.RecvKeyboardEvent");
-			
+		{			
 			UInt32 sessionId;
 			UInt16 keyboardFlags;
 			UInt16 keyCode;
@@ -145,6 +141,7 @@ namespace Screenary
 					return;
 			}
 		}
+		
 		private BinaryWriter InitRspPDU(ref byte[] buffer, int length, UInt32 id)
 		{
 			BinaryWriter s;
@@ -156,6 +153,7 @@ namespace Screenary
 	
 			return s;
 		}
+		
 		public void ChannelThreadProc()
 		{			
 			while (true)

@@ -235,9 +235,7 @@ namespace Screenary.Server
 				
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnSurfaceCommand(Client client, UInt32 sessionId, byte[] surfaceCommand)
-		{
-			Console.WriteLine("SessionManager.OnSurfaceCommand");
-			
+		{			
 			ScreencastingSession session = GetSessionBySenderId(sessionId);
 			
 			if (session == null)
@@ -266,10 +264,8 @@ namespace Screenary.Server
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);
-				Console.WriteLine("ScreencastSession sender is: " + screencastSession.senderId + " " + screencastSession.senderUsername);
 				screencastSession.SendMouseEventToSender(pointerFlags, x, y);
 				return;
-				
 			}
 
 			sessionStatus = 1;
@@ -278,14 +274,14 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void OnRecvKeyboardEvent(Client client, UInt32 sessionId, char[] sessionKey, ref UInt32 sessionStatus, UInt16 pointerFlag, UInt16 keyCode)
 		{
-			Console.WriteLine("SessionManager.OnRecvKeyboardEvent sessionkey: "+sessionKey.ToString());
+			Console.WriteLine("SessionManager.OnRecvKeyboardEvent sessionKey: {0} keyCode: {1}",
+			                  new string(sessionKey), keyCode);
 			
 			if (isSessionAlive(sessionKey))
 			{
 				ScreencastingSession screencastSession = getSessionByKey(sessionKey);				
 				screencastSession.SendKeyboardEventToSender(pointerFlag, keyCode);
-				return;
-				
+				return;	
 			}
 
 			sessionStatus = 1;

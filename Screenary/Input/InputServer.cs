@@ -45,18 +45,13 @@ namespace Screenary
 			pointerFlags = s.ReadUInt16();
 			x = s.ReadUInt16();		
 			y = s.ReadUInt16();
-		
-			Console.WriteLine("Received mouse event {0}: {1}, {2} for sessionId: {3}",
-				pointerFlags, x, y, sessionId);
 			
 			if (sessionId != 0)
 				listener.OnRecvMouseEvent(sessionId, pointerFlags, x, y);
 		}
 		
 		public void SendMouseEventToSender(UInt16 pointerFlags, int x, int y, UInt32 sessionId)
-		{
-			Console.WriteLine("InputServer.SendMouseEventToSender " + sessionId);
-			
+		{			
 			byte[] buffer = null;
 			int length = sizeof(UInt16) * 3;
 			BinaryWriter s = InitRspPDU(ref buffer, length, sessionId);

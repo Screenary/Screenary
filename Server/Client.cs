@@ -170,8 +170,7 @@ namespace Screenary.Server
 		{
 			UInt32 sessionStatus = UInt32.MaxValue;
 			
-			clientListener.OnRecvMouseEvent(this, sessionId, sessionServer.sessionKey, ref sessionStatus, pointerFlag, x, y);
-			//sessionServer.SendLeaveRsp(sessionId, sessionStatus);		
+			clientListener.OnRecvMouseEvent(this, sessionId, sessionServer.sessionKey, ref sessionStatus, pointerFlag, x, y);	
 		}
 		public void OnRecvKeyboardEvent(UInt32 sessionId, UInt16 pointerFlag, UInt16 keyCode)
 		{

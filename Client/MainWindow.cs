@@ -724,8 +724,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 */
 	public void OnSessionRemoteAccessRequestReceived(string receiverUsername)
 	{
-		IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);
-		incomingRequestList.Add(request);
+		/* Can only accept/deny remote access when sharing screen */
+		if (currentState == clientStates[SENDER_SENDING_STATE])
+		{
+			IncomingRequestDialog request = new IncomingRequestDialog(this,receiverUsername);
+			incomingRequestList.Add(request);
+		}
 	}
 	
 	/**
@@ -734,12 +738,12 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	public void OnUserRequestResponse(Boolean permission, string receiverUsername)
 	{
 		/* Deny all other requests  */
-		if(permission) 
+		if (permission) 
 		{
-			foreach(IncomingRequestDialog incomingRequestDialog in incomingRequestList)
+			foreach (IncomingRequestDialog incomingRequestDialog in incomingRequestList)
 			{
 				string otherUsername = incomingRequestDialog.GetUsername();
-				if(!receiverUsername.Equals(otherUsername))
+				if (!receiverUsername.Equals(otherUsername))
 				{
 					sessionClient.SendRemoteAccessPermissionReq(this.sessionKey.ToCharArray(), otherUsername, false);
 					incomingRequestDialog.Destroy();
@@ -1049,8 +1053,8 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	}	
 	
 	/**
-	* Class to store information about messages to remove them after a timeout of 5 seconds
-	*/ 
+	 * Class to store information about messages to remove them after a timeout of 5 seconds
+	 */ 
 	public class StatusMessage
 	{
 		private uint messageId;

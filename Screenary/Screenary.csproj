@@ -65,6 +65,7 @@
     <Compile Include="Input\InputClient.cs" />
     <Compile Include="Input\InputServer.cs" />
     <Compile Include="Input\IInputListener.cs" />
+    <Compile Include="Transport\TransportException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

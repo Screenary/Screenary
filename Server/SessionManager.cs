@@ -249,7 +249,15 @@ namespace Screenary.Server
 					
 					if (receiverSessionId != sessionId)
 					{
-						receiver.OnSendSurfaceCommand(receiverSessionId, surfaceCommand);
+						try
+						{
+							receiver.OnSendSurfaceCommand(receiverSessionId, surfaceCommand);
+						}
+						catch (TransportException e)
+						{
+							Console.WriteLine("Caught Transport Exception: " + e.Message);
+							session.RemoveAuthenticatedUser(receiver);
+						}
 					}
 				}
 			}	

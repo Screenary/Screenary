@@ -150,7 +150,7 @@ namespace Screenary
 				}
 				catch (SocketException e)
 				{
-					return;
+					throw new TransportException("Error sending through socket");
 				}
 			}
 		}

@@ -129,6 +129,16 @@ namespace Screenary.Server
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void RemoveAuthenticatedUser(Client client)
+		{
+			User user;
+			UInt32 sessionId;
+			authenticatedClients.TryRemove(client, out user);
+			joinedClients.TryRemove(client, out sessionId);
+			UpdateNotifications("left", user.username);
+		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		public bool Authenticate(Client client, UInt32 sessionId, string username, string password)
 		{			
 			bool isAuthenticated = (this.sessionPassword.Equals(password));

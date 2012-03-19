@@ -3,6 +3,7 @@
  * Transport Client
  *
  * Copyright 2011-2012 Marc-Andre Moreau <marcandre.moreau@gmail.com>
+ * Copyright 2011-2012 Hai-Long Nguyen <hlnguyen21@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,9 +142,16 @@ namespace Screenary
 			
 			while (offset < end)
 			{
-				sent = socket.Send(buffer, offset, (size - total_sent), 0);
-				total_sent += sent;
-				offset += sent;
+				try
+				{
+					sent = socket.Send(buffer, offset, (size - total_sent), 0);
+					total_sent += sent;
+					offset += sent;
+				}
+				catch (SocketException e)
+				{
+					return;
+				}
 			}
 		}
 		

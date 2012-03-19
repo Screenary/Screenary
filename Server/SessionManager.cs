@@ -176,7 +176,16 @@ namespace Screenary.Server
 					foreach(Client authenticatedClient in screencastSession.authenticatedClients.Keys)
 					{
 						UInt32 clientSessionId = screencastSession.authenticatedClients[authenticatedClient].sessionId;
-						authenticatedClient.OnSessionTermination(clientSessionId, sessionKey, sessionStatus);
+						
+						try
+						{
+							authenticatedClient.OnSessionTermination(clientSessionId, sessionKey, sessionStatus);
+						}
+						catch (TransportException e)
+						{
+							Console.WriteLine("Caught Transport Exception: " + e.Message);
+							screencastSession.RemoveAuthenticatedUser(authenticatedClient);	
+						}
 					}
 					screencastSession.authenticatedClients.Clear();
 					sessions.TryRemove(new string(sessionKey), out screencastSession);
@@ -228,7 +237,15 @@ namespace Screenary.Server
 				
 				foreach (Client client in session.authenticatedClients.Keys)
 				{
-					client.OnSessionParticipantListUpdated(participantUsernames);
+					try
+					{
+						client.OnSessionParticipantListUpdated(participantUsernames);
+					}
+					catch (TransportException e)
+					{
+						Console.WriteLine("Caught Transport Exception: " + e.Message);
+						session.RemoveAuthenticatedUser(client);	
+					}
 				}
 			}
 		}	

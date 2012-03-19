@@ -97,25 +97,49 @@ namespace Screenary.Server
 		{
 			foreach (Client client in authenticatedClients.Keys)
 			{
-				client.OnSessionParticipantListUpdated(GetParticipantUsernames());
+				try
+				{
+					client.OnSessionParticipantListUpdated(GetParticipantUsernames());
+				}
+				catch (TransportException e)
+				{
+					Console.WriteLine("Caught Transport Exception: " + e.Message);
+					RemoveAuthenticatedUser(client);
+				}
 			}
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateNotifications(string type, string username)
 		{
-			foreach (Client clients in authenticatedClients.Keys)
+			foreach (Client client in authenticatedClients.Keys)
 			{
-				clients.OnSessionNotificationUpdate(type, username);
+				try
+				{
+					client.OnSessionNotificationUpdate(type, username);
+				}
+				catch (TransportException e)
+				{
+					Console.WriteLine("Caught Transport Exception: " + e.Message);
+					RemoveAuthenticatedUser(client);
+				}
 			}
 		}
 		
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void UpdateFirstNotifications(string type, string username, string senderClient)
 		{
-			foreach (Client clients in authenticatedClients.Keys)
+			foreach (Client client in authenticatedClients.Keys)
 			{
-				clients.OnSessionFirstNotificationUpdate(type, username, senderClient);
+				try
+				{
+					client.OnSessionFirstNotificationUpdate(type, username, senderClient);
+				}
+				catch (TransportException e)
+				{
+					Console.WriteLine("Caught Transport Exception: " + e.Message);
+					RemoveAuthenticatedUser(client);
+				}
 			}
 		}
 		

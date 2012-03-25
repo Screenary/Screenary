@@ -252,7 +252,7 @@ namespace Screenary
 			if (sessionStatus != 0)
 			{
 				Console.WriteLine("Session Authentication Failed: {0}", sessionStatus);
-				listener.OnSessionOperationFail("Session Authentication Failed");
+				listener.OnSessionOperationFail("Session Authentication Failed.\nPassword is invalid or the Username already exists.");
 				return;
 			}
 			else if (sessionId != this.sessionId)

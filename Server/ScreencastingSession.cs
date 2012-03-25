@@ -165,7 +165,7 @@ namespace Screenary.Server
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public bool Authenticate(Client client, UInt32 sessionId, string username, string password)
 		{			
-			bool isAuthenticated = (this.sessionPassword.Equals(password));
+			bool isAuthenticated = (this.sessionPassword.Equals(password) && isUsernameUnique(username));
 			
 			if (isAuthenticated)
 			{
@@ -262,6 +262,21 @@ namespace Screenary.Server
 		public bool isPasswordProtected()
 		{
 			return (!sessionPassword.Equals(""));	
+		}
+		
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		private bool isUsernameUnique(string username)
+		{
+			bool isUsernameUnique = true;
+			foreach(User user in authenticatedClients.Values)
+			{
+				if(username.Equals(user.username)) 
+				{
+					isUsernameUnique = false;
+					break;
+				}
+			}
+			return isUsernameUnique;
 		}
 	}
 }

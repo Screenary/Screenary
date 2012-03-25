@@ -11,7 +11,7 @@ namespace Screenary.Client
 		private global::Gtk.Entry txtSessionKey;
 		private global::Gtk.Button buttonCancel;
 		private global::Gtk.Button buttonJoin;
-		
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

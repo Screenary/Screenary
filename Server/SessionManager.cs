@@ -320,6 +320,25 @@ namespace Screenary.Server
 		{
 			char[] sessionKey = new char[SESSION_KEY_LENGTH];
 			
+			/*
+			if (sessions.IsEmpty)
+			{
+				sessionKey[0] = 'A';
+				sessionKey[1] = 'A';
+				sessionKey[2] = 'A';
+				sessionKey[3] = 'B';
+				sessionKey[4] = 'B';
+				sessionKey[5] = 'B';
+				sessionKey[6] = 'C';
+				sessionKey[7] = 'C';
+				sessionKey[8] = 'C';
+				sessionKey[9] = 'D';
+				sessionKey[10] = 'D';
+				sessionKey[11] = 'D';
+				
+				return sessionKey;
+			}*/
+			
 			do
 			{
 				for (int i = 0; i < SESSION_KEY_LENGTH; i++)

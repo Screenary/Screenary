@@ -207,12 +207,25 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 */
 	protected void OnMainDrawingAreaExposeEvent(object o, Gtk.ExposeEventArgs args)
 	{
+		int x, y, w, h;
 		Gdk.Rectangle[] rects = args.Event.Region.GetRectangles();
 		
 		foreach (Gdk.Rectangle rect in rects)
 		{
-			drawable.DrawPixbuf(gc, surface, rect.X, rect.Y, rect.X, rect.Y,
-				rect.Width, rect.Height, Gdk.RgbDither.None, 0, 0);
+			x = rect.X;
+			y = rect.Y;
+			w = rect.Width;
+			h = rect.Height;
+			
+			if (x + w > width)
+				w = width - x;
+			
+			if (y + h > height)
+				h = height - y;
+			
+			//Console.WriteLine("DrawPixbuf x:{0} y:{1} w:{2} h:{3}", x, y, w, h);
+
+			drawable.DrawPixbuf(gc, surface, x, y, x, y, w, h, Gdk.RgbDither.None, 0, 0);
 		}
 	}
 	

@@ -422,7 +422,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 	 * Is invoked when application launches. Connects the Client to the Server
 	 */
 	public void OnUserConnect(string address, int port)
-	{
+	{		
 		ChannelDispatcher dispatcher = new ChannelDispatcher();
 		this.transport = new TransportClient(dispatcher);
 		
@@ -440,9 +440,10 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 			this.transport.Connect(address, port);
 			DisplayStatusText("Welcome! You are connected to Screenary server at " + address + " : " + port);
 		}
-		catch(Exception e)
+		catch (TransportException e)
 		{
-			DisplayStatusText("Could not connect to Screenary server at " + address + " : " + port);
+			ExceptionDialog exception = new ExceptionDialog("Operation Fail", "Could not connect to Screenary server at "
+				+ address + " : " + port + "\nVerify connections.");
 		}
 	}
 	
@@ -858,13 +859,14 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and end session triggers
-		 **/ 		
+		 */ 		
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;
 			mainWindow.JoinSessionAction.Visible = false;
 			mainWindow.CreateSessionAction.Visible = false;
 			mainWindow.shareScreenAction.Visible = true;
+			mainWindow.shareScreenAction.Label = "Share Screen";
 			mainWindow.LeaveSessionAction.Visible = false;
 			mainWindow.EndSessionAction.Visible = true;
 			mainWindow.RequestRemoteAccessAction.Visible = false;
@@ -944,7 +946,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and leave session triggers
-		 **/ 		
+		 */ 		
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = false;
@@ -977,7 +979,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and leave session triggers, no terminate remote
-		 **/ 
+		 */ 
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;
@@ -1008,7 +1010,7 @@ public partial class MainWindow : Gtk.Window, IUserAction, ISurfaceClient, ISour
 		
 		/**
 		 * Only show participants, recording, and leave session triggers, no request remote
-		 **/ 
+		 */ 
 		public override void refresh()
 		{
 			mainWindow.vbox3.Visible = true;

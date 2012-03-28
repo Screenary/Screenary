@@ -106,13 +106,19 @@ namespace Screenary
 				tcpClient.NoDelay = true;
 			}
 			
-			tcpClient.Connect(this.hostname, this.port);
+			/* Allow 5 seconds for connection attempt, otherwise throw Exception */
+			IAsyncResult result = tcpClient.BeginConnect(this.hostname, this.port, null, null);
+			bool success = result.AsyncWaitHandle.WaitOne(5000, true);
+			if (!tcpClient.Connected)
+			{
+				throw new TransportException("Error connecting socket");	
+			}
 			
 			this.StartThread();
 			
 			dispatcher.OnConnect();
 	
-			return true;
+			return tcpClient.Connected;
 		}
 		
 		public bool Disconnect()

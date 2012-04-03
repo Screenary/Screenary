@@ -22,202 +22,182 @@ using System.Runtime.InteropServices;
 
 namespace FreeRDP
 {
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Explicit)]
 	public unsafe struct rdpSettings
 	{
-		public freerdp* instance;
-		public fixed UInt32 paddingA[16-1];
+		[FieldOffset(0 * 8)] public freerdp* instance;
 		
 		/* Core Protocol Parameters */
-		public UInt32 width;
-		public UInt32 height;
-		public UInt32 rdpVersion;
-		public UInt32 colorDepth;
-		public UInt32 kbdLayout;
-		public UInt32 kbdType;
-		public UInt32 kbdSubType;
-		public UInt32 kbdFnKeys;
-		public UInt32 clientBuild;
-		public UInt32 requestedProtocols;
-		public UInt32 selectedProtocol;
-		public UInt32 encryptionMethod;
-		public UInt32 encryptionLevel;
-		public int authentication;
-		public UInt32 negotiationFlags;
-		public fixed UInt32 paddingB[48-31];
+		[FieldOffset(16 * 8)] public UInt32 width;
+		[FieldOffset(17 * 8)] public UInt32 height;
+		[FieldOffset(18 * 8)] public UInt32 rdpVersion;
+		[FieldOffset(19 * 8)] public UInt32 colorDepth;
+		[FieldOffset(20 * 8)] public UInt32 kbdLayout;
+		[FieldOffset(21 * 8)] public UInt32 kbdType;
+		[FieldOffset(22 * 8)] public UInt32 kbdSubType;
+		[FieldOffset(23 * 8)] public UInt32 kbdFnKeys;
+		[FieldOffset(24 * 8)] public UInt32 clientBuild;
+		[FieldOffset(25 * 8)] public UInt32 requestedProtocols;
+		[FieldOffset(26 * 8)] public UInt32 selectedProtocol;
+		[FieldOffset(27 * 8)] public UInt32 encryptionMethod;
+		[FieldOffset(28 * 8)] public UInt32 encryptionLevel;
+		[FieldOffset(29 * 8)] public int authentication;
+		[FieldOffset(30 * 8)] public UInt32 negotiationFlags;
 		
 		/* Connection Settings */
-		public UInt32 port;
-		public int ipv6;
-		public IntPtr hostname;
-		public IntPtr username;
-		public IntPtr password;
-		public IntPtr domain;
-		public IntPtr shell;
-		public IntPtr directory;
-		public IntPtr ipAddress;
-		public IntPtr clientDir;
-		public int autologon;
-		public int compression;
-		public UInt32 performanceFlags;
-		public IntPtr passwordCookie;
-		public IntPtr kerberosKDC;
-		public IntPtr kerberosRealm;
-		public fixed UInt32 paddingC[80-64];
+		[FieldOffset(48 * 8)] public UInt32 port;
+		[FieldOffset(49 * 8)] public int ipv6;
+		[FieldOffset(50 * 8)] public IntPtr hostname;
+		[FieldOffset(51 * 8)] public IntPtr username;
+		[FieldOffset(52 * 8)] public IntPtr password;
+		[FieldOffset(53 * 8)] public IntPtr domain;
+		[FieldOffset(54 * 8)] public IntPtr shell;
+		[FieldOffset(55 * 8)] public IntPtr directory;
+		[FieldOffset(56 * 8)] public IntPtr ipAddress;
+		[FieldOffset(57 * 8)] public IntPtr clientDir;
+		[FieldOffset(58 * 8)] public int autologon;
+		[FieldOffset(59 * 8)] public int compression;
+		[FieldOffset(60 * 8)] public UInt32 performanceFlags;
+		[FieldOffset(61 * 8)] public IntPtr passwordCookie;
+		[FieldOffset(62 * 8)] public IntPtr kerberosKDC;
+		[FieldOffset(63 * 8)] public IntPtr kerberosRealm;
 		
 		/* User Interface Parameters */
-		public int softwareGdi;
-		public int workarea;
-		public int fullscreen;
-		public int grabKeyboard;
-		public int decorations;
-		public UInt32 percentScreen;
-		public int mouseMotion;
-		public IntPtr windowTitle;
-		public UInt64 parentWindowXid;
-		public fixed UInt32 paddingD[112-89];
+		[FieldOffset(80 * 8)] public int softwareGdi;
+		[FieldOffset(81 * 8)] public int workarea;
+		[FieldOffset(82 * 8)] public int fullscreen;
+		[FieldOffset(83 * 8)] public int grabKeyboard;
+		[FieldOffset(84 * 8)] public int decorations;
+		[FieldOffset(85 * 8)] public UInt32 percentScreen;
+		[FieldOffset(86 * 8)] public int mouseMotion;
+		[FieldOffset(87 * 8)] public IntPtr windowTitle;
+		[FieldOffset(88 * 8)] public UInt64 parentWindowXid;
 		
 		/* Internal Parameters */
-		public IntPtr homePath;
-		public UInt32 shareId;
-		public UInt32 pduSource;
-		public IntPtr uniconv;
-		public int serverMode;
-		public IntPtr configPath;
-		public IntPtr currentPath;
-		public IntPtr developmentPath;
-		public int developmentMode;
-		public fixed UInt32 paddingE[144-121];
+		[FieldOffset(112 * 8)] public IntPtr homePath;
+		[FieldOffset(113 * 8)] public UInt32 shareId;
+		[FieldOffset(114 * 8)] public UInt32 pduSource;
+		[FieldOffset(115 * 8)] public IntPtr uniconv;
+		[FieldOffset(116 * 8)] public int serverMode;
+		[FieldOffset(117 * 8)] public IntPtr configPath;
+		[FieldOffset(118 * 8)] public IntPtr currentPath;
+		[FieldOffset(119 * 8)] public IntPtr developmentPath;
+		[FieldOffset(120 * 8)] public int developmentMode;
 		
 		/* Security */
-		public int encryption;
-		public int tlsSecurity;
-		public int nlaSecurity;
-		public int rdpSecurity;
-		public UInt32 ntlmVersion;
-		public int secureChecksum;
-		public fixed UInt32 paddingF[160-150];
+		[FieldOffset(144 * 8)] public int encryption;
+		[FieldOffset(145 * 8)] public int tlsSecurity;
+		[FieldOffset(146 * 8)] public int nlaSecurity;
+		[FieldOffset(147 * 8)] public int rdpSecurity;
+		[FieldOffset(148 * 8)] public UInt32 ntlmVersion;
+		[FieldOffset(149 * 8)] public int saltedChecksum;
 		
 		/* Session */
-		public int consoleAudio;
-		public int consoleSession;
-		public UInt32 redirectedSessionId;
-		public fixed UInt32 paddingG[176-163];
+		[FieldOffset(160 * 8)] public int consoleAudio;
+		[FieldOffset(161 * 8)] public int consoleSession;
+		[FieldOffset(162 * 8)] public UInt32 redirectedSessionId;
+		[FieldOffset(163 * 8)] public int audioPlayback;
+		[FieldOffset(164 * 8)] public int audioCapture;
 	
 		/* Output Control */
-		public int refreshRect;
-		public int suppressOutput;
-		public int desktopResize;
-		public fixed UInt32 paddingH[192-179];
+		[FieldOffset(176 * 8)] public int refreshRect;
+		[FieldOffset(177 * 8)] public int suppressOutput;
+		[FieldOffset(178 * 8)] public int desktopResize;
 	
 		/* Reconnection */
-		public int autoReconnection;
-		public IntPtr clientAutoReconnectCookie;
-		public IntPtr serverAutoReconnectCookie;
-		public fixed UInt32 paddingI[208-195];
+		[FieldOffset(192 * 8)] public int autoReconnection;
+		[FieldOffset(193 * 8)] public IntPtr clientAutoReconnectCookie;
+		[FieldOffset(194 * 8)] public IntPtr serverAutoReconnectCookie;
 	
 		/* Time Zone */
-		public IntPtr clientTimeZone;
-		public fixed UInt32 paddingJ[216-209];
+		[FieldOffset(208 * 8)] public IntPtr clientTimeZone;
 	
 		/* Capabilities */
-		public UInt32 osMajorType;
-		public UInt32 osMinorType;
-		public UInt32 vcChunkSize;
-		public int soundBeeps;
-		public int smoothFonts;
-		public int frameMarker;
-		public int fastpathInput;
-		public int fastpathOutput;
-		public fixed byte receivedCaps[32];
-		public fixed byte orderSupport[32];
-		public int surfaceCommands;
-		public int disableWallpaper;
-		public int disableFullWindowDrag;
-		public int disableMenuAnimations;
-		public int disableTheming;
-		public UInt32 connectionType;
-		public UInt32 multifragMaxRequestSize;
-		public fixed UInt32 paddingK[248-247];
+		[FieldOffset(216 * 8)] public UInt32 osMajorType;
+		[FieldOffset(217 * 8)] public UInt32 osMinorType;
+		[FieldOffset(218 * 8)] public UInt32 vcChunkSize;
+		[FieldOffset(219 * 8)] public int soundBeeps;
+		[FieldOffset(220 * 8)] public int smoothFonts;
+		[FieldOffset(221 * 8)] public int frameMarker;
+		[FieldOffset(222 * 8)] public int fastpathInput;
+		[FieldOffset(223 * 8)] public int fastpathOutput;
+		[FieldOffset(224 * 8)] public IntPtr receivedCaps;
+		[FieldOffset(225 * 8)] public IntPtr orderSupport;
+		[FieldOffset(226 * 8)] public int surfaceCommands;
+		[FieldOffset(227 * 8)] public int disableWallpaper;
+		[FieldOffset(228 * 8)] public int disableFullWindowDrag;
+		[FieldOffset(229 * 8)] public int disableMenuAnimations;
+		[FieldOffset(230 * 8)] public int disableTheming;
+		[FieldOffset(231 * 8)] public UInt32 connectionType;
+		[FieldOffset(232 * 8)] public UInt32 multifragMaxRequestSize;
 	
 		/* Certificate */
-		public IntPtr certFile;
-		public IntPtr privateKeyFile;
-		public fixed byte clientHostname[32];
-		public fixed byte clientProductId[32];
-		public IntPtr serverRandom;
-		public IntPtr serverCertificate;
-		public int ignoreCertificate;
-		public IntPtr serverCert;
-		public IntPtr rdpKeyFile;
-		public IntPtr serverKey;
-		public IntPtr certificateName;
-		public fixed UInt32 paddingL[280-273];
+		[FieldOffset(248 * 8)] public IntPtr certFile;
+		[FieldOffset(249 * 8)] public IntPtr privateKeyFile;
+		[FieldOffset(250 * 8)] public IntPtr clientHostname;
+		[FieldOffset(251 * 8)] public IntPtr clientProductId;
+		[FieldOffset(252 * 8)] public IntPtr serverRandom;
+		[FieldOffset(253 * 8)] public IntPtr serverCertificate;
+		[FieldOffset(254 * 8)] public int ignoreCertificate;
+		[FieldOffset(255 * 8)] public IntPtr serverCert;
+		[FieldOffset(256 * 8)] public IntPtr rdpKeyFile;
+		[FieldOffset(257 * 8)] public IntPtr serverKey;
+		[FieldOffset(258 * 8)] public IntPtr certificateName;
 	
 		/* Codecs */
-		public int rfxCodec;
-		public int nsCodec;
-		public UInt32 rfxCodecId;
-		public UInt32 nsCodecId;
-		public UInt32 rfxCodecMode;
-		public int frameAcknowledge;
-		public fixed UInt32 paddingM[296-286];
+		[FieldOffset(280 * 8)] public int rfxCodec;
+		[FieldOffset(281 * 8)] public int nsCodec;
+		[FieldOffset(282 * 8)] public UInt32 rfxCodecId;
+		[FieldOffset(283 * 8)] public UInt32 nsCodecId;
+		[FieldOffset(284 * 8)] public UInt32 rfxCodecMode;
+		[FieldOffset(285 * 8)] public int frameAcknowledge;
 	
 		/* Recording */
-		public int dumpRfx;
-		public int playRfx;
-		public IntPtr dumpRfxFile;
-		public IntPtr playRfxFile;
-		public fixed UInt32 paddingN[312-300];
+		[FieldOffset(296 * 8)] public int dumpRfx;
+		[FieldOffset(297 * 8)] public int playRfx;
+		[FieldOffset(298 * 8)] public IntPtr dumpRfxFile;
+		[FieldOffset(299 * 8)] public IntPtr playRfxFile;
 	
 		/* RemoteApp */
-		public int remoteApp;
-		public UInt32 numIconCaches;
-		public UInt32 numIconCacheEntries;
-		public int railLangbarSupported;
-		public fixed UInt32 paddingO[320-316];
+		[FieldOffset(312 * 8)] public int remoteApp;
+		[FieldOffset(313 * 8)] public UInt32 numIconCaches;
+		[FieldOffset(314 * 8)] public UInt32 numIconCacheEntries;
+		[FieldOffset(315 * 8)] public int railLangbarSupported;
 	
 		/* Pointer */
-		public int largePointer;
-		public int colorPointer;
-		public UInt32 pointerCacheSize;
-		public fixed UInt32 paddingP[328-323];
+		[FieldOffset(320 * 8)] public int largePointer;
+		[FieldOffset(321 * 8)] public int colorPointer;
+		[FieldOffset(322 * 8)] public UInt32 pointerCacheSize;
 	
 		/* Bitmap Cache */
-		public int bitmapCache;
-		public int bitmapCacheV3;
-		public int persistentBitmapCache;
-		public UInt32 bitmapCacheV2NumCells;
-		public IntPtr bitmapCacheV2CellInfo;
-		public fixed UInt32 paddingQ[344-333];
+		[FieldOffset(328 * 8)] public int bitmapCache;
+		[FieldOffset(329 * 8)] public int bitmapCacheV3;
+		[FieldOffset(330 * 8)] public int persistentBitmapCache;
+		[FieldOffset(331 * 8)] public UInt32 bitmapCacheV2NumCells;
+		[FieldOffset(332 * 8)] public IntPtr bitmapCacheV2CellInfo;
 	
 		/* Offscreen Bitmap Cache */
-		public int offscreenBitmapCache;
-		public UInt32 offscreenBitmapCacheSize;
-		public UInt32 offscreenBitmapCacheEntries;
-		public fixed UInt32 paddingR[352-347];
+		[FieldOffset(344 * 8)] public int offscreenBitmapCache;
+		[FieldOffset(345 * 8)] public UInt32 offscreenBitmapCacheSize;
+		[FieldOffset(346 * 8)] public UInt32 offscreenBitmapCacheEntries;
 	
 		/* Glyph Cache */
-		public int glyphCache;
-		public UInt32 glyphSupportLevel;
-		public IntPtr glyphCacheInfo;
-		public IntPtr fragCacheInfo;
-		public fixed UInt32 paddingS[360-356];
+		[FieldOffset(352 * 8)] public int glyphCache;
+		[FieldOffset(353 * 8)] public UInt32 glyphSupportLevel;
+		[FieldOffset(354 * 8)] public IntPtr glyphCacheInfo;
+		[FieldOffset(355 * 8)] public IntPtr fragCacheInfo;
 	
 		/* Draw Nine Grid */
-		public int drawNineGrid;
-		public UInt32 drawNineGridCacheSize;
-		public UInt32 drawNineGridCacheEntries;
-		public fixed UInt32 paddingT[368-363];
+		[FieldOffset(360 * 8)] public int drawNineGrid;
+		[FieldOffset(361 * 8)] public UInt32 drawNineGridCacheSize;
+		[FieldOffset(362 * 8)] public UInt32 drawNineGridCacheEntries;
 	
 		/* Draw GDI+ */
-		public int drawGdiPlus;
-		public int drawGdiPlusCache;
-		public fixed UInt32 paddingU[376-370];
+		[FieldOffset(368 * 8)] public int drawGdiPlus;
+		[FieldOffset(369 * 8)] public int drawGdiPlusCache;
 	
 		/* Desktop Composition */
-		public int desktopComposition;
-		public fixed UInt32 paddingV[384-377];
+		[FieldOffset(376 * 8)] public int desktopComposition;
 	};
 }
 

@@ -92,7 +92,9 @@ namespace Screenary.Client
 		public void SetBounds(rdpContext* context, rdpBounds* bounds) { }
 		public void Synchronize(rdpContext* context) { }
 		public void DesktopResize(rdpContext* context) { }
-		public void BitmapUpdate(rdpContext* context, BitmapUpdate* bitmap) { }
+		public void BitmapUpdate(rdpContext* context, BitmapUpdate* bitmap) {
+			Console.WriteLine("BitmapUpdate");
+		}
 		public void Palette(rdpContext* context, PaletteUpdate* palette) { }
 		public void PlaySound(rdpContext* context, PlaySoundUpdate* playSound) { }
 		
@@ -106,7 +108,9 @@ namespace Screenary.Client
 		public void DstBlt(rdpContext* context, DstBltOrder* dstblt) { }
 		public void PatBlt(rdpContext* context, PatBltOrder* patblt) { }
 		public void ScrBlt(rdpContext* context, ScrBltOrder* scrblt) { }
-		public void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect) { }
+		public void OpaqueRect(rdpContext* context, OpaqueRectOrder* opaqueRect) {
+			Console.WriteLine("OpaqueRect");
+		}
 		public void DrawNineGrid(rdpContext* context, DrawNineGridOrder* drawNineGrid) { }	
 		public void MultiDstBlt(rdpContext* context, MultiDstBltOrder* multi_dstblt) { }
 		public void MultiPatBlt(rdpContext* context, MultiPatBltOrder* multi_patblt) { }		
